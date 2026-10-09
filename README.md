@@ -104,3 +104,11 @@ La carpeta `extension/` contiene una extensión Manifest V3 (Chrome/Brave) que o
 **Flujo:** abrir la web oficial de un negocio -> Contact Scout -> encontrar contactos -> copiar JSON -> volver a BuscaClientes -> botón «Encontrar contactos» del mismo negocio -> pegar. La app comprueba que el dominio sea coincidente, y guarda los resultados en la cartera local si el prospecto ya fue guardado. Los resultados no están verificados como entregables. La extensión no navega automáticamente a otras páginas, ni ignora robots/captchas, ni hace recolección masiva.
 
 **Costos:** ningún nuevo servicio desplegado; no se ha conectado `enrich-worker.js` ni configurado Cloudflare. El escaneo lo ejecuta el navegador y procesa el contenido de la pestaña localmente. PocketBase no se incorpora porque requeriría un servidor adicional y no resuelve la extracción de sitios ajenos desde el navegador.
+
+## Actualización quirúrgica — profesionales y clasificación independiente/cadena (octubre 2026)
+
+- Incorporadas 20 categorías profesionales y de servicios con etiquetas específicas de OpenStreetMap: arquitectos, abogados, contadores, consultores, inmobiliarios, seguros, asesores financieros, fisioterapia, psicología, veterinarias, fotografía, diseño, ingeniería, IT, coworking, fitness, academias, limpieza, plomería y electricidad.
+- Filtros opcionales: todos, cadenas identificadas, independientes probables y tipo sin determinar. Orden alfabético, priorización por contactos y por tipo.
+- Clasificación **heurística** basada únicamente en señales explícitas `brand`, `brand:wikidata`, `branch`, `franchise`, `operator:type` y algunos nombres de cadenas conocidos. No afirma conocer la titularidad efectiva de todos los establecimientos; desconocidos permanecen desconocidos y no se inventan independientes.
+- Fuentes oficiales de contexto para una futura capa estadística, no directorios nominales: U.S. Census Bureau County Business Patterns (CBP), Nonemployer Statistics (NES) y Economic Census Establishment and Firm Size Statistics (ECNSIZE), que distingue single-unit y multiunit en estadísticas agregadas. Su API puede requerir clave; no se ha añadido uso de cuota ni integrado como directorio en este cambio.
+- Sin despliegue de Cloudflare ni cambios de almacenamiento de la cartera.
