@@ -1,0 +1,10 @@
+name = "buscaclientes-enrich"
+main = "enrich-worker.js"
+compatibility_date = "2026-10-01"
+workers_dev = true
+
+# Required: create KV namespace and insert its ID before deploying.
+# Deploy only after testing robots rules, per-origin limits and origin restrictions.
+# [[kv_namespaces]]
+# binding = "CACHE"
+# id = "REPLACE_WITH_REAL_KV_ID"
