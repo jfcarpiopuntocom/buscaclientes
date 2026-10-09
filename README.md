@@ -93,3 +93,14 @@ Datos geográficos: [srestre/world-countries-cities-db](https://github.com/srest
 - Restricciones: URLs HTTP(S) de dominio público, sin redirecciones, límite de tamaño y tiempo, caché de 24 horas y cuota básica por cliente. **Requiere KV y reglas de seguridad adicionales al desplegarse.**
 - **NO DESPLEGADO**: falta configurar Cloudflare Worker, binding KV y asignar `window.BUSCA_CLIENTES_ENRICH_BASE` en `config.js`. Hasta entonces el botón informa que no está conectado. No hay coste de TinyFish ni scrapers de Google Maps.
 - Ver detalles en [ENRICHMENT.md](./ENRICHMENT.md). No ejecutar extracción masiva sobre sitios ajenos.
+
+
+## Contact Scout — navegador del usuario, cero Cloudflare
+
+La carpeta `extension/` contiene una extensión Manifest V3 (Chrome/Brave) que obtiene correos y teléfonos empresariales publicados **solo en la pestaña que el usuario abre y analiza expresamente**. No requiere cuentas, servidor, Cloudflare Workers, PocketBase, Docker ni librerías de terceros. Permisos: `activeTab` y `scripting` (solo tras pulsar la extensión).
+
+**Instalación manual (modo desarrollador):** descargar la carpeta `extension/` desde el repositorio; abrir `chrome://extensions` o `brave://extensions`, activar modo desarrollador y seleccionar «Cargar descomprimida». Revisar el código antes de instalar. No se ha enviado a Chrome Web Store.
+
+**Flujo:** abrir la web oficial de un negocio -> Contact Scout -> encontrar contactos -> copiar JSON -> volver a BuscaClientes -> botón «Encontrar contactos» del mismo negocio -> pegar. La app comprueba que el dominio sea coincidente, y guarda los resultados en la cartera local si el prospecto ya fue guardado. Los resultados no están verificados como entregables. La extensión no navega automáticamente a otras páginas, ni ignora robots/captchas, ni hace recolección masiva.
+
+**Costos:** ningún nuevo servicio desplegado; no se ha conectado `enrich-worker.js` ni configurado Cloudflare. El escaneo lo ejecuta el navegador y procesa el contenido de la pestaña localmente. PocketBase no se incorpora porque requeriría un servidor adicional y no resuelve la extracción de sitios ajenos desde el navegador.
