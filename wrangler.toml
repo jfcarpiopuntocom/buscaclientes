@@ -1,0 +1,7 @@
+name = "busca-clientes-api"
+main = "worker.js"
+compatibility_date = "2026-10-01"
+# Para límites persistentes, crear KV y descomentar:
+# [[kv_namespaces]]
+# binding = "QUOTAS"
+# id = "REPLACE_WITH_YOUR_KV_ID"
