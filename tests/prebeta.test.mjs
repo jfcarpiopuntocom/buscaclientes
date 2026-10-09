@@ -14,3 +14,5 @@ test('Periscope keeps approved option 3 hierarchy',()=>{const hero=html.indexOf(
 test('Automatic periscope run is bounded per tab',()=>{assert.match(html,/sessionStorage\.getItem\('bc-scope-v08'\)/)});
 test('CSV clipboard fallback wired',()=>{assert.match(html,/copyCsvButton/);assert.match(html,/addEventListener\('click',copyCRMCSV\)/)});
 test('Expected Spanish flag is Ecuador',()=>{assert.match(html,/flagcdn\.com\/ec\.svg/)});
+test('Activity view has no unapproved title',()=>{assert.doesNotMatch(html,/Periscopio Vivo|Así funciona la búsqueda/)});
+test('Mobile flow fits with two-column cards',()=>{assert.match(html,/\.scope-track\{display:grid;grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/)});
