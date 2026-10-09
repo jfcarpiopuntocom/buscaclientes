@@ -105,9 +105,29 @@ function crmFields(r){const w=CRM_WORDS[lang];return `<div class="crm-edit"><sel
 function showCRM(v){crmView=v;crmTabs();render(v==='saved'?saved:lastResults,v==='search'?demo:false);focusRadar()}
 function saveCRM(id){const item=saved.find(x=>x.id===id);if(!item)return;const ss=[...document.querySelectorAll('[data-stage]')].find(x=>x.dataset.stage===id),nn=[...document.querySelectorAll('[data-note]')].find(x=>x.dataset.note===id);if(!ss||!nn)return;item.stage=CRM_STAGES.includes(ss.value)?ss.value:'new';item.notes=nn.value.slice(0,1200);item.modified=new Date().toISOString();persistCRM();showCRM('saved')}
 function render(rows,isDemo){crmTabs();const container=$('results');if(crmView==='saved'&&!rows.length){container.innerHTML='<div class="empty">'+esc(CRM_WORDS[lang].empty)+'</div>';$('counter').textContent='0';return}$('counter').textContent=rows.length;if(!rows.length){container.innerHTML=`<div class="empty"><div class="empty-icon">◎</div><b>${esc(t().emptyTitle)}</b><span>${esc(t().emptyText)}</span></div>`;return}container.innerHTML=`<div class="results-items">${rows.map((r,i)=>{let has=saved.some(s=>s.id===r.id), contact=[r.phone,r.email,r.website].filter(Boolean).length;return `<article class="lead"><div class="lead-header"><div><div class="lead-name">${esc(r.name)}</div><div class="lead-location">📍 ${esc(r.address||$('city').value)}</div></div><span class="num">#${String(i+1).padStart(2,'0')}</span></div><div class="lead-data">${contact?`<strong>${contact}</strong> ${lang==='es'?'dato(s) público(s)':lang==='en'?'public field(s)':'dado(s) público(s)'}`:lang==='es'?'Datos de contacto no publicados':lang==='en'?'No published contact details':'Sem dados de contacto publicados'}</div><div class="lead-actions">${r.website?`<a class="action" rel="noreferrer noopener" target="_blank" href="${esc(validLink(r.website))}">${esc(t().website)}</a>`:''}${r.website?`<button class="action reveal" data-enrich="${i}">${lang==='es'?'✦ Encontrar contactos':lang==='en'?'✦ Find contacts':'✦ Encontrar contactos'}</button>`:''}<a class="action" rel="noreferrer noopener" target="_blank" href="${esc(googleMapLink(r))}">Google Maps ↗</a><a class="action" rel="noreferrer noopener" target="_blank" href="${esc(validLink(r.source))}">${esc(t().view)}</a><button class="action reveal" data-save="${i}" ${has?'disabled':''}>${esc(has?t().saved:t().reveal)}</button></div>${crmView==='saved'?crmFields(r):has?`<div class="lead-data">${r.email?'✉ '+esc(r.email)+' · ':''}${r.phone?'☎ '+esc(r.phone):''}</div>`:''}</article>`}).join('')}</div>`;container.querySelectorAll('[data-enrich]').forEach(b=>b.addEventListener('click',()=>enrichLead(rows[Number(b.dataset.enrich)],b)));container.querySelectorAll('[data-save]').forEach(b=>b.addEventListener('click',()=>save(rows[Number(b.dataset.save)],isDemo)));container.querySelectorAll('[data-crm-save]').forEach(b=>b.addEventListener('click',()=>saveCRM(b.dataset.crmSave)))}
+function importScout(r){
+ const help=lang==='es'?'Abre la web de este negocio con Contact Scout, copia el resultado y pégalo aquí.':lang==='en'?'Open the business website with Contact Scout, copy the result and paste it here.':'Abra o site do negócio com Contact Scout, copie o resultado e cole aqui.';
+ const raw=prompt(help+'\n\nExtensión: github.com/jfcarpiopuntocom/buscaclientes/tree/main/extension');
+ if(raw===null)return;
+ try{
+  if(raw.length>15000)throw Error('Datos demasiado grandes');
+  const data=JSON.parse(raw);
+  if(data.type!=='buscaclientes-contact-evidence'||!Array.isArray(data.emails)||!Array.isArray(data.phones)||typeof data.source!=='string')throw Error('Formato no válido');
+  const expected=new URL(validLink(r.website)),actual=new URL(data.source);
+  const domain=h=>h.toLowerCase().replace(/^www\./,'');
+  if(domain(expected.hostname)!==domain(actual.hostname)||!['https:','http:'].includes(actual.protocol))throw Error('La web analizada no coincide con el negocio');
+  const emails=data.emails.filter(x=>typeof x==='string'&&x.length<120&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(x)).slice(0,20);
+  const phones=data.phones.filter(x=>typeof x==='string'&&x.length<45&&x.replace(/\D/g,'').length>=7).slice(0,15);
+  r.email=r.email||emails[0]||'';r.phone=r.phone||phones[0]||'';
+  r.contactEvidence={emails,phones,pages:[actual.href],checked_at:new Date().toISOString(),verified:false,method:'local_browser'};
+  const old=saved.find(x=>x.id===r.id);if(old){old.email=old.email||r.email;old.phone=old.phone||r.phone;old.contactEvidence=r.contactEvidence;persistCRM()}
+  setStatus(lang==='es'?'Contactos importados desde la web oficial. No se enviaron al servidor.':'Contacts imported locally from the business website.');
+  render(crmView==='saved'?saved:lastResults,demo);
+ }catch(e){setStatus('Contact Scout: '+e.message)}
+}
 async function enrichLead(r,button){
  const msg=lang==='es'?['Consulta no disponible todavía.','Buscando contactos en la web oficial…','Contactos encontrados: ','No hay contactos publicados en las páginas revisadas.']:lang==='en'?['Enrichment is not connected yet.','Checking the official business website…','Contacts found: ','No published contacts were found on checked pages.']:['Enriquecimento ainda não ligado.','A procurar contactos no website oficial…','Contactos encontrados: ','Não foram encontrados contactos nas páginas consultadas.'];
- if(!ENRICH_BASE){setStatus(msg[0]);return}
+ if(!ENRICH_BASE){importScout(r);return}
  button.disabled=true;const label=button.textContent;button.textContent='◌ ...';setStatus(msg[1]);
  try{
   const res=await fetch(ENRICH_BASE+'/api/enrich',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({website:r.website})});
