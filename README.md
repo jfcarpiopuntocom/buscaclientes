@@ -84,3 +84,12 @@ Datos geográficos: [srestre/world-countries-cities-db](https://github.com/srest
 - JS propio añadido: `fusion.js`, pocos KB; los CDN del globo se cargan como antes. No se incorporan paquetes pesados.
 - La investigación de un backend para importaciones Overture, enriquecimiento de webs y rate limiting continúa abierta; no afirmar que esas fuentes ya están integradas.
 - Limitación: consultas desde browser dependen de CORS y disponibilidad, así que faltan pruebas automatizadas de resultados reales antes de considerarlo producción.
+
+## Contact Intelligence Engine (octubre 2026)
+
+- `enrich-worker.js`: API `/api/enrich` para examinar la web oficial de un prospecto y un máximo de dos páginas adicionales compatibles con robots.txt.
+- Extrae direcciones de correo corporativas y teléfonos publicados; devuelve `pages`, `checked_at`, `verified:false` y no inventa datos.
+- El frontend expone «Encontrar contactos» y conserva el enriquecimiento dentro de la cartera CRM existente.
+- Restricciones: URLs HTTP(S) de dominio público, sin redirecciones, límite de tamaño y tiempo, caché de 24 horas y cuota básica por cliente. **Requiere KV y reglas de seguridad adicionales al desplegarse.**
+- **NO DESPLEGADO**: falta configurar Cloudflare Worker, binding KV y asignar `window.BUSCA_CLIENTES_ENRICH_BASE` en `config.js`. Hasta entonces el botón informa que no está conectado. No hay coste de TinyFish ni scrapers de Google Maps.
+- Ver detalles en [ENRICHMENT.md](./ENRICHMENT.md). No ejecutar extracción masiva sobre sitios ajenos.
