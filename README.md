@@ -49,3 +49,11 @@ Datos geográficos: [srestre/world-countries-cities-db](https://github.com/srest
 - Los prospectos ficticios de demostración no consumen créditos ni se exportan al CSV comercial.
 - Rendimiento móvil: densidad de píxeles WebGL limitada a 1,65.
 - Limitaciones: todavía pendiente test automatizado completo navegador→Nominatim→Overpass→tarjetas y despliegue de cuotas/autenticación del lado servidor; el comportamiento depende de conectividad/CORS y disponibilidad de fuentes públicas.
+
+## v0.5 — Prospecting Fusion & mobile-first UX
+
+- Multi-tag OSM: busca variantes de clasificación para aumentar cobertura en categorías principales.
+- Deduplicación por dominio o nombre/dirección y clasificación prioritaria por campos de contacto públicos.
+- Enlace externo a Google Maps para comprobar cada negocio; **no** se extraen datos de Google Maps ni se asegura cobertura de Google Business Profile.
+- UX: al iniciar una búsqueda, se desplaza inmediatamente al radar de resultados, mostrando su propio indicador de carga; en móvil, los resultados preceden a las tarjetas de créditos.
+- No se ha integrado todavía Overture Maps, el enriquecimiento de webs ni fuentes comerciales: requieren backend y pruebas independientes.
