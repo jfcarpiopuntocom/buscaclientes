@@ -33,3 +33,10 @@ No requiere dominio propio ni Docker.
 - Bloom WebGL más pronunciado (UnrealBloomPass, ACES tone mapping), dependiente de aceleración WebGL.
 - El límite de siete contactos sigue siendo local/demostrativo y no seguro frente a abuso; antes de monetizar necesita autenticación y cuotas de servidor.
 - La búsqueda en producción todavía requiere validación E2E de resultados reales; no se ha certificado disponibilidad de los proveedores externos.
+
+
+## v0.331 — catálogo glocal
+
+Selector de país (aprox. 250 países) y sugerencias de ciudades cargadas por demanda desde `srestre/world-countries-cities-db` mediante jsDelivr. El dataset fuente enumera ~156.025 ciudades y localidades globales; no garantiza un censo exhaustivo de cada municipio ni clasifica la población, y puede contener distritos y duplicados. EE. UU. incorpora su listado de localidades (con entrada libre para cualquier ciudad o estado). Al buscar, la geocodificación continúa mediante OpenStreetMap/Nominatim y los comercios por Overpass. Los contactos solo aparecen cuando están publicados en la fuente.
+
+Datos geográficos: [srestre/world-countries-cities-db](https://github.com/srestre/world-countries-cities-db), derivado de [dr5hn/countries-states-cities-database](https://github.com/dr5hn/countries-states-cities-database), bajo ODbL. La búsqueda libre continúa disponible si el CDN falla.
