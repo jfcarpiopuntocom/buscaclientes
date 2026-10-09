@@ -40,3 +40,12 @@ No requiere dominio propio ni Docker.
 Selector de país (aprox. 250 países) y sugerencias de ciudades cargadas por demanda desde `srestre/world-countries-cities-db` mediante jsDelivr. El dataset fuente enumera ~156.025 ciudades y localidades globales; no garantiza un censo exhaustivo de cada municipio ni clasifica la población, y puede contener distritos y duplicados. EE. UU. incorpora su listado de localidades (con entrada libre para cualquier ciudad o estado). Al buscar, la geocodificación continúa mediante OpenStreetMap/Nominatim y los comercios por Overpass. Los contactos solo aparecen cuando están publicados en la fuente.
 
 Datos geográficos: [srestre/world-countries-cities-db](https://github.com/srestre/world-countries-cities-db), derivado de [dr5hn/countries-states-cities-database](https://github.com/dr5hn/countries-states-cities-database), bajo ODbL. La búsqueda libre continúa disponible si el CDN falla.
+
+
+## v0.4 — Earth Edition (2026-10-09)
+
+- Globo realista: textura terrestre, atmósfera Fresnel, iluminación direccional, capa de nubes y bloom ajustado; Three.js CDN.
+- Búsqueda: se muestran primero negocios con email, teléfono o web publicados; los datos siguen provenientes de fuentes OSM y no se inventan.
+- Los prospectos ficticios de demostración no consumen créditos ni se exportan al CSV comercial.
+- Rendimiento móvil: densidad de píxeles WebGL limitada a 1,65.
+- Limitaciones: todavía pendiente test automatizado completo navegador→Nominatim→Overpass→tarjetas y despliegue de cuotas/autenticación del lado servidor; el comportamiento depende de conectividad/CORS y disponibilidad de fuentes públicas.
