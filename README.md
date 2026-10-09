@@ -73,3 +73,14 @@ Datos geográficos: [srestre/world-countries-cities-db](https://github.com/srest
 - Mejoras en foco visible de teclado, áreas táctiles y tarjetas móviles; exportación CSV con nombre BuscaClientes.
 - Se mantienen cartera CRM, notas, estados y almacenamiento persistente existentes. No hay migración ni borrado de datos.
 - QA: sintaxis JavaScript verificada; las pruebas E2E de búsqueda y CRM todavía deben ejecutarse en navegador real.
+
+## Motor de fuentes ligeras (9 oct 2026)
+
+- `fusion.js`: módulo JavaScript sin bibliotecas ni instalación, conecta Wikidata SPARQL de manera suplementaria para ciertas categorías y combina con los resultados de Overpass/OSM.
+- Tres endpoints Overpass alternativos ya configurados; el motor inicia la fuente complementaria sin esperar el resultado de Overpass y la puede usar como respaldo.
+- Deduplicación básica por web o coordenadas/nombre; prioriza contactos públicos utilizables.
+- No son scrapers de Google Maps/Google Business ni técnicas para eludir bloqueos. Google Maps se abre mediante enlace de comprobación manual.
+- No exige cuentas de pago ni cuota de TinyFish; los endpoints comunitarios tienen políticas de uso, límites y disponibilidad independientes.
+- JS propio añadido: `fusion.js`, pocos KB; los CDN del globo se cargan como antes. No se incorporan paquetes pesados.
+- La investigación de un backend para importaciones Overture, enriquecimiento de webs y rate limiting continúa abierta; no afirmar que esas fuentes ya están integradas.
+- Limitación: consultas desde browser dependen de CORS y disponibilidad, así que faltan pruebas automatizadas de resultados reales antes de considerarlo producción.
