@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "BuscaClientes · Contact Scout",
+  "version": "0.1.0",
+  "description": "Extrae contactos empresariales publicados de la pestaña actual. Sin servidores, cuentas ni claves.",
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}
