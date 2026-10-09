@@ -57,3 +57,12 @@ Datos geográficos: [srestre/world-countries-cities-db](https://github.com/srest
 - Enlace externo a Google Maps para comprobar cada negocio; **no** se extraen datos de Google Maps ni se asegura cobertura de Google Business Profile.
 - UX: al iniciar una búsqueda, se desplaza inmediatamente al radar de resultados, mostrando su propio indicador de carga; en móvil, los resultados preceden a las tarjetas de créditos.
 - No se ha integrado todavía Overture Maps, el enriquecimiento de webs ni fuentes comerciales: requieren backend y pruebas independientes.
+
+## v0.667 — CRM desde el descubrimiento
+
+- Panel «Resultados / Mi cartera» con traducciones ES/EN/PT.
+- Prospectos guardados en almacenamiento local persistente sin borrarlos cada lunes; migración inicial desde el conjunto semanal anterior.
+- Etapas editables: nuevo, contactado, seguimiento, calificado, ganado y descartado; notas de hasta 1200 caracteres y fecha de modificación.
+- CSV incluye etapa y notas. Estado de error de búsqueda dentro del radar, con reintento.
+- Importante: es un CRM **local del navegador**, sin sincronización entre equipos, cuentas, respaldo remoto ni protección antifraude para los 7 créditos; no confundir con un CRM cloud listo para producción.
+- Fuentes: el motor actual sigue utilizando OSM/Overpass; Google Maps solo se enlaza para comprobación externa. La integración multifuente y el enriquecimiento no están desplegados.
