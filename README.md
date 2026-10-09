@@ -66,3 +66,10 @@ Datos geográficos: [srestre/world-countries-cities-db](https://github.com/srest
 - CSV incluye etapa y notas. Estado de error de búsqueda dentro del radar, con reintento.
 - Importante: es un CRM **local del navegador**, sin sincronización entre equipos, cuentas, respaldo remoto ni protección antifraude para los 7 créditos; no confundir con un CRM cloud listo para producción.
 - Fuentes: el motor actual sigue utilizando OSM/Overpass; Google Maps solo se enlaza para comprobación externa. La integración multifuente y el enriquecimiento no están desplegados.
+
+## v0.678 — refinamiento de marca y usabilidad
+
+- Marca unificada **BuscaClientes** con contraste cromático y kerning compacto, sin introducir espacios entre las palabras.
+- Mejoras en foco visible de teclado, áreas táctiles y tarjetas móviles; exportación CSV con nombre BuscaClientes.
+- Se mantienen cartera CRM, notas, estados y almacenamiento persistente existentes. No hay migración ni borrado de datos.
+- QA: sintaxis JavaScript verificada; las pruebas E2E de búsqueda y CRM todavía deben ejecutarse en navegador real.
