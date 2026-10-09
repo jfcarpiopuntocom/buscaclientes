@@ -54,6 +54,13 @@ export default {async fetch(request,env){
  if(request.method!=='POST'||new URL(request.url).pathname!=='/api/enrich')return reply({error:'not_found'},404);
  if(Number(request.headers.get('content-length')||0)>1200)return reply({error:'oversize'},413);
  const origin=request.headers.get('origin');if(origin&&origin!=='https://jfcarpiopuntocom.github.io')return reply({error:'origin_denied'},403);
+ if(!env?.CACHE)return reply({error:'enrichment_not_configured'},503);
+ const ip=request.headers.get('CF-Connecting-IP')||'unknown';
+ const safeIp=ip.replace(/[^a-zA-Z0-9:.]/g,'').slice(0,64);
+ const hourlyKey='throttle:'+safeIp+':'+new Date().toISOString().slice(0,13);
+ const count=Number(await env.CACHE.get(hourlyKey)||0);
+ if(count>=12)return reply({error:'rate_limited',retry_after:'1h'},429);
+ await env.CACHE.put(hourlyKey,String(count+1),{expirationTtl:3600});
  let body;try{body=await request.json()}catch{return reply({error:'invalid_json'},400)}
  let site;try{site=siteUrl(body.website)}catch{return reply({error:'invalid_website'},400)}
  // Explicit bounded action, never scan an entire domain. Optional KV helps cache and throttle.
