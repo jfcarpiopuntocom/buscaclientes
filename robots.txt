@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://jfcarpiopuntocom.github.io/buscaclientes/sitemap.xml
