@@ -112,3 +112,10 @@ La carpeta `extension/` contiene una extensión Manifest V3 (Chrome/Brave) que o
 - Clasificación **heurística** basada únicamente en señales explícitas `brand`, `brand:wikidata`, `branch`, `franchise`, `operator:type` y algunos nombres de cadenas conocidos. No afirma conocer la titularidad efectiva de todos los establecimientos; desconocidos permanecen desconocidos y no se inventan independientes.
 - Fuentes oficiales de contexto para una futura capa estadística, no directorios nominales: U.S. Census Bureau County Business Patterns (CBP), Nonemployer Statistics (NES) y Economic Census Establishment and Firm Size Statistics (ECNSIZE), que distingue single-unit y multiunit en estadísticas agregadas. Su API puede requerir clave; no se ha añadido uso de cuota ni integrado como directorio en este cambio.
 - Sin despliegue de Cloudflare ni cambios de almacenamiento de la cartera.
+
+## Beta hardening — QA discipline (2026-10-09)
+
+- CSV: one common generator, with BOM UTF-8, CSV formula escaping, notes, CRM stages and evidence. Explicit clipboard-copy fallback for browsers blocking download. A click that starts a download is **not** proof the OS saved the file; interactive acceptance remains pending.
+- Periscopio Vivo: automatic data lookup is capped to once per browser tab session; further calls only on user action. Avoid unnecessary load on public geocoders. No Cloudflare Worker deployment.
+- Regression suite: `node --test tests/prebeta.test.mjs` from the repository root. No hosted CI enabled; execution is local/on demand.
+- Mandatory release note: commit SHA, git blob SHA-1 checksum, line count, test results, and unverified behaviors. Protect CRM data and existing design option 3.
