@@ -1,4 +1,4 @@
-# Busca Clientes — Beta 0.1
+# Busca Clientes — Beta 0.3
 
 Explorador glocal ES / EN / PT para descubrir pequeños negocios, con globo 3D, categorías y un pequeño CRM local. Primera etapa: descubrir candidatos para **friendly-123**.
 
@@ -24,3 +24,12 @@ Repositorio propuesto: `jfcarpiopuntocom/buscaclientes`. Una vez creado y habili
 - Antes de abrir al público: auth, rate limiting, proveedor sostenible, CRM durable, controles antiabuso y facturación.
 
 No requiere dominio propio ni Docker.
+
+## Beta 0.3 — 9 octubre 2026
+
+- Búsqueda directa desde GitHub Pages vía Nominatim + Overpass cuando no hay Worker configurado. Requiere conectividad y disponibilidad/CORS de servicios comunitarios; no se garantizan tiempos ni cobertura.
+- Búsqueda por ciudad, categoría y palabra clave; OpenStreetMap puede no publicar emails/teléfonos.
+- Etiqueta superior «7 contactos gratis a la semana» (con traducciones EN/PT).
+- Bloom WebGL más pronunciado (UnrealBloomPass, ACES tone mapping), dependiente de aceleración WebGL.
+- El límite de siete contactos sigue siendo local/demostrativo y no seguro frente a abuso; antes de monetizar necesita autenticación y cuotas de servidor.
+- La búsqueda en producción todavía requiere validación E2E de resultados reales; no se ha certificado disponibilidad de los proveedores externos.
