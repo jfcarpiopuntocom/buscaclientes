@@ -1,0 +1,37 @@
+name: BuscaClientes Shell 005 Release Gate
+on:
+  push:
+    branches: [release/buscaclientes-shell-005-20261010]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check source and full unit suite
+        run: |
+          node --check gyro-motion.js
+          node --check terminator-scan.js
+          node --check shell-005-browser-qa.cjs
+          node --test tests/*.test.mjs
+      - name: Install Chromium and WebKit
+        run: |
+          npm install --no-save --no-audit --no-fund playwright@1.56.1
+          npx playwright install --with-deps chromium webkit
+      - name: Real globe lock and mobile UI
+        run: node shell-005-browser-qa.cjs
+      - name: Regression Terminator scan
+        run: node terminator-browser-qa.cjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: buscaclientes-shell-005-screen-evidence
+          path: shell-005-evidence/*.png
+          if-no-files-found: error
