@@ -1,0 +1,41 @@
+/* B — ATLAS. Navy/coral practical sales command desk; original live form embedded in hero. */
+:root{--lime:#ffbd89;--aqua:#8ce7ff}
+body{background:#080b1c}
+body:before{background:radial-gradient(ellipse at 12% 4%,#6c3caa40,transparent 40%),radial-gradient(ellipse at 95% 30%,#2b7caf38,transparent 44%),#080b1c}
+.logo{border-color:#e6a5b5;box-shadow:0 0 25px #ed90943a}
+.wordmark-second{color:#ffbd8b!important}
+.kicker{color:#f5b9c3}
+h1 em{color:#ffbd89;text-shadow:0 0 34px #ff98675f}
+.hero{grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr);min-height:670px;gap:24px;align-items:start;padding:18px 0 0}
+.hero h1{font-size:clamp(41px,4.1vw,62px);line-height:1.03;margin-bottom:8px}
+.hero .sub{font-size:13px;line-height:1.6}
+.hero .stats{margin:10px 0}
+.hero .swiss-search{margin-top:15px;border-color:#6f83ae;background:linear-gradient(145deg,#192849,#0c182d);box-shadow:0 22px 55px #07091bbb}
+.hero .swiss-search .panel-head{padding:12px 14px;background:linear-gradient(100deg,#253d60,#192844)}
+.hero .swiss-search .section-title{font-size:20px}
+.hero .swiss-search .section-note{font-size:11px}
+.hero .swiss-search .body{padding:13px 14px}
+.hero .swiss-search .fields{grid-template-columns:1fr 1fr;gap:9px}
+.hero .swiss-search .fields .go{grid-column:1/-1;width:100%;min-height:45px}
+.hero .swiss-search .field input,.hero .swiss-search .field select{height:43px;font-size:12px}
+.hero .swiss-search .suggest{gap:5px;margin-top:8px}
+.hero .swiss-search .suggest .chip{font-size:10px;padding:5px 7px}
+.hero .swiss-search .swiss-advanced{margin-top:7px}
+.hero .globe-wrap{height:590px;filter:drop-shadow(0 0 40px #6791ea41);margin-top:4px}
+.hero .globe-wrap:before{box-shadow:0 0 0 19px #697cf30e,0 0 0 42px #697cf307}
+.globe-wrap .orb-tag{border-color:#7cb5ff}
+.globe-wrap .orb-tag.b{border-color:#ffb992;color:#ffdbbf}
+.scope-mini{border-color:#717fb5!important;background:linear-gradient(102deg,#243b5d,#1d2444 58%,#142d41)!important;box-shadow:inset 3px 0 #ffbb82,0 13px 30px #0307177a!important}
+.scope-mini .scope-state{background:#694331;border-color:#e7ad7e;color:#ffe1bc}
+.go{background:linear-gradient(110deg,#ffd38a,#ff9b98);color:#27182b;box-shadow:0 6px 22px #ffb48d47}
+.scope-features{background:linear-gradient(100deg,#141e39,#191d38)}
+.scope-features>div:nth-child(1) svg{color:#f5c695}
+.scope-features>div:nth-child(2) svg{color:#85e1ff}
+.scope-features>div:nth-child(3) svg{color:#ed9dda}
+#radar{border-color:#6675a0}
+#radar .panel-head{background:linear-gradient(110deg,#243c60,#192340)}
+.lead{background:linear-gradient(140deg,#1b2744,#131c32);border-color:#4f5f80}
+.sidebar-card{background:linear-gradient(140deg,#25334c,#172440)}
+.free{color:#ffd49b!important}
+@media(max-width:1050px){.hero{grid-template-columns:1fr;min-height:0}.hero .globe-wrap{grid-row:1;height:370px}.hero-copy{grid-row:2}.hero h1{font-size:clamp(43px,7vw,65px)}}
+@media(max-width:740px){.hero{gap:0}.hero .globe-wrap{height:270px!important}.hero .swiss-search .fields{grid-template-columns:1fr 1fr}.hero .swiss-search .fields .go{grid-column:1/-1}}
