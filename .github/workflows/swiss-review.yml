@@ -1,0 +1,32 @@
+name: Swiss Army visual & UX acceptance
+on:
+  push:
+    branches: [design/swiss-army-command-20261010]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax and offline regression suite
+        run: |
+          node --check swiss-ux.js
+          node --check intelligence.js
+          node --test tests/*.test.mjs
+      - name: Browser tooling
+        run: |
+          npm install --no-save --no-audit --no-fund playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Desktop/mobile visual and interaction checks
+        run: node swiss-visual-check.cjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: BuscaClientes-Swiss-Army-Visuals
+          path: swiss-shots/*.png
+          if-no-files-found: error
