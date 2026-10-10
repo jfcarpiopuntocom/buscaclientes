@@ -132,9 +132,9 @@ function exportCSV(){
  a.href=url;a.download='BuscaClientes-Contactos-'+new Date().toISOString().slice(0,10)+'.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);
  $('shown').textContent=data.length+' contactos · CSV exportado';
 }
-bus.connectDashboard(snapshot=>{state=snapshot;paint()});
+const connection=bus.connectDashboard(snapshot=>{state=snapshot;paint()});
 $('filter').addEventListener('input',renderTable);
-$('refresh').addEventListener('click',()=>{bus.connectDashboard?location.reload():paint()});
+$('refresh').addEventListener('click',()=>connection.refresh());
 $('print').addEventListener('click',()=>root.print());
 $('csv').addEventListener('click',exportCSV);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)paint()});
