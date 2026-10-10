@@ -34,7 +34,7 @@ function init(){
   const intel=window.BC_INTEL;
   const [macro,news,territory]=await Promise.allSettled([
     intel.countryContext(country),intel.opportunitySignals({sector:category.replace(/_/g,' '),area:city.split(',')[0]}),
-    intel.territoryContext({city,category,country})
+    intel.territoryContext({city,category,country,lat:ctx.lat,lon:ctx.lon})
   ]);
   if(!detail.open){busy=false;return}
   const facts=macro.status==='fulfilled'?macro.value.facts.filter(f=>f.status!=='unavailable'):[];
