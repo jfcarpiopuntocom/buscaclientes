@@ -302,9 +302,12 @@ function cityDraft(){
  window.dispatchEvent(new CustomEvent('bc:globe-scan'));
 }
 window.BC_CITY_DRAFT=cityDraft;
+window.BC_CITY_STATE=()=>cityTruth.state;
 function resolvedCity(token,name,lat,lon){
+ const old=cityTruth.state;
  if(!cityTruth.resolve(token,name,lat,lon))return false;
- showSelectedCity(name,true);focusGlobeOnCity([name,cityTruth.state.category,lat,lon]);return true;
+ showSelectedCity(name,true);
+ if(old.status!=='located'||old.lat!==Number(lat)||old.lon!==Number(lon))focusGlobeOnCity([name,cityTruth.state.category,lat,lon]);return true;
 }
 $('category').addEventListener('change',()=>{
  const previous=cityTruth.state;
