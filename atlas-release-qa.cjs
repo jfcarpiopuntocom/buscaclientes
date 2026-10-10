@@ -11,6 +11,27 @@ const engines=[['Chromium',chromium],['WebKit',webkit]];
   const context=await browser.newContext({viewport:mobile?{width:390,height:844}:{width:1440,height:980},deviceScaleFactor:1,locale:'es-ES',reducedMotion:'reduce'});
   const page=await context.newPage(),errors=[];
   page.on('pageerror',e=>errors.push(String(e.message)));
+  await page.addInitScript(()=>{
+    window.BUSCA_CLIENTES_WORLD_MCP_BASE='https://mcp.test.example';
+    window.BUSCA_CLIENTES_INTEL_BASE='https://census.test.example';
+  });
+  await page.route('**/*',async route=>{
+    const u=route.request().url();
+    const headers={'access-control-allow-origin':'*','content-type':'application/json'};
+    if(u.startsWith('https://mcp.test.example/api/world-intel')){
+      const kind=new URL(u).searchParams.get('kind');
+      const data=kind==='macro'
+        ? {kind:'macro',provider:'world-intel-mcp',country:'US',geographyLevel:'country',facts:[{label:'Inflation',value:2.25,unit:'% annual',year:2025,sourceUrl:'https://api.worldbank.org/v2/country/US/indicator/FP.CPI.TOTL.ZG'}]}
+        : {kind:'signals',provider:'world-intel-mcp',signals:[{title:'Sample source signal',url:'https://publisher.example/a',claimStatus:'unverified_lead'}]};
+      return route.fulfill({status:200,headers,body:JSON.stringify(data)});
+    }
+    if(u.startsWith('https://census.test.example/api/territories')){
+      return route.fulfill({status:200,headers,body:JSON.stringify({territories:[{name:'Alpha County',year:2023,naics:'72',level:'county',sourceUrl:'https://api.census.gov/data/2023/cbp',establishments:200,population:10000}]})});
+    }
+    if(/overpass|nominatim|api.worldbank.org|api.gdeltproject.org/i.test(u))
+      return route.fulfill({status:503,headers,body:'{"error":"offline_fixture"}'});
+    return route.continue();
+  });
   await page.goto('file://'+path.resolve('index.html'),{waitUntil:'domcontentloaded',timeout:40000});
   await page.waitForTimeout(2500);
   const state=await page.evaluate(()=>{
@@ -37,16 +58,12 @@ const engines=[['Chromium',chromium],['WebKit',webkit]];
   const evidence=page.locator('#scopeEvidence');
   await evidence.click();
   assert(await page.locator('#scopeDetail').isVisible(),'Periscope detail does not expand');
-  // Fixtures replace the outbound public data calls here, never a live network claim.
-  await page.evaluate(()=>{
-   window.BC_INTEL.countryContext=async()=>({facts:[{label:'Inflation',value:2.25,unit:'% annual',year:2025,sourceUrl:'https://api.worldbank.org/v2/country/US/indicator/FP.CPI.TOTL.ZG'}]});
-   window.BC_INTEL.opportunitySignals=async()=>({signals:[{title:'Sample source signal',url:'https://publisher.example/a'}]});
-   window.BC_INTEL.territoryContext=async()=>({status:'not_configured',ranked:[]});
-   document.querySelector('#scopeEvidence').click();
-   document.querySelector('#scopeEvidence').click();
-   return true;
-  });
-  await page.waitForTimeout(150);
+  // Fixtures exercise the actual World Intelligence MCP gateway adapter; no fabricated claims of production connectivity.
+  await page.waitForFunction(()=>document.querySelector('#scopeLog')?.textContent?.includes('Inflation'),{timeout:10000});
+  const intelText=await page.locator('#scopeLog').innerText();
+  assert(intelText.includes('Inflation'),'World Bank MCP context did not render in Periscope');
+  assert(intelText.includes('Sample source signal'),'GDELT MCP news did not render in Periscope');
+  assert(intelText.includes('Alpha County'),'Census territory density did not render in Periscope');
   // Demo is explicitly synthetic and must be non-persistent; never claim real sales leads.
   await page.evaluate(()=>sample());
   await page.waitForTimeout(250);
