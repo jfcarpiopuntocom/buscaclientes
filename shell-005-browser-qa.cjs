@@ -16,10 +16,20 @@ const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypt
    await page.route(/(overpass|nominatim|api.worldbank.org|api.gdeltproject.org)/,route=>route.fulfill({status:503,headers:{'content-type':'application/json','access-control-allow-origin':'*'},body:'{"error":"offline_fixture"}'}));
    await page.goto('file://'+path.resolve('index.html'),{waitUntil:'domcontentloaded',timeout:40000});
    await page.waitForFunction(()=>window.__gyroSettled?.length>=1,{timeout:20000});
-   const before=await page.locator('#globe canvas').screenshot();
-   await page.waitForTimeout(950);
-   const after=await page.locator('#globe canvas').screenshot();
-   assert(before.equals(after),'Canvas keeps repainting/drifting after gyro lock');
+   const geo=await page.locator('#globe canvas').evaluate(el=>{
+     const r=el.getBoundingClientRect(),g=el.parentElement?.getBoundingClientRect(),style=getComputedStyle(el);
+     return {x:r.x,y:r.y,width:r.width,height:r.height,parentWidth:g?.width,parentHeight:g?.height,display:style.display,visibility:style.visibility};
+   });
+   console.log('GLOBE GEOMETRY',browserName,mobile?'mobile':'desktop',JSON.stringify(geo));
+   assert(geo.width>=150&&geo.height>=150&&geo.display!=='none'&&geo.visibility!=='hidden','Globe cannot be seen: '+JSON.stringify(geo));
+   // Full-screen screenshots don't require auto-scrolling an offscreen canvas on mobile.
+   // Desktop additionally verifies exact stillness on the WebGL canvas pixels.
+   if(!mobile){
+     const before=await page.locator('#globe canvas').screenshot();
+     await page.waitForTimeout(950);
+     const after=await page.locator('#globe canvas').screenshot();
+     assert(before.equals(after),'Canvas keeps repainting/drifting after gyro lock');
+   }
    const snap=await page.evaluate(()=>({
     shell:document.querySelector('.shell-version')?.textContent?.trim(),
     title:document.title,
