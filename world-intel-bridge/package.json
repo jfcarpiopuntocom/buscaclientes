@@ -1,0 +1,1 @@
+{"name":"buscaclientes-world-intel-bridge","private":true,"type":"module","version":"0.1.0","engines":{"node":">=22"},"dependencies":{"@modelcontextprotocol/sdk":"^1.17.0"}}
