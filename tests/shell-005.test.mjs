@@ -69,6 +69,10 @@ test('selective orange, cobalt, crimson, petrol and ice, never another panel',()
  assert.doesNotMatch(css,/\.pink|magenta|#f69dcf|#f39fc9/i);
  assert.doesNotMatch(css,/(?:display:\s*none).*(?:#periscope|#radar|#results)/);
 });
+test('390px mobile keeps native globe and canvas full-width despite inherited start alignment',()=>{
+ assert.match(css,/@media\(max-width:740px\)\{\.hero\{align-items:stretch!important;width:100%\}/);
+ assert.match(css,/\.hero \.globe-wrap\{width:100%;flex:none;min-width:0\}/);
+});
 test('untouched CRM exports and user storage remain durable and escaped',()=>{
  assert.match(html,/localStorage\.setItem\('bc-crm-durable-v1'/);
  assert.match(html,/function makeCRMCSV/);
