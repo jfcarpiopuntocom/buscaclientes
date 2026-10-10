@@ -16,7 +16,7 @@ test('pre-launch materials disclose companion software and future limits',()=>{
 test('personal and enterprise both deliver original operational material',()=>{
  assert.match(get(files[2]),/Prueba de pertinencia/);
  assert.match(get(files[4]),/Hipótesis falsable/);
- assert.match(get(files[4]),/no.*equivale a retorno financiero/i);
+ assert.match(get(files[4]),/(?:jamás|no).*equivale a retorno financiero/i);
 });
 test('Talorys pilot does not claim Cloudflare or Gumroad is connected',()=>{
  const pilot=get(files[5]);
