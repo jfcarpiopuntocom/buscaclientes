@@ -13,7 +13,7 @@ El formulario empezaba por defecto en «Austin, Texas, USA» pero el Periscopio 
 6. Al editar manualmente una ciudad, el globo deja de fingir que sigue enfocado en la ciudad anterior: muestra «SIN UBICAR» hasta tener geocodificación comprobada.
 7. Cambiar el país limpia el destino anterior; no se deja una marca geográfica inconsistente.
 8. Al cambiar la categoría, los resultados del Periscopio anterior se marcan como obsoletos sin alterar los contactos guardados.
-9. Una búsqueda manual geocodificada reorienta el globo hacia coordenadas reales, no hacia el último destino aleatorio. Si el backend no entrega coordenadas, se intenta un geocodificador público sin inventarlas.
+9. Seleccionar una ciudad manualmente y salir del campo inicia un intento de ubicarla **sin exigir pulsar Explorar**. Una búsqueda manual también reorienta el globo con coordenadas verificadas; si el backend no trae coordenadas, no se inventan.
 10. Los escaneos y las respuestas asíncronas obsoletas no pueden sobrescribir la ciudad escrita posteriormente; una señal de cancelación protege el zero-in y la renderización.
 11. El modo de muestra ficticia se ancla explícitamente a Austin y conserva su naturaleza de demostración.
 12. El dashboard no presenta resultados de otra ciudad bajo el nombre de la ciudad recién seleccionada; conserva inalterada la cartera persistente.
@@ -24,7 +24,7 @@ El formulario empezaba por defecto en «Austin, Texas, USA» pero el Periscopio 
 Globo 3D, Terminator/zeroing-in, animación, randomizador y su historial, tarjetas y Periscopio, formulario, radar, CRM, 7 contactos semanales, exportación, dashboard atlas, mapas de muestra, roles comerciales futuros. **No se toca friendly-123.** Sin backend nuevo, login ficticio, pago ni IA externalizada.
 
 ## Pruebas
-`tests/shell-008.test.mjs` añade 17 tests deterministas: selección, validez, cancelación, caché, país, ejemplo, fuente del dashboard y legado. Las aserciones E2E para Chromium y WebKit se integran al gate existente `shell-006-browser-qa.cjs`: ciudad aleatoria, recuperación de Port Townsend del caché, edición de Austin, estado sin coordenadas, geocodificación controlada realista y coincidencia entre selector, globo y país. Otras gates heredadas mantienen protección sobre ATLAS, Terminator, gyro, interacción, exportación y CRM.
+`tests/shell-008.test.mjs` añade 18 tests deterministas: selección, validez, cancelación, caché, país, ejemplo, fuente del dashboard y legado. Las aserciones E2E para Chromium y WebKit se integran al gate existente `shell-006-browser-qa.cjs`: ciudad aleatoria, recuperación de Port Townsend del caché, edición de Austin, estado sin coordenadas, geocodificación controlada realista y coincidencia entre selector, globo y país. Otras gates heredadas mantienen protección sobre ATLAS, Terminator, gyro, interacción, exportación y CRM.
 
 ## Estados honestos
 Candidato hasta comprobar PR, 5 gates y despliegue Pages para SHA idéntico de main. Publicación no equivale a resultados reales de proveedores de mapas (en navegador se prueban fixtures aisladas); no afirmar validación de cada proveedor externo.
