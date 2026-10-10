@@ -18,7 +18,7 @@ jobs:
       - name: Static syntax checks
         run: |
           node --check intelligence.js
-          node --check intelligence-ui.js
+          node --check swiss-ux.js
           node --check intelligence-territories-worker.js
           node --check fusion.js
           node --check worker.js
