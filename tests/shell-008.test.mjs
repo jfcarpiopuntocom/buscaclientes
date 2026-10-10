@@ -90,7 +90,12 @@ test('16 Terminator cancels obsolete acquisitions before focus or query',async()
  const result=await win.BC_TERMINATOR_SCAN(['Port Townsend','boutique',48,-122],()=>focused++,()=>current);
  assert.equal(result.cancelled,true);assert.equal(focused,0);
 });
-test('17 original CRM, quota, globe and dashboard remain present',()=>{
+test('17 selecting a manual city can geocode before a search is launched',()=>{
+ assert.match(html,/cityInput\.addEventListener\('change',\(\)=>\{/);
+ assert.match(html,/const known=periscopeCities\.find/);
+ assert.match(html,/\.then\(geo=>\{if\(Array\.isArray\(geo\)&&geo\.length\)resolvedCity/);
+});
+test('18 original CRM, quota, globe and dashboard remain present',()=>{
  for(const needle of ["const quotaKey='bc-credits-'+week()","function persistCRM()","function save(r,isDemo)","window.BC_DASHBOARD_SOURCE=","BC_GYRO.create","BC_TERMINATOR_SCAN","function makeCRMCSV"])assert(html.includes(needle),needle);
  assert.match(html,/v1\.0 shell 008/);
  assert.match(html,/<script src="\.\/city-coherence\.js"><\/script>/);
