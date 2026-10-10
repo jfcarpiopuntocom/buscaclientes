@@ -15,6 +15,7 @@ async function acquire(city,focus){
   globe?.classList.remove('bc-locking','acquiring');
   hud?.classList.remove('active');
   globe?.classList.add('bc-hunting');
+  root.dispatchEvent?.(new CustomEvent('bc:globe-scan')); // new hunt resumes globe rotation until next zero-in
   if(coords)coords.textContent='WORLD SCAN · ACQUIRING';
   set('scopeBadge','RASTREANDO');
   set('scopeHeadline','Escaneando el mundo en busca de oportunidades…');
