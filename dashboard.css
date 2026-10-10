@@ -5,7 +5,7 @@
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--canvas);color:var(--ink);line-height:1.5;font-size:15px}
 a{color:var(--cobalt)}button,input{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
 .wrap{max-width:1440px;margin:0 auto;padding:0 clamp(14px,2.5vw,34px)}
-.top{background:#FFF;border-bottom:3px solid var(--orange);position:sticky;top:0;z-index:5;box-shadow:0 4px 26px #0923470e}
+.top{background:#FFF;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5;box-shadow:0 4px 26px #0923470e}
 .top-inner{display:flex;gap:16px;align-items:center;min-height:76px;flex-wrap:wrap;padding-top:10px;padding-bottom:10px}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-size:clamp(17px,2vw,23px);font-weight:900;letter-spacing:-.06em;color:var(--navy);white-space:nowrap}
 .brand span span,.brand strong span{color:var(--cobalt)}

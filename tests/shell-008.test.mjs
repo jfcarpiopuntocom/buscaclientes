@@ -75,9 +75,9 @@ test('14 dashboard results cannot be assigned to a different selected city',()=>
  assert.match(html,/results:cityTruth\.state\.name===lastResultCity\?lastResults:\[\]/);
  assert.match(html,/saved:saved\.filter\(x=>!x\.demo\)/);
 });
-test('15 3D texture failure clears cloud layer without script exception',()=>{
- assert.match(html,/clouds\.visible=false;needsPaint=true;/);
- assert.doesNotMatch(html,/falseneedsPaint/);
+test('15 cloudless globe does not instantiate cloud textures or spherical cover',()=>{
+ assert.doesNotMatch(html,/earth_clouds_1024|const clouds=/);
+ assert.match(html,/earth_normal_2048/);
 });
 test('16 Terminator cancels obsolete acquisitions before focus or query',async()=>{
  let current=true,focused=0;
@@ -97,6 +97,6 @@ test('17 selecting a manual city can geocode before a search is launched',()=>{
 });
 test('18 original CRM, quota, globe and dashboard remain present',()=>{
  for(const needle of ["const quotaKey='bc-credits-'+week()","function persistCRM()","function save(r,isDemo)","window.BC_DASHBOARD_SOURCE=","BC_GYRO.create","BC_TERMINATOR_SCAN","function makeCRMCSV"])assert(html.includes(needle),needle);
- assert.match(html,/v1\.0 shell 008/);
+ assert.match(html,/v1\.0 shell 009/);
  assert.match(html,/<script src="\.\/city-coherence\.js"><\/script>/);
 });
