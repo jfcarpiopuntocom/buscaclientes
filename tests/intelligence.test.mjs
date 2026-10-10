@@ -6,7 +6,7 @@ import vm from 'node:vm';
 
 const base=join(import.meta.dirname,'..');
 const source=readFileSync(join(base,'intelligence.js'),'utf8');
-const ui=readFileSync(join(base,'intelligence-ui.js'),'utf8');
+const ui=readFileSync(join(base,'swiss-ux.js'),'utf8');
 const html=readFileSync(join(base,'index.html'),'utf8');
 function intel(fetchImpl=async()=>({ok:false,status:503})){
  const box={fetch:fetchImpl,URL,URLSearchParams,AbortController,setTimeout,clearTimeout,Date,console,Intl};
@@ -93,10 +93,12 @@ test('Untrusted query is bounded and never transmits contact data',async()=>{
  assert.equal(url,'');
 });
 test('Opt-in UI never automatically fetches intelligence on load',()=>{
- assert.match(ui,/addEventListener\('toggle'/);
- assert.match(ui,/if\(!detail\.open\|\|busy\)return/);
- assert.match(ui,/\.textContent=w\.loading/);
+ assert.match(ui,/evidence\.addEventListener\('click',toggle\)/);
+ assert.match(ui,/if\(detail\.hidden\)return/);
+ assert.match(ui,/fetchContextIfPossible\(feed\)/);
  assert.match(ui,/noopener noreferrer/);
+ assert.match(html,/<script src="\.\/swiss-ux\.js" defer><\/script>/);
+ assert.doesNotMatch(html,/intelligence-ui\.js/);
  assert.match(html,/<script src="\.\/intelligence\.js"><\/script>/);
  assert.match(html,/window\.BC_INTEL_CONTEXT=\(\)=>/);
  assert.match(html,/bc-crm-durable-v1/);
