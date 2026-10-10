@@ -4,10 +4,11 @@ import http from 'node:http';
 import {Client} from '@modelcontextprotocol/sdk/client/index.js';
 import {StdioClientTransport} from '@modelcontextprotocol/sdk/client/stdio.js';
 
-const HOST=process.env.HOST||'127.0.0.1';
+const HOST='127.0.0.1'; // MUST stay loopback; proxy owns HTTPS and public rate limiting
 const PORT=Number(process.env.PORT||8789);
 const ORIGIN=process.env.ALLOWED_ORIGIN||'https://jfcarpiopuntocom.github.io';
 const BEARER=process.env.INTERNAL_BEARER_TOKEN||'';
+if(BEARER.length<24)throw new Error('INTERNAL_BEARER_TOKEN (24+ characters) required; do not expose MCP as unauthenticated public gateway');
 const PYTHON=process.env.WORLD_INTEL_PYTHON||'python';
 const limits=new Map();
 let client;
@@ -51,7 +52,9 @@ async function main(){
   const key=req.socket.remoteAddress||'unknown';
   const now=Date.now(),hits=(limits.get(key)||[]).filter(t=>now-t<60000);
   if(hits.length>=12){respond(res,429,{error:'rate_limited'},!!origin);return}
-  hits.push(now);limits.set(key,hits);
+  hits.push(now);
+  if(limits.size>1000)limits.clear(); // bounded local rate limiter, edge WAF mandatory
+  limits.set(key,hits);
   const kind=url.searchParams.get('kind');
   try{
    if(kind==='macro'){
