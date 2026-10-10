@@ -256,7 +256,7 @@ function pickSearchCity(){
 }
 function focusGlobeOnCity(city){
  if(!Array.isArray(city))return;
- const hud=document.getElementById('targetUI');if(hud){const coords=document.getElementById('targetCoords');coords.textContent=Number(city[2]).toFixed(2)+'° · '+Number(city[3]).toFixed(2)+'°';hud.classList.remove('active');void hud.offsetWidth;if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches)hud.classList.add('active');}
+ const hud=document.getElementById('targetUI');if(hud){const coords=document.getElementById('targetCoords');coords.textContent=Number(city[2]).toFixed(2)+'° · '+Number(city[3]).toFixed(2)+'°';hud.classList.remove('active');void hud.offsetWidth;hud.classList.add('active'); // Motion preference handled by CSS; targeting state remains visible.}
  const event=new CustomEvent('bc:globe-focus',{detail:{name:city[0],lat:city[2],lon:city[3]}});
  window.dispatchEvent(event);
 }
