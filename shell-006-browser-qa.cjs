@@ -90,6 +90,10 @@ const fixtures=[
     status:200,headers:{'content-type':'application/json','access-control-allow-origin':'*'},
     body:JSON.stringify([{lat:'30.2672',lon:'-97.7431',display_name:'Austin, Texas, USA'}])
    }));
+   // Blur/selection alone must focus Austin correctly, without pressing Explorar.
+   await app.locator('#city').press('Tab');
+   await app.waitForFunction(()=>window.BC_CITY_STATE?.().status==='located'&&window.BC_CITY_STATE().name==='Austin, Texas, USA',{timeout:20000});
+   assert.equal(await app.locator('#city').inputValue(),'Austin, Texas, USA');
    await app.locator('#searchButton').click();
    await app.waitForFunction(()=>window.BC_CITY_STATE?.().status==='located'&&window.BC_CITY_STATE().name==='Austin, Texas, USA',{timeout:20000});
    const live=await app.evaluate(()=>window.BC_CITY_STATE());
