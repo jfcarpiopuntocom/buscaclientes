@@ -39,7 +39,7 @@ const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypt
     editorial:!!document.querySelector('link[href="./shell-005-editorial.css"]'),
     formAtHero:document.querySelector('#searchButton')?.closest('.panel')?.parentElement?.classList.contains('hero-copy')
    }));
-   assert.match(snap.shell,/^v1\.0 shell 00[567]$/,'Prior globe-stabilization regression remains valid on next shell');
+   assert.match(snap.shell,/^v1\.0 shell 00[5678]$/,'Prior globe-stabilization regression remains valid on next shell');
    assert.equal(snap.title,'BuscaClientes: el mundo está lleno de clientes');
    assert(snap.nativeCanvas&&snap.validControls&&snap.editorial&&snap.formAtHero,JSON.stringify(snap));
    assert(snap.overflow<=8,'viewport overflow: '+snap.overflow);

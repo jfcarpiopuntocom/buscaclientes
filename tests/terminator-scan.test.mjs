@@ -35,7 +35,7 @@ test('Preflight: no new forms, panels, or CRM mutations',()=>{
  assert.match(html,/<link rel="stylesheet" href="\.\/terminator-scan\.css">/);
  assert.doesNotMatch(code,/localStorage|sessionStorage|fetch\(|\.innerHTML|querySelector.*createElement/);
  assert.match(html,/runPeriscope\(\)/);
- assert.match(html,/await window\.BC_TERMINATOR_SCAN\(choice,focusGlobeOnCity\);const data=await searchDirect/);
+ assert.match(html,/await window\.BC_TERMINATOR_SCAN\(choice,focusGlobeOnCity,\(\)=>cityTruth\.current\(token\)\)/);
 });
 test('Terminator orders scan, true target lock, then returns to data request',async()=>{
  const {events,nodes,acquire}=setup(false);

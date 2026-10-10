@@ -66,9 +66,45 @@ const fixtures=[
    await app.route(/(overpass|nominatim|api.worldbank.org|api.gdeltproject.org)/,route=>route.fulfill({status:503,headers:{'content-type':'application/json','access-control-allow-origin':'*'},body:'{"error":"offline_fixture"}'}));
    await app.goto(origin+'/index.html',{waitUntil:'domcontentloaded',timeout:40000});
    await app.waitForFunction(()=>typeof window.BC_DASHBOARD_SOURCE==='function'&&typeof window.BC_DASHBOARD_PUBLISH==='function',{timeout:35000});
+   // 008: city selector, HUD, focus and source must share a real target.
+   await app.waitForFunction(()=>window.BC_CITY_STATE?.().name && document.querySelector('#city').value===window.BC_CITY_STATE().name,{timeout:35000});
+   const first=await app.evaluate(()=>({form:document.querySelector('#city').value,state:window.BC_CITY_STATE(),category:document.querySelector('#category').value}));
+   assert.equal(first.form,first.state.name,'Random city left the visible selector behind');
+   assert.equal(first.category,first.state.category,'Random sector differs from selector');
+   assert.equal(first.state.status,'located','Chosen randomized city must have verified coordinates');
+   await app.waitForFunction(()=>document.querySelector('#cityMarker')?.textContent?.includes(document.querySelector('#city').value.toUpperCase().slice(0,20)),{timeout:12000});
+   // New tab session with a trustworthy cached target cannot show Austin by default.
+   await app.evaluate(()=>sessionStorage.setItem('bc-live-lookup-v1',JSON.stringify({city:'Port Townsend, Washington, USA',category:'boutique',rows:[],at:Date.now()})));
+   await app.reload({waitUntil:'domcontentloaded',timeout:40000});
+   await app.waitForFunction(()=>window.BC_CITY_STATE?.().name==='Port Townsend, Washington, USA',{timeout:35000});
+   assert.equal(await app.locator('#city').inputValue(),'Port Townsend, Washington, USA');
+   assert.equal(await app.locator('#category').inputValue(),'boutique');
+   assert.equal((await app.locator('#cityMarker').innerText()).includes('PORT TOWNSEND'),true);
+   await app.locator('#city').fill('Austin, Texas, USA');
+   await app.waitForFunction(()=>window.BC_CITY_STATE?.().status==='unlocated');
+   assert.match(await app.locator('#cityMarker').innerText(),/SIN UBICAR/);
+   assert.match(await app.locator('#targetCoords').innerText(),/PENDIENTES/);
+   // Geocoder succeeds, downstream OSM is deliberately unavailable:
+   // map can focus exactly on the searched city without invented contacts.
+   await app.route(/nominatim\.openstreetmap\.org\/search/,route=>route.fulfill({
+    status:200,headers:{'content-type':'application/json','access-control-allow-origin':'*'},
+    body:JSON.stringify([{lat:'30.2672',lon:'-97.7431',display_name:'Austin, Texas, USA'}])
+   }));
+   // Blur/selection alone must focus Austin correctly, without pressing Explorar.
+   await app.locator('#city').press('Tab');
+   await app.waitForFunction(()=>window.BC_CITY_STATE?.().status==='located'&&window.BC_CITY_STATE().name==='Austin, Texas, USA',{timeout:20000});
+   assert.equal(await app.locator('#city').inputValue(),'Austin, Texas, USA');
+   await app.locator('#searchButton').click();
+   await app.waitForFunction(()=>window.BC_CITY_STATE?.().status==='located'&&window.BC_CITY_STATE().name==='Austin, Texas, USA',{timeout:20000});
+   const live=await app.evaluate(()=>window.BC_CITY_STATE());
+   assert(Math.abs(live.lat-30.2672)<.0001&&Math.abs(live.lon+97.7431)<.0001,'Manual Austin geocode not applied');
+   assert.equal(await app.locator('#city').inputValue(),live.name);
+   assert.equal((await app.locator('#cityMarker').innerText()).includes('AUSTIN'),true);
+   assert.equal(await app.locator('#country').inputValue(),'US');
+
    await dashboard.waitForFunction(()=>document.querySelector('#liveState')?.dataset.live==='yes',{timeout:25000});
    assert.equal(await dashboard.locator('#kSaved').innerText(),'3');
-   assert.equal(await app.locator('.shell-version').innerText(),'v1.0 shell 007');
+   assert.equal(await app.locator('.shell-version').innerText(),'v1.0 shell 008');
    await dashboard.locator('#refresh').click();
    await dashboard.waitForFunction(()=>document.querySelector('#liveState')?.dataset.live==='yes',{timeout:8000});
    assert.equal(errors.length,0,'Dashboard JS errors: '+errors.join('; '));
