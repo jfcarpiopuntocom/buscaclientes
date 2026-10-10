@@ -2,9 +2,9 @@
 (function(){
 'use strict';
 const LABELS={
- es:{title:'⌁ Contexto e indicios',hint:'Se consulta solo al abrir; no usa contactos de tu cartera.',loading:'Consultando fuentes públicas…',macro:'Contexto nacional',events:'Señales para investigar',leads:'Evidencia de negocios',territory:'Prioridad territorial',none:'No hay datos comprobables para esta consulta.',unknown:'Sin determinar',chain:'Cadena identificada',independent:'Independiente probable',status:'Datos indicativos; verifica cada fuente.',unavailable:'No disponible',error:'Fuente no disponible o acceso bloqueado; no se inventaron datos.',density:'Ranking municipal/condal pendiente de estadísticas agregadas con procedencia.',year:'año',reason:'Señales'},
- en:{title:'⌁ Context & evidence',hint:'Fetched only when opened; contacts are never sent.',loading:'Reading public sources…',macro:'Country context',events:'Signals to investigate',leads:'Business evidence',territory:'Territory priority',none:'No verified data for this query.',unknown:'Undetermined',chain:'Identified chain',independent:'Likely independent',status:'Indicative only; verify each source.',unavailable:'Unavailable',error:'Source unavailable or blocked; no data invented.',density:'County/city ranking requires sourced aggregate statistics.',year:'year',reason:'Signals'},
- pt:{title:'⌁ Contexto e evidências',hint:'Consultado apenas ao abrir; sem transmitir contactos.',loading:'A consultar fontes públicas…',macro:'Contexto nacional',events:'Sinais para investigar',leads:'Evidência de negócios',territory:'Prioridade territorial',none:'Não há dados comprováveis para esta consulta.',unknown:'Por determinar',chain:'Rede identificada',independent:'Independente provável',status:'Informação indicativa; verifique as fontes.',unavailable:'Fonte indisponível ou acesso bloqueado; não foram inventados dados.',error:'Fonte indisponível ou acesso bloqueado; sem dados inventados.',density:'Comparar municípios requer estatísticas agregadas com proveniência.',year:'ano',reason:'Sinais'}
+ es:{title:'⌁ Contexto e indicios',hint:'Se consulta solo al abrir; no usa contactos de tu cartera.',loading:'Consultando fuentes públicas…',macro:'Contexto nacional',events:'Señales para investigar',leads:'Evidencia de negocios',territory:'Prioridad territorial',none:'No hay datos comprobables para esta consulta.',unknown:'Sin determinar',chain:'Cadena identificada',independent:'Independiente probable',status:'Datos indicativos; verifica cada fuente.',unavailable:'No disponible',error:'Fuente no disponible o acceso bloqueado; no se inventaron datos.',density:'Ranking municipal/condal pendiente de estadísticas agregadas con procedencia.',year:'año',reason:'Señales',research:'Investigar noticia'},
+ en:{title:'⌁ Context & evidence',hint:'Fetched only when opened; contacts are never sent.',loading:'Reading public sources…',macro:'Country context',events:'Signals to investigate',leads:'Business evidence',territory:'Territory priority',none:'No verified data for this query.',unknown:'Undetermined',chain:'Identified chain',independent:'Likely independent',status:'Indicative only; verify each source.',unavailable:'Unavailable',error:'Source unavailable or blocked; no data invented.',density:'County/city ranking requires sourced aggregate statistics.',year:'year',reason:'Signals',research:'Check news'},
+ pt:{title:'⌁ Contexto e evidências',hint:'Consultado apenas ao abrir; sem transmitir contactos.',loading:'A consultar fontes públicas…',macro:'Contexto nacional',events:'Sinais para investigar',leads:'Evidência de negócios',territory:'Prioridade territorial',none:'Não há dados comprováveis para esta consulta.',unknown:'Por determinar',chain:'Rede identificada',independent:'Independente provável',status:'Informação indicativa; verifique as fontes.',unavailable:'Fonte indisponível ou acesso bloqueado; não foram inventados dados.',error:'Fonte indisponível ou acesso bloqueado; sem dados inventados.',density:'Comparar municípios requer estatísticas agregadas com proveniência.',year:'ano',reason:'Sinais',research:'Ver notícias'}
 };
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const lang=()=>LABELS[document.documentElement.lang]||LABELS.es;
@@ -22,12 +22,26 @@ function init(){
  const caption=document.createElement('p');caption.className='bc-intel-note';caption.textContent=lang().hint;
  const body=document.createElement('div');body.className='bc-intel-body';body.setAttribute('aria-live','polite');
  detail.append(summary,caption,body);tabs.after(detail);
- let busy=false,lastKey='';
+ let busy=false,lastKey='',activeRows=[];
+ body.addEventListener('click',async event=>{
+  const button=event.target.closest('button[data-intel-company]');
+  if(!button||button.disabled)return;
+  const index=Number(button.dataset.intelCompany),record=activeRows[index];
+  if(!record)return;
+  const output=button.parentElement.querySelector('[data-intel-result]');
+  button.disabled=true;output.textContent=lang().loading;
+  try{
+   const area=String(window.BC_INTEL_CONTEXT?.().city||'').split(',')[0];
+   const result=await window.BC_INTEL.companySignals(record,{area});
+   output.innerHTML=result.signals.length?result.signals.slice(0,4).map(e=>sourceLink(e.url,e.title)).join(' · ')+' — unverified name match':'No matching public news evidence; company identity not verified.';
+  }catch{output.textContent=lang().error}
+  finally{button.disabled=false}
+ });
  detail.addEventListener('toggle',async()=>{
   if(!detail.open||busy)return;
   const w=lang();summary.textContent=w.title;caption.textContent=w.hint;
   const ctx=window.BC_INTEL_CONTEXT?.()||{}, country=String(ctx.country||'').toUpperCase(),city=String(ctx.city||''),category=String(ctx.category||'');
-  const rows=(ctx.leads||[]).filter(r=>r&&!r.demo).slice(0,7);
+  const rows=(ctx.leads||[]).filter(r=>r&&!r.demo).slice(0,7);activeRows=rows;
   const key=[country,city,category,rows.map(x=>x.id).join(',')].join('|');
   if(lastKey===key&&body.childElementCount)return;
   lastKey=key;busy=true;body.textContent=w.loading;
@@ -43,8 +57,8 @@ function init(){
   html+=section(w.events,reports.length?'<ul>'+reports.slice(0,5).map(e=>'<li>'+sourceLink(e.url,e.title)+' <span class="bc-intel-note">· '+esc(e.publishedAt||e.source)+'</span></li>').join('')+'</ul><p class="bc-intel-note">News ≠ validated sales opportunity.</p>':'<p>'+esc(w.none)+'</p>');
   const ranked=territory.status==='fulfilled'?territory.value.ranked||[]:[];
   html+=section(w.territory,ranked.length?'<ol>'+ranked.slice(0,5).map(r=>'<li>'+esc(r.name)+': '+esc(fmt(r.per10000))+' establishments per 10k people ('+esc(r.year)+') '+sourceLink(r.sourceUrl,'Census / source')+'</li>').join('')+'</ol>':'<p>'+esc(w.density)+'</p>');
-  html+=section(w.leads,rows.length?'<ul>'+rows.map(r=>{const v=intel.companyEvidence(r),c=v.classification;
-   const label=w[c.classification]||w.unknown;return '<li><b>'+esc(v.name)+'</b> — '+esc(label)+(c.reasonCodes?.length?' · '+esc(w.reason)+': '+esc(c.reasonCodes.join(', ')):'')+' '+v.sourceEvidence.map(e=>sourceLink(e.url,e.type)).join(' · ')+'</li>'}).join('')+'</ul><p class="bc-intel-note">Brand identity and published listings do not verify legal ownership.</p>':'<p>'+esc(w.none)+'</p>');
+  html+=section(w.leads,rows.length?'<ul>'+rows.map((r,i)=>{const v=intel.companyEvidence(r),c=v.classification;
+   const label=w[c.classification]||w.unknown;return '<li><b>'+esc(v.name)+'</b> — '+esc(label)+(c.reasonCodes?.length?' · '+esc(w.reason)+': '+esc(c.reasonCodes.join(', ')):'')+' '+v.sourceEvidence.map(e=>sourceLink(e.url,e.type)).join(' · ')+' <button type="button" data-intel-company="'+i+'" class="chip bc-intel-chip">'+esc(w.research)+'</button><div class="bc-intel-note" data-intel-result="'+i+'"></div></li>'}).join('')+'</ul><p class="bc-intel-note">Brand identity and published listings do not verify legal ownership.</p>':'<p>'+esc(w.none)+'</p>');
   body.innerHTML=html+'<p class="bc-intel-note">'+esc(w.status)+'</p>';busy=false;
  });
 }
