@@ -67,21 +67,22 @@ async function countryContext(iso,opts={}){
 function rankTerritories(input=[]){
  if(!Array.isArray(input))throw Error('invalid_territories');
  const rejected=[],accepted=[];let cohort=null;
- for(const t of input.slice(0,100)){
+ for(const t of input.slice(0,500)){
   const name=str(t.name),year=Number(t.year),code=str(t.naics),source=http(t.sourceUrl);
-  const count=Number(t.establishments),population=Number(t.population),level=str(t.level);
+  const count=Number(t.establishments),population=Number(t.population),level=str(t.level),populationSource=http(t.populationSourceUrl);
   if(!name||!source||!Number.isInteger(year)||year<1990||!code||!['county','metro'].includes(level)||!Number.isFinite(count)||count<0||!Number.isFinite(population)||population<=0){
    rejected.push({name,reason:'missing_or_invalid_evidence'});continue;
   }
   const key=year+'|'+code+'|'+level;
   if(cohort!==null&&cohort!==key){rejected.push({name,reason:'incomparable_year_naics_or_level'});continue}
   cohort=key;
-  accepted.push({name,year,naics:code,level,establishments:count,population,sourceUrl:source,per10000:Math.round(count/population*10000*100)/100});
+  accepted.push({name,year,naics:code,level,establishments:count,population,sourceUrl:source,populationSourceUrl:populationSource,per10000:Math.round(count/population*10000*100)/100});
  }
  accepted.sort((a,b)=>b.per10000-a.per10000||a.name.localeCompare(b.name));
  return {ranked:accepted,rejected,year:accepted[0]?.year||null,scope:'aggregate establishment density, not verified individual businesses'};
 }
 function newsQuery(term,area){
+ if(/[<>@]/.test(str(term)+str(area)))throw Error('invalid_news_search');
  const a=str(term).replace(/[^\p{L}\p{N}\s-]/gu,' ').replace(/\s+/g,' ').slice(0,70);
  const b=str(area).replace(/[^\p{L}\p{N}\s-]/gu,' ').replace(/\s+/g,' ').slice(0,65);
  if(a.length<3||b.length<2)throw Error('invalid_news_search');
@@ -101,13 +102,14 @@ async function opportunitySignals({sector='',area=''}={},opts={}){
  return {query,signals,checkedAt:new Date().toISOString(),sourceUrl:url,note:'News is an investigation lead, not proof of company needs.'};
 }
 /* Optional private server must return verified aggregate records, never contacts. */
-async function territoryContext({city='',category='',country=''}={},opts={}){
+async function territoryContext({city='',category='',country='',lat=null,lon=null}={},opts={}){
  const base=http(opts.endpoint||root.BUSCA_CLIENTES_INTEL_BASE);
  if(!base)return {status:'not_configured',ranked:[],note:'City-level business density needs a licensed/authorized aggregate provider; no invented city scores.'};
  const url=new URL('/api/territories',base);
  url.searchParams.set('city',str(city).slice(0,100));
  url.searchParams.set('category',str(category).slice(0,60));
  url.searchParams.set('country',str(country).slice(0,2));
+ if(Number.isFinite(Number(lat))&&Number.isFinite(Number(lon))&&lat!==null&&lon!==null){url.searchParams.set('lat',String(lat));url.searchParams.set('lon',String(lon))}
  const data=await json(url.toString(),opts);
  const result=rankTerritories(data?.territories||[]);
  return {status:result.ranked.length?'available':'unavailable',...result};
