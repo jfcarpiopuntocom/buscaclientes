@@ -89,8 +89,8 @@ test('GDELT news is source-linked, deduplicated, and only a lead',async()=>{
 });
 test('Untrusted query is bounded and never transmits contact data',async()=>{
  let url='';const x=intel(async u=>{url=String(u);return {ok:true,json:async()=>({articles:[]})}});
- await x.opportunitySignals({sector:'bakery',area:'Austin@example.org<script>alert()</script>'});
- assert.doesNotMatch(url,/@example\.org|script|<|>/);
+ await assert.rejects(x.opportunitySignals({sector:'bakery',area:'Austin@example.org<script>alert()</script>'}),/invalid_news_search/);
+ assert.equal(url,'');
 });
 test('Opt-in UI never automatically fetches intelligence on load',()=>{
  assert.match(ui,/addEventListener\('toggle'/);
