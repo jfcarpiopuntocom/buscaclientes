@@ -2,7 +2,10 @@
 (function(){
 'use strict';
 function init(){
- const choice=document.documentElement.dataset.designChoice||'a';
+ const param=new URLSearchParams(location.search).get('choice');
+ const choice=['a','b','c'].includes(param)?param:'a';
+ const link=document.createElement('link');link.rel='stylesheet';link.href='./choice-'+choice+'.css';link.dataset.choiceCss=choice;document.head.append(link);
+ document.documentElement.dataset.designChoice=choice;
  const hero=document.querySelector('.hero');
  const copy=hero?.querySelector('.hero-copy');
  const search=document.querySelector('.swiss-search');
