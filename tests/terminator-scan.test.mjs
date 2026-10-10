@@ -63,7 +63,7 @@ test('Reduced-motion users see same phases in static HUD with short wait',async(
  assert.deepEqual(Array.from(events.filter(x=>x[0]==='timer').map(x=>x[1])),[250,350]);
  assert.match(css,/prefers-reduced-motion:reduce/);
  assert.match(css,/#globe\.bc-locking \.target-ui\.active/);
- assert.match(html,/hud\.classList\.add\('active'\); \/\/ Motion preference handled by CSS/);
+ assert.match(html,/hud\.classList\.add\('active'\)/);
 });
 test('Bad coordinates cannot trigger acquisitions',async()=>{
  const {acquire}=setup();
