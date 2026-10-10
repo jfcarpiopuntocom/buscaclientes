@@ -3,7 +3,7 @@ const assert=require('node:assert/strict');
 const path=require('node:path'),fs=require('node:fs');
 (async()=>{
  fs.mkdirSync('scan-screens',{recursive:true});
- for(const [engine,launcher] of [['chromium',chromium],['webkit',webkit']])for(const mode of ['desktop','mobile']){
+ for(const [engine,launcher] of [['chromium',chromium],['webkit',webkit]])for(const mode of ['desktop','mobile']){
   const browser=await launcher.launch({headless:true,args:engine==='chromium'?['--use-gl=angle','--use-angle=swiftshader','--enable-webgl','--ignore-gpu-blocklist']:[]});
   const page=await browser.newPage({viewport:mode==='desktop'?{width:1440,height:980}:{width:390,height:844},reducedMotion:'no-preference'});
   const errors=[],upstream=[];
