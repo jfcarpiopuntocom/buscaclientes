@@ -17,7 +17,7 @@ const fixtures=[
  });
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
  const origin='http://127.0.0.1:'+server.address().port;
- fs.mkdirSync('shell-006-evidence',{recursive:true});
+ fs.mkdirSync('shell-007-evidence',{recursive:true});
  try{
   for(const [name,engine] of [['chromium',chromium],['webkit',webkit]])for(const mobile of [false,true]){
    const browser=await engine.launch({headless:true,args:name==='chromium'?['--use-gl=angle','--use-angle=swiftshader','--enable-webgl','--ignore-gpu-blocklist']:[]});
@@ -39,10 +39,9 @@ const fixtures=[
    assert.equal(await dashboard.locator('.force .status').first().innerText(),'MUESTRA OBSERVADA');
    assert.deepEqual(await dashboard.locator('.force .status').allInnerTexts(),['MUESTRA OBSERVADA','NO MEDIDO','NO MEDIDO','NO MEDIDO','NO MEDIDO']);
    assert.equal(await dashboard.locator('#geoMap circle').count(),3);
-   // Shell 007 additive gate: fixed-frame atlas on the same verified CRM fixture.
    assert.equal(await dashboard.locator('#tlGrid .tl-cell').count(),9);
    assert.equal(await dashboard.locator('#tlEvidence .tl-evidence').count(),5);
-   assert.equal((await dashboard.locator('#tlGrid .tl-cell strong').allTextContents()).map(Number).reduce((a,b)=>a+b,0),3);
+   assert.equal(await dashboard.locator('#tlGrid .tl-cell strong').allTextContents().then(a=>a.map(Number).reduce((x,n)=>x+n,0)),3);
    await dashboard.locator('#tlSector').selectOption('cafe');
    assert.match(await dashboard.locator('#tlCount').innerText(),/1 contactos ubicados/);
    assert.match(await dashboard.locator('#tlDetails').innerText(),/Cafetería Cuenca/);
@@ -51,15 +50,15 @@ const fixtures=[
    await dashboard.locator('#tlSector').selectOption('shop');
    assert.match(await dashboard.locator('#tlDetails').innerText(),/Tienda Central/);
    await dashboard.locator('#tlSector').selectOption('');
-   assert.equal((await dashboard.locator('#tlGrid .tl-cell strong').allTextContents()).map(Number).reduce((a,b)=>a+b,0),3);
-
+   assert.equal(await dashboard.locator('#tlGrid .tl-cell').count(),9);
+   assert.equal(await dashboard.locator('#tlGrid .tl-cell strong').allTextContents().then(a=>a.map(Number).reduce((x,n)=>x+n,0)),3);
    assert((await dashboard.locator('#mapStatus').innerText()).includes('Muestra geográfica'));
    const overflow=await dashboard.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
    assert(overflow<=8,'Dashboard horizontal overflow '+overflow);
    await dashboard.locator('#filter').fill('Tienda');
    assert.equal(await dashboard.locator('#contactRows tr').count(),1);
    await dashboard.locator('#filter').fill('');
-   if(name==='chromium')await dashboard.screenshot({path:'shell-006-evidence/'+(mobile?'mobile':'desktop')+'.png',fullPage:true,timeout:30000});
+   if(name==='chromium')await dashboard.screenshot({path:'shell-007-evidence/'+(mobile?'mobile':'desktop')+'.png',fullPage:true,timeout:30000});
    // The app must remain the authority. An open tab sends the real local CRM
    // over the same-origin BroadcastChannel; no backend/API/secret involved.
    const app=await context.newPage();
@@ -68,13 +67,14 @@ const fixtures=[
    await app.waitForFunction(()=>typeof window.BC_DASHBOARD_SOURCE==='function'&&typeof window.BC_DASHBOARD_PUBLISH==='function',{timeout:35000});
    await dashboard.waitForFunction(()=>document.querySelector('#liveState')?.dataset.live==='yes',{timeout:25000});
    assert.equal(await dashboard.locator('#kSaved').innerText(),'3');
+   assert.equal(await dashboard.locator('#tlGrid .tl-cell').count(),9);
    assert.equal(await app.locator('.shell-version').innerText(),'v1.0 shell 007');
    await dashboard.locator('#refresh').click();
    await dashboard.waitForFunction(()=>document.querySelector('#liveState')?.dataset.live==='yes',{timeout:8000});
    assert.equal(errors.length,0,'Dashboard JS errors: '+errors.join('; '));
    const appData=await app.evaluate(()=>JSON.stringify(window.BC_DASHBOARD_SOURCE()));
    assert(!appData.includes('fake_executive'),'No fictitious contacts');
-   console.log('PASS shell006',name,mobile?'mobile':'desktop',JSON.stringify({saved:3,geolocated:3,live:true,overflow,forces:5}));
+   console.log('PASS shell007',name,mobile?'mobile':'desktop',JSON.stringify({saved:3,geolocated:3,live:true,overflow,forces:5}));
    await context.close();await browser.close();
   }
  }finally{await new Promise(r=>server.close(r))}
