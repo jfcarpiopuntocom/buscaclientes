@@ -9,7 +9,7 @@
 'use strict';
 const clean=s=>String(s??'').replace(/[\u0000-\u001f]/g,' ').trim().slice(0,180);
 const numeric=n=>Number.isFinite(Number(n))&&n!==null&&n!==''?Number(n):null;
-const safeUrl=v=>{try{const u=new URL(String(v||'').startsWith('http')?v:'https://'+v);return /^https?:$/.test(u.protocol)?u.href:''}catch{return ''}};
+const safeUrl=v=>{const raw=String(v??'').trim();if(!raw)return '';try{const u=new URL(/^https?:\/\//i.test(raw)?raw:'https://'+raw);return /^https?:$/.test(u.protocol)&&u.hostname.includes('.')&&!u.username&&!u.password?u.href:''}catch{return ''}};
 function normalize(row={}){
  if(!row||typeof row!=='object')return null;
  const name=clean(row.name);if(!name)return null;
