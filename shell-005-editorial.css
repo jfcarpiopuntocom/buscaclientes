@@ -24,3 +24,9 @@
 
 /* Critical mobile fix: old B-layout aligns flex children to start. The absolutely-positioned WebGL canvas has no intrinsic width; without stretch its parent collapses to 0px. */
 @media(max-width:740px){.hero{align-items:stretch!important;width:100%}.hero .globe-wrap{width:100%;flex:none;min-width:0}}
+
+/* Shell 006: native Dashboard launcher, same palette and compact mobile width. */
+.bc-dashboard-shortcut{display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:7px 10px;border-radius:9px;border:1px solid #3F8CA0;background:#14304A;color:#BFF6EE;font-size:12px;font-weight:800;text-decoration:none;white-space:nowrap}
+.bc-dashboard-shortcut:hover{color:#fff;border-color:#F97316;background:#264268}
+.bc-dashboard-shortcut:focus-visible{outline:3px solid #F97316;outline-offset:2px}
+@media(max-width:740px){.top .menu{display:flex;flex-wrap:wrap;justify-content:flex-end}.bc-dashboard-shortcut{min-height:38px;padding:7px 8px;font-size:11px}}
