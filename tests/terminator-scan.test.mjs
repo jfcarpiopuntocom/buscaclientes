@@ -23,6 +23,11 @@ function setup(reduce=false){
  vm.runInNewContext(code,context,{timeout:1000});
  return {events,nodes,acquire:window.BC_TERMINATOR_SCAN};
 }
+test('Legacy inline application script must parse in entirety',()=>{
+ const classic=[...html.matchAll(/<script([^>]*)>([\\s\\S]*?)<\\/script>/g)].filter(x=>x[1].trim()==='');
+ assert.equal(classic.length,1,'Expected one legacy app inline script');
+ assert.doesNotThrow(()=>new Function(classic[0][2]));
+});
 test('Preflight: no new forms, panels, or CRM mutations',()=>{
  assert.match(html,/<script src="\.\/terminator-scan\.js"><\/script>/);
  assert.match(html,/<link rel="stylesheet" href="\.\/terminator-scan\.css">/);
