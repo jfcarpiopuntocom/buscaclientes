@@ -154,3 +154,31 @@ h1 em{color:#baff74;text-shadow:0 0 42px #8bed7840}
  .swiss-search .section-note{font-size:11px}
 }
 @media(prefers-reduced-motion:reduce){.go,.lead{transition:none!important}.lead:hover{transform:none}}
+
+
+/* Refined knife handle: three pre-existing feature cards become real tools. */
+.scope-features>div[role=button]{cursor:pointer;border-radius:7px;transition:background .16s,transform .16s;position:relative}
+.scope-features>div[role=button]:hover{background:#213753ad;transform:translateY(-1px)}
+.scope-features>div[role=button]:focus-visible{outline:2px solid #aeff7a;outline-offset:2px}
+.scope-features>div[role=button]:after{content:'↗';color:#78e2cc;font-size:12px;margin-left:auto;opacity:.7}
+.scope-features>div[role=button]:nth-child(1)>span{color:#b9ff81}
+.scope-features>div[role=button]:nth-child(2)>span{color:#78dffc}
+.scope-features>div[role=button]:nth-child(3)>span{color:#f39fc9}
+.scope-features>div[role=button]>span{display:inline-flex;filter:drop-shadow(0 0 7px currentColor)}
+.scope-features>div[role=button] b{font-size:13px}
+.swiss-search{background:radial-gradient(ellipse at 85% -60%,#5666b51c,transparent 70%),linear-gradient(145deg,#101c32,#0b1428)}
+.swiss-search .section-title{letter-spacing:-.045em}
+.content>.sidebar>.sidebar-card:nth-child(2){border-color:#8f6eaf55;background:linear-gradient(155deg,#172a40,#151c38)}
+.content>.sidebar>.sidebar-card:nth-child(2) .side-label{color:#f6a9d8}
+.side-copy{font-size:12px!important;line-height:1.65!important}
+.field label{font-size:12px}
+.suggest .chip[data-cat]:hover{background:#1d3d4c}
+.results .lead-data{font-size:12px;line-height:1.6}
+.scope-mini #scopeEvidence:after{content:'  ⌄';font-weight:900;color:#baff8b}
+.scope-mini #scopeEvidence[aria-expanded=true]:after{content:'  ⌃'}
+@media(max-width:740px){
+ .scope-features>div[role=button]{gap:4px}
+ .scope-features>div[role=button]:after{display:none}
+ .scope-features>div[role=button] b{font-size:11px}
+ .scope-features>div[role=button] svg{width:20px;height:20px}
+}
