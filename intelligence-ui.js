@@ -44,7 +44,7 @@ function init(){
   const ranked=territory.status==='fulfilled'?territory.value.ranked||[]:[];
   html+=section(w.territory,ranked.length?'<ol>'+ranked.slice(0,5).map(r=>'<li>'+esc(r.name)+': '+esc(fmt(r.per10000))+' establishments per 10k people ('+esc(r.year)+') '+sourceLink(r.sourceUrl,'Census / source')+'</li>').join('')+'</ol>':'<p>'+esc(w.density)+'</p>');
   html+=section(w.leads,rows.length?'<ul>'+rows.map(r=>{const v=intel.companyEvidence(r),c=v.classification;
-   const label=w[c]||w.unknown;return '<li><b>'+esc(v.name)+'</b> — '+esc(label)+(v.classification.reasonCodes?.length?' · '+esc(w.reason)+': '+esc(v.classification.reasonCodes.join(', ')):'')+' '+v.sourceEvidence.map(e=>sourceLink(e.url,e.type)).join(' · ')+'</li>'}).join('')+'</ul><p class="bc-intel-note">Brand identity and published listings do not verify legal ownership.</p>':'<p>'+esc(w.none)+'</p>');
+   const label=w[c.classification]||w.unknown;return '<li><b>'+esc(v.name)+'</b> — '+esc(label)+(c.reasonCodes?.length?' · '+esc(w.reason)+': '+esc(c.reasonCodes.join(', ')):'')+' '+v.sourceEvidence.map(e=>sourceLink(e.url,e.type)).join(' · ')+'</li>'}).join('')+'</ul><p class="bc-intel-note">Brand identity and published listings do not verify legal ownership.</p>':'<p>'+esc(w.none)+'</p>');
   body.innerHTML=html+'<p class="bc-intel-note">'+esc(w.status)+'</p>';busy=false;
  });
 }
