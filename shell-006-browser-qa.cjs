@@ -72,7 +72,7 @@ const fixtures=[
    assert.equal(first.form,first.state.name,'Random city left the visible selector behind');
    assert.equal(first.category,first.state.category,'Random sector differs from selector');
    assert.equal(first.state.status,'located','Chosen randomized city must have verified coordinates');
-   assert.equal((await app.locator('#cityMarker').innerText()).includes(first.form.toUpperCase().slice(0,20)),true);
+   await app.waitForFunction(()=>document.querySelector('#cityMarker')?.textContent?.includes(document.querySelector('#city').value.toUpperCase().slice(0,20)),{timeout:12000});
    // New tab session with a trustworthy cached target cannot show Austin by default.
    await app.evaluate(()=>sessionStorage.setItem('bc-live-lookup-v1',JSON.stringify({city:'Port Townsend, Washington, USA',category:'boutique',rows:[],at:Date.now()})));
    await app.reload({waitUntil:'domcontentloaded',timeout:40000});
@@ -86,7 +86,7 @@ const fixtures=[
    assert.match(await app.locator('#targetCoords').innerText(),/PENDIENTES/);
    // Geocoder succeeds, downstream OSM is deliberately unavailable:
    // map can focus exactly on the searched city without invented contacts.
-   await app.route('**/nominatim.openstreetmap.org/search?**',route=>route.fulfill({
+   await app.route(/nominatim\.openstreetmap\.org\/search/,route=>route.fulfill({
     status:200,headers:{'content-type':'application/json','access-control-allow-origin':'*'},
     body:JSON.stringify([{lat:'30.2672',lon:'-97.7431',display_name:'Austin, Texas, USA'}])
    }));
