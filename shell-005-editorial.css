@@ -1,0 +1,23 @@
+/* BuscaClientes · shell 005 · approved editorial palette; orange #FF6900 is
+   PROVISIONAL until historic JFCarpio.com/Publicaciones stylesheet is verified.
+   This layer adds selected underlines, NOT a new layout or neon clutter. */
+:root{--bc-navy:#0b1730;--bc-cobalt:#2353a4;--bc-crimson:#a4233f;--bc-petrol:#168c97;--bc-ice:#e7ecf4;--bc-orange:#ff6900}
+.hero h1 em{position:relative;display:inline-block;color:var(--bc-ice);text-shadow:none}
+.hero h1 em::after{content:"";position:absolute;left:0;right:0;bottom:.02em;height:clamp(4px,.65vw,8px);background:var(--bc-orange);border-radius:12px;transform:rotate(-1.5deg);z-index:-1;box-shadow:0 0 10px #ff690035}
+.hero .kicker{color:#9edaff}
+.hero .kicker .dot{background:var(--bc-orange);box-shadow:0 0 0 4px #ff690025}
+.hero .swiss-search .panel-head{border-bottom:1px solid #3877b3}
+.hero .swiss-search .section-title::after{content:"";display:block;width:48px;height:3px;margin-top:6px;background:var(--bc-orange);border-radius:20px}
+.scope-mini{box-shadow:inset 3px 0 var(--bc-orange),0 13px 30px #0307177a!important}
+.scope-features>div:nth-child(1) svg{color:#7bcdff}
+.scope-features>div:nth-child(2) svg{color:#75d6db}
+.scope-features>div:nth-child(3) svg{color:#e8f3fc}
+.scope-features>div:focus-visible,.lead a:focus-visible,.lead button:focus-visible{outline:3px solid var(--bc-orange);outline-offset:3px}
+#radar .panel-head{border-bottom-color:#486fa9}
+#radar .section-title::after{content:"";display:block;width:40px;height:3px;margin-top:6px;background:var(--bc-orange);border-radius:20px}
+#radar .lead{border-color:#344f78}
+#radar .lead:hover{border-color:#2c97a8}
+#radar .num{color:#9ccaff}
+#radar .lead-class{border-color:#287e8d!important}
+.go:hover{box-shadow:0 5px 20px #ff690044}
+@media(prefers-reduced-motion:reduce){.hero h1 em::after{transform:none;box-shadow:none}}
