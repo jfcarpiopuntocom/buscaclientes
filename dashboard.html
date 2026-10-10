@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta name="robots" content="noindex,nofollow">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#0B1730">
+<title>BuscaClientes · Dashboard de contactos y oportunidades</title>
+<link rel="stylesheet" href="./dashboard.css">
+</head>
+<body>
+<header class="top">
+ <div class="wrap top-inner">
+  <a href="./index.html" class="brand" aria-label="Volver a BuscaClientes"><span class="brand-mark" aria-hidden="true">◎</span><strong>Busca<span>Clientes</span></strong></a>
+  <span class="shell-label">v1.0 shell 006</span>
+  <div class="tools">
+   <span id="liveState" class="pulse" role="status" aria-live="polite">Conectando con BuscaClientes…</span>
+   <button id="refresh" type="button" title="Solicitar los datos actuales a BuscaClientes">↻ Actualizar</button>
+   <button id="print" type="button" title="Imprimir este reporte">⎙ Imprimir</button>
+   <button id="csv" type="button" title="Exportar tu cartera a CSV">⇩ CSV</button>
+  </div>
+ </div>
+</header>
+<main class="wrap" id="dashboard">
+ <div class="notice" role="note"><b>Vista local de tu navegador.</b> Sin sincronización remota ni contraseña configurada todavía. No utilices este enlace como acceso empresarial protegido; el acceso seguro se implementará antes de habilitar cuentas de equipos. <a href="./index.html#radar">Abrir BuscaClientes</a></div>
+ <section class="intro">
+  <div><span class="eyebrow">BUSCACLIENTES · INTELIGENCIA COMERCIAL</span>
+   <h1>Tu cartera. <em>Tu territorio.</em></h1>
+   <p>Datos reales de tus contactos guardados y de la búsqueda activa, cuando la aplicación está abierta en este mismo navegador. Sin inventar contactos, demanda ni rentabilidad.</p>
+  </div>
+  <div class="run">
+   <span class="run-label">ORIGEN DE DATOS</span><strong id="source">Cartera local</strong>
+   <span id="refreshed">Pendiente de lectura</span>
+   <a href="./index.html" class="open-app">⌖ Buscar contactos ↗</a>
+  </div>
+ </section>
+ <nav class="route" aria-label="Secciones de tu dashboard">
+  <a href="#resumen">Resumen</a><a href="#mapa">Mapa local</a><a href="#porter">Porter invertida</a><a href="#cartera">Cartera</a>
+ </nav>
+ <section id="resumen" aria-labelledby="summaryTitle">
+  <div class="section-top"><div><span class="index">01 / CONTROL</span><h2 id="summaryTitle">Visión general</h2></div><span class="minor">La app es la autoridad · este dashboard solo lee</span></div>
+  <div class="kpis">
+   <article class="kpi"><span class="et">Contactos observados</span><strong id="kTotal" class="n">0</strong><span class="pie">Cartera + consulta activa, sin duplicados</span></article>
+   <article class="kpi"><span class="et">En mi cartera</span><strong id="kSaved" class="n">0</strong><span class="pie">Guardados por ti; nunca ejemplos</span></article>
+   <article class="kpi"><span class="et">Con canal público</span><strong id="kContact" class="n">0</strong><span class="pie">Web, teléfono o correo documentado</span></article>
+   <article class="kpi"><span class="et">Ubicados en mapa</span><strong id="kGeo" class="n">0</strong><span class="pie">Coordenadas presentes y válidas</span></article>
+  </div>
+  <div class="duo">
+    <article class="card" aria-labelledby="sectorTitle">
+     <div class="card-top"><div><span class="index">SECTORES</span><h3 id="sectorTitle">Composición observada</h3></div><span class="small-chip">Muestra, no censo</span></div>
+     <div id="sectors" class="sectors"><p class="empty">Abre BuscaClientes y consulta un sector para ver distribución real.</p></div>
+    </article>
+    <article class="card" aria-labelledby="pipelineTitle">
+     <div class="card-top"><div><span class="index">CRM</span><h3 id="pipelineTitle">Etapas de tu cartera</h3></div><a class="small-link" href="./index.html#radar">Gestionar en la app ↗</a></div>
+     <div id="stages" class="stages"><p class="empty">Tu cartera está vacía. Aquí verás los estados reales guardados.</p></div>
+    </article>
+  </div>
+ </section>
+ <section id="mapa" aria-labelledby="mapTitle">
+  <div class="section-top"><div><span class="index">02 / TERRITORIO</span><h2 id="mapTitle">Mapa local de oportunidades</h2></div><span class="minor" id="mapStatus">Esperando coordenadas reales</span></div>
+  <div class="map-layout">
+   <div class="map-card">
+    <div class="map-header"><b>Distribución de contactos observados</b><span id="mapBounds">Sin región disponible</span></div>
+    <svg id="geoMap" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 480" role="img" aria-label="Mapa esquemático de coordenadas reales de contactos; no es un mapa de demanda"></svg>
+    <div class="map-foot"><span><i class="dot" style="background:#F97316"></i>Contacto observado</span><span><i class="dot" style="background:#207BA4"></i>Cuadrícula de análisis</span></div>
+   </div>
+   <aside class="card" aria-labelledby="gapTitle"><span class="index">SEÑALES DE COBERTURA</span><h3 id="gapTitle">Dónde investigar más</h3><p class="small-info">Un área con negocios identificados pero pocas webs publicadas en la muestra merece revisión; <b>no demuestra demanda insatisfecha ni alto rendimiento</b>.</p><div id="gaps" class="gaps"><p class="empty">Aún no hay una muestra geográfica suficiente.</p></div></aside>
+  </div>
+ </section>
+ <section id="porter" aria-labelledby="porterTitle">
+  <div class="section-top"><div><span class="index">03 / INVESTIGACIÓN</span><h2 id="porterTitle">Matriz de Porter invertida</h2></div><span class="minor">Laboratorio de investigación · fórmula histórica pendiente</span></div>
+  <article class="explain"><b>Una matriz de preguntas, no una sentencia de mercado.</b> Invertimos las cinco fuerzas como preguntas sobre dónde podría faltar cobertura o una ventaja competitiva, pero solo puntuaremos dimensiones con evidencia adecuada. La observación de negocios en una búsqueda **no mide satisfacción, rentabilidad, demanda o barreras de entrada**. Faltan tus apuntes originales para definir una fórmula cuantitativa propia.</article>
+  <div id="forces" class="forces"></div>
+  <p class="footnote">Para identificar áreas de verdadero alto rendimiento aún se necesitan demanda verificable, oferta/cobertura competitiva, precios, costos, sustitutos y restricciones locales; nunca inferirlos de etiquetas OSM ausentes.</p>
+ </section>
+ <section id="cartera" aria-labelledby="contactsTitle">
+  <div class="section-top"><div><span class="index">04 / CARTERA</span><h2 id="contactsTitle">Tus contactos</h2></div><span class="minor">Lectura y exportación; edición en BuscaClientes</span></div>
+  <div class="table-tools"><label>Filtrar <input id="filter" type="search" placeholder="Nombre, ciudad, sector..." autocomplete="off"></label><span id="shown" aria-live="polite">0 contactos</span></div>
+  <div class="tablewrap"><table id="contacts"><thead><tr><th>Negocio</th><th>Sector</th><th>Localización</th><th>Contacto público</th><th>Etapa</th><th>Origen</th></tr></thead><tbody id="contactRows"><tr><td colspan="6" class="empty">No hay contactos almacenados en este navegador.</td></tr></tbody></table></div>
+ </section>
+ <footer><span>BuscaClientes: el mundo está lleno de clientes.</span><span>El mapa muestra una muestra observada, no una promesa de rendimiento.</span><a href="./index.html">Volver a BuscaClientes ↗</a></footer>
+</main>
+<script src="./opportunity-matrix.js"></script>
+<script src="./dashboard-bridge.js"></script>
+<script src="./dashboard.js"></script>
+</body>
+</html>

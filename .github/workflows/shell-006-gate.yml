@@ -1,0 +1,35 @@
+name: BuscaClientes Shell 006 Dashboard Gate
+on:
+  push:
+    branches: [release/buscaclientes-shell-006-20261010]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  dashboard-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Javascript and full legacy regression suite
+        run: |
+          node --check opportunity-matrix.js
+          node --check dashboard-bridge.js
+          node --check dashboard.js
+          node --check shell-006-browser-qa.cjs
+          node --test tests/*.test.mjs
+      - name: Install both engines
+        run: |
+          npm install --no-save --no-audit --no-fund playwright@1.56.1
+          npx playwright install --with-deps chromium webkit
+      - name: Live dashboard↔original-app bridge and mobile regression
+        run: node shell-006-browser-qa.cjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: buscaclientes-shell006-dashboard-screens
+          path: shell-006-evidence/*.png
+          if-no-files-found: error
