@@ -10,12 +10,13 @@
 <meta name="theme-color" content="#0B1730">
 <title>BuscaClientes · Dashboard de contactos y oportunidades</title>
 <link rel="stylesheet" href="./dashboard.css">
+<link rel="stylesheet" href="./territory-lab.css">
 </head>
 <body>
 <header class="top">
  <div class="wrap top-inner">
   <a href="./index.html" class="brand" aria-label="Volver a BuscaClientes"><span class="brand-mark" aria-hidden="true">◎</span><strong>Busca<span>Clientes</span></strong></a>
-  <span class="shell-label">v1.0 shell 006</span>
+  <span class="shell-label">v1.0 shell 007</span>
   <div class="tools">
    <span id="liveState" class="pulse" role="status" aria-live="polite">Conectando con BuscaClientes…</span>
    <button id="refresh" type="button" title="Solicitar los datos actuales a BuscaClientes">↻ Actualizar</button>
@@ -38,7 +39,7 @@
   </div>
  </section>
  <nav class="route" aria-label="Secciones de tu dashboard">
-  <a href="#resumen">Resumen</a><a href="#mapa">Mapa local</a><a href="#porter">Porter invertida</a><a href="#cartera">Cartera</a>
+  <a href="#resumen">Resumen</a><a href="#mapa">Mapa local</a><a href="#territorio">Atlas sectorial</a><a href="#porter">Porter invertida</a><a href="#cartera">Cartera</a>
  </nav>
  <section id="resumen" aria-labelledby="summaryTitle">
   <div class="section-top"><div><span class="index">01 / CONTROL</span><h2 id="summaryTitle">Visión general</h2></div><span class="minor">La app es la autoridad · este dashboard solo lee</span></div>
@@ -70,14 +71,35 @@
    <aside class="card" aria-labelledby="gapTitle"><span class="index">SEÑALES DE COBERTURA</span><h3 id="gapTitle">Dónde investigar más</h3><p class="small-info">Un área con negocios identificados pero pocas webs publicadas en la muestra merece revisión; <b>no demuestra demanda insatisfecha ni alto rendimiento</b>.</p><div id="gaps" class="gaps"><p class="empty">Aún no hay una muestra geográfica suficiente.</p></div></aside>
   </div>
  </section>
+ <section id="territorio" aria-labelledby="tlTitle">
+  <div class="section-top"><div><span class="index">03 / ATLAS TERRITORIAL</span><h2 id="tlTitle">Dónde investigar ventajas competitivas</h2></div><span class="minor">Comparador sectorial · evidencia, no pronóstico</span></div>
+  <p class="explain">Selecciona un sector y examina sus establecimientos observados en una cuadrícula de referencia territorial fija. Las celdas reflejan <b>densidad de la muestra</b>, no demanda, rentabilidad ni ventajas competitivas comprobadas. El atlas preserva la misma geografía al cambiar de sector; no toma una muestra incompleta por un censo.</p>
+  <div class="tl-controls">
+   <label for="tlSector">Sector observado<select id="tlSector"><option value="">Todos los sectores</option></select></label>
+   <label class="tl-toggle" for="tlOverlayToggle"><input type="checkbox" id="tlOverlayToggle"> Ver densidad observada sobre el mapa SVG</label>
+   <button id="tlExport" type="button">⇩ Exportar cuadrículas CSV</button>
+  </div>
+  <div class="tl-layout">
+   <div class="tl-panel">
+    <h3>Cuadrículas comparables</h3>
+    <p class="tl-hint" id="tlCount">0 contactos ubicados</p>
+    <div id="tlGrid" class="tl-grid" role="group" aria-label="Seleccionar cuadrante del territorio"></div>
+    <p id="tlQuality" class="tl-hint" role="status">Muestra sin medir</p>
+    <p id="tlMissing" class="tl-caution">Faltan coordenadas</p>
+   </div>
+   <aside class="tl-panel" aria-live="polite" id="tlDetails"><p class="tl-empty">Selecciona un cuadrante para ver el origen de sus contactos.</p></aside>
+  </div>
+  <div class="section-top"><div><span class="index">EVIDENCIA NECESARIA</span><h3>Porter invertida: las cinco preguntas</h3></div><span class="minor">No se atribuyen respuestas sin fuentes</span></div>
+  <div id="tlEvidence" class="tl-evidence-grid"></div>
+ </section>
  <section id="porter" aria-labelledby="porterTitle">
-  <div class="section-top"><div><span class="index">03 / INVESTIGACIÓN</span><h2 id="porterTitle">Matriz de Porter invertida</h2></div><span class="minor">Laboratorio de investigación · fórmula histórica pendiente</span></div>
+  <div class="section-top"><div><span class="index">04 / INVESTIGACIÓN</span><h2 id="porterTitle">Matriz de Porter invertida</h2></div><span class="minor">Laboratorio de investigación · fórmula histórica pendiente</span></div>
   <article class="explain"><b>Una matriz de preguntas, no una sentencia de mercado.</b> Invertimos las cinco fuerzas como preguntas sobre dónde podría faltar cobertura o una ventaja competitiva, pero solo puntuaremos dimensiones con evidencia adecuada. La observación de negocios en una búsqueda **no mide satisfacción, rentabilidad, demanda o barreras de entrada**. Faltan tus apuntes originales para definir una fórmula cuantitativa propia.</article>
   <div id="forces" class="forces"></div>
   <p class="footnote">Para identificar áreas de verdadero alto rendimiento aún se necesitan demanda verificable, oferta/cobertura competitiva, precios, costos, sustitutos y restricciones locales; nunca inferirlos de etiquetas OSM ausentes.</p>
  </section>
  <section id="cartera" aria-labelledby="contactsTitle">
-  <div class="section-top"><div><span class="index">04 / CARTERA</span><h2 id="contactsTitle">Tus contactos</h2></div><span class="minor">Lectura y exportación; edición en BuscaClientes</span></div>
+  <div class="section-top"><div><span class="index">05 / CARTERA</span><h2 id="contactsTitle">Tus contactos</h2></div><span class="minor">Lectura y exportación; edición en BuscaClientes</span></div>
   <div class="table-tools"><label>Filtrar <input id="filter" type="search" placeholder="Nombre, ciudad, sector..." autocomplete="off"></label><span id="shown" aria-live="polite">0 contactos</span></div>
   <div class="tablewrap"><table id="contacts"><thead><tr><th>Negocio</th><th>Sector</th><th>Localización</th><th>Contacto público</th><th>Etapa</th><th>Origen</th></tr></thead><tbody id="contactRows"><tr><td colspan="6" class="empty">No hay contactos almacenados en este navegador.</td></tr></tbody></table></div>
  </section>
@@ -86,5 +108,6 @@
 <script src="./opportunity-matrix.js"></script>
 <script src="./dashboard-bridge.js"></script>
 <script src="./dashboard.js"></script>
+<script src="./territory-lab.js"></script>
 </body>
 </html>
