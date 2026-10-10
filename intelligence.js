@@ -101,6 +101,13 @@ async function opportunitySignals({sector='',area=''}={},opts={}){
  }
  return {query,signals,checkedAt:new Date().toISOString(),sourceUrl:url,note:'News is an investigation lead, not proof of company needs.'};
 }
+/* On-demand research only: articles matching a public business name are candidates, not entity verification. */
+async function companySignals(record,opts={}){
+ const name=str(record?.name).slice(0,90),area=str(opts.area).slice(0,65);
+ if(name.length<3||area.length<2)throw Error('insufficient_company_context');
+ const report=await opportunitySignals({sector:name,area},opts);
+ return {...report,businessName:name,identityVerified:false,warning:'A news title containing this name does not prove the company identity or a buyer need.'};
+}
 /* Optional private server must return verified aggregate records, never contacts. */
 async function territoryContext({city='',category='',country='',lat=null,lon=null}={},opts={}){
  const base=http(opts.endpoint||root.BUSCA_CLIENTES_INTEL_BASE);
@@ -114,5 +121,5 @@ async function territoryContext({city='',category='',country='',lat=null,lon=nul
  const result=rankTerritories(data?.territories||[]);
  return {status:result.ranked.length?'available':'unavailable',...result};
 }
-root.BC_INTEL=Object.freeze({countryContext,opportunitySignals,rankTerritories,territoryContext,classifyOwnership,companyEvidence});
+root.BC_INTEL=Object.freeze({countryContext,opportunitySignals,companySignals,rankTerritories,territoryContext,classifyOwnership,companyEvidence});
 })(typeof window!=='undefined'?window:globalThis);
