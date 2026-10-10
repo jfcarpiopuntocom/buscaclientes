@@ -19,6 +19,7 @@ jobs:
           node --check choice-layout.js
           node --check swiss-ux.js
           node --check intelligence.js
+          node --check world-intel-bridge/server.mjs
           node --test tests/*.test.mjs
       - name: Install Playwright
         run: |
