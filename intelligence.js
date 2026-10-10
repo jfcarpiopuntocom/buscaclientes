@@ -47,9 +47,20 @@ async function json(url,{fetchImpl,timeout=7500}={}){
  if(!res.ok)throw Error('http_'+res.status);return await res.json();
  }finally{clearTimeout(timer)}
 }
+async function worldMcp(kind,params={},opts={}){
+ const base=http(opts.mcpBase||root.BUSCA_CLIENTES_WORLD_MCP_BASE);
+ if(!base)return null;
+ const endpoint=new URL('/api/world-intel',base);
+ endpoint.searchParams.set('kind',kind);
+ for(const [k,v] of Object.entries(params))endpoint.searchParams.set(k,str(v).slice(0,80));
+ const data=await json(endpoint.href,opts);
+ if(data?.provider!=='world-intel-mcp'||data.kind!==kind)throw Error('invalid_mcp_gateway');
+ return data;
+}
 async function countryContext(iso,opts={}){
  const country=str(iso).toUpperCase();
  if(!/^[A-Z]{2}$/.test(country))throw Error('invalid_country');
+ try{const mcp=await worldMcp('macro',{country},opts);if(mcp)return mcp}catch{/* honest direct public fallback */}
  const facts=[];
  for(const metric of METRICS){
   const url=WB+country+'/indicator/'+metric.id+'?'+new URLSearchParams({format:'json',per_page:'12'});
@@ -90,6 +101,7 @@ function newsQuery(term,area){
 }
 async function opportunitySignals({sector='',area=''}={},opts={}){
  const query=newsQuery(sector,area);
+ try{const mcp=await worldMcp('signals',{sector,city:area},opts);if(mcp)return mcp}catch{/* honest direct public fallback */}
  const url=GDELT+'?'+new URLSearchParams({query,mode:'artlist',format:'json',maxrecords:'8',timespan:'3months',sort:'datedesc'});
  const data=await json(url,opts),articles=Array.isArray(data?.articles)?data.articles:[];
  const seen=new Set(),signals=[];
