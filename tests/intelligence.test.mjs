@@ -108,3 +108,44 @@ test('Read-only client does not persist or post contacts',()=>{
  assert.doesNotMatch(source,/localStorage|sessionStorage|XMLHttpRequest|method:\s*['"]POST|\.push\(r\)/);
  assert.doesNotMatch(ui,/localStorage\.setItem|sessionStorage\.setItem|method:\s*['"]POST/);
 });
+
+test('Configured World Intelligence MCP gateway supplies source-coded country facts without leaking contacts',async()=>{
+ const urls=[],x=intel(async u=>{
+  urls.push(String(u));
+  return {ok:true,json:async()=>({provider:'world-intel-mcp',kind:'macro',country:'US',
+   geographyLevel:'country',facts:[{label:'GDP growth',indicator:'NY.GDP.MKTP.KD.ZG',value:2.7,year:2025,
+    source:'World Bank via World Intelligence MCP',sourceUrl:'https://api.worldbank.org/v2/country/US/indicator/NY.GDP.MKTP.KD.ZG'}]})};
+ });
+ const data=await x.countryContext('US',{mcpBase:'https://intel.example',fetchImpl:async u=>{
+  urls.push(String(u));return {ok:true,json:async()=>({provider:'world-intel-mcp',kind:'macro',country:'US',geographyLevel:'country',facts:[{value:2.7,year:2025,sourceUrl:'https://api.worldbank.org/v2/country/US/indicator/NY.GDP.MKTP.KD.ZG'}]})}
+ }});
+ assert.equal(data.facts.length,1);
+ assert.equal(data.provider,'world-intel-mcp');
+ assert(urls.every(u=>u.startsWith('https://intel.example/api/world-intel')));
+ assert(urls.every(u=>!u.includes('email')&&!u.includes('phone')));
+});
+test('World Intelligence MCP outage transparently falls back to direct public World Bank',async()=>{
+ let calls=0;
+ const x=intel(async u=>{
+  calls++;if(String(u).startsWith('https://intel.example'))throw Error('offline MCP');
+  return {ok:true,json:async()=>[{},[{date:'2024',value:2.2}]]}
+ });
+ const data=await x.countryContext('EC',{mcpBase:'https://intel.example'});
+ assert.equal(calls,4);
+ assert.equal(data.facts.length,3);
+ assert(data.facts.every(f=>f.source==='World Bank Indicators API'));
+});
+test('World Intelligence MCP news candidates never become automatic sales approvals',async()=>{
+ const urls=[];
+ const x=intel(async u=>{
+  urls.push(String(u));
+  return {ok:true,json:async()=>({provider:'world-intel-mcp',kind:'signals',
+   query:'"cafe" "Austin"',signals:[{title:'Store expands',url:'https://news.example/story',
+   claimStatus:'unverified_lead'}]})};
+ });
+ const data=await x.opportunitySignals({sector:'cafe',area:'Austin'},{mcpBase:'https://intel.example'});
+ assert.equal(data.provider,'world-intel-mcp');
+ assert.equal(data.signals[0].claimStatus,'unverified_lead');
+ assert.equal(urls.length,1);
+ assert.match(urls[0],/kind=signals/);
+});
