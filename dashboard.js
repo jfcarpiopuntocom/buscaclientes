@@ -121,6 +121,7 @@ function paint(){
  $('source').textContent=state.connected?'Aplicación abierta · canal local':'Almacenamiento de tu navegador';
  $('refreshed').textContent=state.at?'Datos recibidos: '+new Date(state.at).toLocaleTimeString('es-EC'):'Solo contactos guardados';
  drawStats();drawGeo();drawPorter();renderTable();
+ document.dispatchEvent(new CustomEvent('bc:snapshot-ready',{detail:{saved:state.saved,results:state.results,city:state.city,connected:state.connected}}));
 }
 function exportCSV(){
  const data=filteredRows();
