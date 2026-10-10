@@ -24,9 +24,11 @@ function setup(reduce=false){
  return {events,nodes,acquire:window.BC_TERMINATOR_SCAN};
 }
 test('Legacy inline application script must parse in entirety',()=>{
- const classic=[...html.matchAll(/<script([^>]*)>([\\s\\S]*?)<\\/script>/g)].filter(x=>x[1].trim()==='');
- assert.equal(classic.length,1,'Expected one legacy app inline script');
- assert.doesNotThrow(()=>new Function(classic[0][2]));
+ const tag='<script>';
+ assert.equal(html.split(tag).length,2,'Expected one classic inline application script');
+ const classic=html.split(tag)[1].split('</script>')[0];
+ assert(classic.length>10000,'Unexpectedly small legacy app script');
+ assert.doesNotThrow(()=>new Function(classic));
 });
 test('Preflight: no new forms, panels, or CRM mutations',()=>{
  assert.match(html,/<script src="\.\/terminator-scan\.js"><\/script>/);
