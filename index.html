@@ -309,6 +309,19 @@ function resolvedCity(token,name,lat,lon){
  showSelectedCity(name,true);
  if(old.status!=='located'||old.lat!==Number(lat)||old.lon!==Number(lon))focusGlobeOnCity([name,cityTruth.state.category,lat,lon]);return true;
 }
+// A completed manual selection locates the globe even before clicking Explorar.
+cityInput.addEventListener('change',()=>{
+ let name=cityInput.value.trim();if(!name)return;
+ if(!name.includes(',')){name+=', '+countryTitle(countrySelect.value);cityInput.value=name;cityTruth.draft(name,$('category').value)}
+ setActiveCountry(name);
+ const token=cityTruth.state.epoch;
+ if(cityTruth.state.status==='located')return;
+ const known=periscopeCities.find(c=>c[0].toLowerCase()===name.toLowerCase());
+ if(known){resolvedCity(token,name,known[2],known[3]);return}
+ void reqJson('https://nominatim.openstreetmap.org/search?'+new URLSearchParams({q:name,format:'json',limit:1}),{headers:{'Accept-Language':'en'}},8500)
+  .then(geo=>{if(Array.isArray(geo)&&geo.length)resolvedCity(token,name,Number(geo[0].lat),Number(geo[0].lon))})
+  .catch(()=>{}); // Leave explicit "SIN UBICAR"; never invent coordinates.
+});
 $('category').addEventListener('change',()=>{
  const previous=cityTruth.state;
  if(previous.name!==cityInput.value.trim()||previous.status!=='located'){cityDraft();return}
