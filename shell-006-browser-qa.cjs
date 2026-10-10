@@ -39,6 +39,20 @@ const fixtures=[
    assert.equal(await dashboard.locator('.force .status').first().innerText(),'MUESTRA OBSERVADA');
    assert.deepEqual(await dashboard.locator('.force .status').allInnerTexts(),['MUESTRA OBSERVADA','NO MEDIDO','NO MEDIDO','NO MEDIDO','NO MEDIDO']);
    assert.equal(await dashboard.locator('#geoMap circle').count(),3);
+   // Shell 007 additive gate: fixed-frame atlas on the same verified CRM fixture.
+   assert.equal(await dashboard.locator('#tlGrid .tl-cell').count(),9);
+   assert.equal(await dashboard.locator('#tlEvidence .tl-evidence').count(),5);
+   assert.equal((await dashboard.locator('#tlGrid .tl-cell strong').allTextContents()).map(Number).reduce((a,b)=>a+b,0),3);
+   await dashboard.locator('#tlSector').selectOption('cafe');
+   assert.match(await dashboard.locator('#tlCount').innerText(),/1 contactos ubicados/);
+   assert.match(await dashboard.locator('#tlDetails').innerText(),/Cafetería Cuenca/);
+   await dashboard.locator('#tlOverlayToggle').check();
+   assert.equal(await dashboard.locator('#tlOverlay rect').count(),1);
+   await dashboard.locator('#tlSector').selectOption('shop');
+   assert.match(await dashboard.locator('#tlDetails').innerText(),/Tienda Central/);
+   await dashboard.locator('#tlSector').selectOption('');
+   assert.equal((await dashboard.locator('#tlGrid .tl-cell strong').allTextContents()).map(Number).reduce((a,b)=>a+b,0),3);
+
    assert((await dashboard.locator('#mapStatus').innerText()).includes('Muestra geográfica'));
    const overflow=await dashboard.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
    assert(overflow<=8,'Dashboard horizontal overflow '+overflow);
