@@ -17,6 +17,7 @@ jobs:
           node-version: '22'
       - name: Static and functional tests
         run: |
+          node --check terminator-browser-qa.cjs
           node --check terminator-scan.js
           node --check atlas-layout.js
           node --check swiss-ux.js
