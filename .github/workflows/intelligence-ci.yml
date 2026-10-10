@@ -1,0 +1,26 @@
+name: BuscaClientes integrity
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: ['feature/world-intel-evidence-*']
+permissions:
+  contents: read
+jobs:
+  offline-regressions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Static syntax checks
+        run: |
+          node --check intelligence.js
+          node --check intelligence-ui.js
+          node --check intelligence-territories-worker.js
+          node --check fusion.js
+          node --check worker.js
+      - name: Offline regression tests
+        run: node --test tests/*.test.mjs
