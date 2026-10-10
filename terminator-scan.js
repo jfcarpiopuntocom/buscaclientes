@@ -5,7 +5,7 @@
 const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 const byId=id=>document.getElementById(id);
 const set=(id,text)=>{const x=byId(id);if(x)x.textContent=text};
-async function acquire(city,focus){
+async function acquire(city,focus,isCurrent=()=>true){
  if(!Array.isArray(city)||!Number.isFinite(Number(city[2]))||!Number.isFinite(Number(city[3])))throw Error('invalid_scan_target');
  if(typeof focus!=='function')throw Error('missing_globe_focus');
  const globe=byId('globe'),hud=byId('targetUI'),coords=byId('targetCoords');
@@ -26,6 +26,7 @@ async function acquire(city,focus){
   set('stepQuery','En espera del objetivo');
   set('cityMarker','BUSCANDO DESTINO…');
   await wait(hunting);
+  if(!isCurrent())return {cancelled:true};
   globe?.classList.remove('bc-hunting');
   globe?.classList.add('bc-locking');
   set('scopeBadge','FIJANDO OBJETIVO');
@@ -35,8 +36,10 @@ async function acquire(city,focus){
   set('scopeDetailCity',String(city[0]));
   set('stepGeo',String(city[0]));
   set('cityMarker',String(city[0]).toUpperCase().slice(0,34));
+  if(!isCurrent())return {cancelled:true};
   focus(city); // Existing globe engine rotates and zooms to actual lat/lon.
   await wait(locking);
+  if(!isCurrent())return {cancelled:true};
   set('scopeBadge','CONSULTANDO');
   set('scopeHeadline','Buscando negocios en '+String(city[0])+'…');
   set('scopeCity',String(city[0]));
