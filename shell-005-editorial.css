@@ -21,3 +21,6 @@
 #radar .lead-class{border-color:#287e8d!important}
 .go:hover{box-shadow:0 5px 20px #ff690044}
 @media(prefers-reduced-motion:reduce){.hero h1 em::after{transform:none;box-shadow:none}}
+
+/* Critical mobile fix: old B-layout aligns flex children to start. The absolutely-positioned WebGL canvas has no intrinsic width; without stretch its parent collapses to 0px. */
+@media(max-width:740px){.hero{align-items:stretch!important;width:100%}.hero .globe-wrap{width:100%;flex:none;min-width:0}}
