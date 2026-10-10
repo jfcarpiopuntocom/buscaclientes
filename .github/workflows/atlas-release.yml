@@ -1,0 +1,37 @@
+name: ATLAS Release Gate
+on:
+  push:
+    branches: [release/atlas-intelligence-20261010]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  regression-and-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: JavaScript syntax and complete offline suite
+        run: |
+          node --check atlas-layout.js
+          node --check swiss-ux.js
+          node --check intelligence.js
+          node --check intelligence-territories-worker.js
+          node --check world-intel-bridge/server.mjs
+          node --test tests/*.test.mjs
+      - name: Install Chromium and WebKit
+        run: |
+          npm install --no-save --no-audit --no-fund playwright@1.56.1
+          npx playwright install --with-deps chromium webkit
+      - name: Real UI regression with fixture sources
+        run: node atlas-release-qa.cjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: atlas-release-visual-evidence
+          path: atlas-artifacts/*.png
+          if-no-files-found: error
