@@ -15,6 +15,6 @@ Continuación aditiva del shell 006. **Único producto modificado: BuscaClientes
 La ausencia de web en un registro OSM no implica ausencia real de web; celdas vacías no demuestran mercados desatendidos. La rentabilidad no puede pronosticarse con una muestra de establecimientos. Para validar una tesis high yield hacen falta demanda local, precios, costos, barreras de entrada, sustitutos, calidad de muestra, fecha y fuente.
 
 ## Pruebas y publicación
-Tests unitarios `tests/shell-007.test.mjs`, browser CI `shell-007-browser-qa.cjs` en Chromium/WebKit (390 y 1440 px), regresiones de shells 005/006 y Terminator. Workflow: [Shell 007 gate](https://github.com/jfcarpiopuntocom/buscaclientes/actions/workflows/shell-007-gate.yml).
+Tests unitarios `tests/shell-007.test.mjs`, browser CI `shell-007-browser-qa.cjs` en Chromium/WebKit (390 y 1440 px), regresiones de shells 005/006 y Terminator. La creación del workflow nuevo fue bloqueada por las comprobaciones de seguridad del conector. Se añadieron las aserciones 007 al browser QA 006 existente para que el gate heredado las ejecute en las propuestas a main. Script 007 separado disponible para futuras suites.
 
 Estado: **candidato** hasta verificar CI, revisión, merge y Pages con SHA exacto.
