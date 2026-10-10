@@ -60,7 +60,7 @@ function advancedControls(){
  const summary=document.createElement('summary');summary.id='swissFilterLabel';
  summary.textContent=words().advanced;
  const note=document.createElement('span');note.className='sr-only';note.textContent='Optional existing filters';
- advanced.append(summary);filters.parentNode.insertBefore(advanced,filters);advanced.appendChild(filters);
+ advanced.append(summary);filters.parentNode.insertBefore(advanced,filters);advanced.appendChild(filters);const fields=search.querySelector('.fields');if(fields)fields.after(advanced);
  /* Label remains associated with native selects, keyboard fully supported. */
  const language=$('lang');
  language?.addEventListener('change',()=>{summary.textContent=words().advanced});
