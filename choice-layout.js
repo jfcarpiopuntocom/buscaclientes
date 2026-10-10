@@ -32,5 +32,5 @@ function init(){
  for(const id of originalIds)if(document.querySelectorAll('#'+id).length!==1)console.error('Missing or duplicated original feature: '+id);
  document.documentElement.classList.add('choice-ready');
 }
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,120),{once:true});else setTimeout(init,120);
 })();
