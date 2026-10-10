@@ -109,8 +109,36 @@ function periscopeDetails(){
  evidence.addEventListener('click',toggle);
  evidence.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle()}});
 }
+const TOOLS=[
+ '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7.5"/><path d="m17 17 4 4M11 7.5v7M7.5 11h7"/></svg>',
+ '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h7M7 17h4"/></svg>',
+ '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 8h10M7 12h10M7 16h6"/></svg>'
+];
+function toolRail(){
+ const items=[...document.querySelectorAll('.scope-features>div')].slice(0,3);
+ const actions=[
+  ()=>{$('city')?.scrollIntoView({behavior:'smooth',block:'center'});$('city')?.focus({preventScroll:true})},
+  ()=>{if($('showResults'))$('showResults').click();$('radar')?.scrollIntoView({behavior:'smooth',block:'start'});($('results')?.querySelector('[data-enrich]')||$('radar'))?.focus({preventScroll:true})},
+  ()=>{$('showSaved')?.click()}
+ ];
+ items.forEach((item,i)=>{
+  item.dataset.swissTool=String(i+1);item.setAttribute('role','button');item.tabIndex=0;
+  const icon=item.querySelector('span');if(icon){icon.innerHTML=TOOLS[i]}
+  item.title=i===0?'Elegir ciudad y sector':i===1?'Abrir radar y buscar contactos':'Abrir Mi cartera';
+  item.setAttribute('aria-label',item.querySelector('b')?.textContent||'Herramienta');
+  item.addEventListener('click',actions[i]);
+  item.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();actions[i]()}});
+ });
+}
+function keyboardShortcuts(){
+ document.addEventListener('keydown',e=>{
+  const active=document.activeElement;
+  if(e.altKey||e.ctrlKey||e.metaKey||e.shiftKey||/INPUT|TEXTAREA|SELECT/.test(active?.tagName||'')||active?.isContentEditable)return;
+  if(e.key==='/'){e.preventDefault();$('keyword')?.focus()}
+ });
+}
 function init(){
- advancedControls();periscopeDetails();evidenceInCards();
+ advancedControls();periscopeDetails();evidenceInCards();toolRail();keyboardShortcuts();
  const s=$('scopeTry');if(s)s.title=lang()==='es'?'Buscar otro lugar al azar':'Search another random place';
  /* UX-only; avoid silently altering searches, saved records or quota. */
 }
