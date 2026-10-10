@@ -34,6 +34,15 @@ for(const [label,width,height] of [['desktop',1440,930],['mobile',390,844]]){
  console.log('state '+label,JSON.stringify(state),'errors',errors.slice(0,4));
  for(const k of ['globe','reticle','periscope','radar','advanced','screenshotLoaded','noIntelligencePopup','revealable'])assert.equal(state[k],true,'Missing '+k+' in '+label);
  assert(state.overflow<=8,'HORIZONTAL OVERFLOW '+label+' '+state.overflow);
+ const tools=page.locator('.scope-features>div[role="button"]');
+ assert.equal(await tools.count(),3,'Three existing cards become accessible command tools');
+ await tools.nth(0).click();
+ assert.equal(await page.evaluate(()=>document.activeElement?.id),'city','Find businesses shortcuts focus original city field');
+ await tools.nth(2).click();
+ assert(await page.locator('#showSaved').evaluate(e=>e.classList.contains('active')),'Portfolio shortcut uses original CRM tab');
+ await tools.nth(1).click();
+ assert(await page.locator('#showResults').evaluate(e=>e.classList.contains('active')),'Contacts shortcut uses original Radar tab');
+
  const style=await page.locator('.scope-features').evaluate(e=>getComputedStyle(e).display);assert(['flex','grid'].includes(style));
  const note=await page.evaluate(()=>{const n=document.createElement('div');n.textContent='PREVISUALIZACIÓN · Los negocios de demostración son ficticios';n.style.cssText='position:fixed;z-index:999999;left:16px;bottom:15px;padding:8px 12px;border-radius:9px;background:#071a2aed;color:#d6ffc4;border:1px solid #79c897;font:700 12px system-ui';document.body.append(n);return true});
  await page.screenshot({path:'swiss-shots/01-'+label+'-overview.png',fullPage:true,timeout:30000});
