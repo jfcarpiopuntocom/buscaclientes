@@ -1,13 +1,13 @@
 /* Best-effort rollback of all touched keys; never announce a saved contact before durable writes succeed. */
 (function(root){'use strict';
 function commit(storage,entries){
- const previous=[];try{
+ const previous=[];let written=0;try{
   for(const [key] of entries)previous.push([key,storage.getItem(key)]);
-  for(const [key,value] of entries)storage.setItem(key,String(value));
+  for(const [key,value] of entries){storage.setItem(key,String(value));written++}
   return {ok:true,rolledBack:true};
  }catch(error){
   let rolledBack=true;
-  for(let i=previous.length-1;i>=0;i--){
+  for(let i=written-1;i>=0;i--){
    const [key,old]=previous[i];
    try{if(old===null)storage.removeItem(key);else storage.setItem(key,old)}catch{rolledBack=false}
   }
