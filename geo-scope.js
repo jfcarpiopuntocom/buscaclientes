@@ -20,7 +20,7 @@ function choose(results,iso,countryOnly=false){
   if(/\bequator\b|\becuator\b|\bequateur\b/.test(kind))return false;
   if(String(r.address?.country_code||'').toLowerCase()!==expected)return false;
   if(!countryOnly)return true;
-  return r.addresstype==='country'||r.type==='country'||(r.type==='administrative'&&r.class==='boundary');
+  return r.addresstype==='country'||r.type==='country';
  })||null;
 }
 const known=Object.freeze({EC:Object.freeze({lat:-1.8312,lon:-78.1834,label:'Ecuador'})});
