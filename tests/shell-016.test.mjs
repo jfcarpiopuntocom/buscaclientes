@@ -16,6 +16,11 @@ test('no fake PayPal unlock, secret, order or premium localStorage toggle',()=>{
  assert.doesNotMatch(page,/paypal\.com\/webapps\/billing\/plans\/subscribe/);
  assert.match(page,/No se ha cobrado nada/);
 });
+test('public plans display Free + Personal and hide legacy Teams',()=>{
+ const plans=read('planes.html');
+ assert.match(plans,/data-plan-card="team" hidden aria-hidden="true"/);
+ assert.match(plans,/href="\.\/personal\/"/);
+});
 test('portal supports ES, EN and PT, preserves legacy original files',()=>{
  for(const t of ['YOUR PERSONAL SPACE','TU ESPACIO PERSONAL','O TEU ESPAÇO PESSOAL'])assert(page.includes(t));
  assert.match(read('index.html'),/const quotaKey='bc-credits-'/);
@@ -25,9 +30,9 @@ test('portal supports ES, EN and PT, preserves legacy original files',()=>{
 test('dashboard bridge accepts 1000+ records without silent 250 truncation',()=>{
  const c={window:{},URL};vm.runInNewContext(read('opportunity-matrix.js'),c);
  const api=c.window.BC_OPPORTUNITIES;
- const items=Array.from({length:1250},(_,i)=>({id:'osm:'+i,name:'Place '+i,category:'shop',address:'City',lat:2+i/10000,lon:-78,source:'https://www.openstreetmap.org'}));
- assert.equal(api.unique(items).length,1250);
- assert.equal(api.stats(items).count,1250);
+ const items=Array.from({length:2500},(_,i)=>({id:'osm:'+i,name:'Place '+i,category:'shop',address:'City',lat:2+i/10000,lon:-78,source:'https://www.openstreetmap.org'}));
+ assert.equal(api.unique(items).length,2500);
+ assert.equal(api.stats(items).count,2500);
  assert.match(read('dashboard-bridge.js'),/unique\(arr\)/);
 });
 test('dashboard has real pagination navigation and exports all filtered rows',()=>{
