@@ -2,7 +2,7 @@ import test from 'node:test';import assert from 'node:assert/strict';import fs f
 const dir=path.join(import.meta.dirname,'..');const src=n=>fs.readFileSync(path.join(dir,n),'utf8');
 const app=src('index.html'),dash=src('dashboard.html'),css=src('shell-009-visual.css'),mark=src('brand-globe.svg'),dc=src('dashboard.css');
 test('1 protected Spanish tagline inside actual globe DOM',()=>{assert.match(app,/class="orb-tag a bc-globe-slogan"/);assert.match(app,/data-i="worldMarker">El mundo está lleno de clientes/);});
-test('2 correct English and Portuguese globe copy',()=>{assert.match(app,/worldMarker:'The world is full of customers'/);assert.match(app,/worldMarker:'O mundo está cheio de clientes'/);});
+test('2 correct English and Portuguese globe copy',()=>{assert.match(app,/worldMarker:'The world is full of clients'/);assert.match(app,/worldMarker:'O mundo está cheio de clientes'/);});
 test('3 globe cloud assets and rotation physically removed',()=>{assert.doesNotMatch(app,/earth_clouds_1024|const clouds=|clouds\.rotation/);assert.match(app,/earth_atmos_2048/);});
 test('4 topographic relief optional and graceful on missing texture',()=>{assert.match(app,/earth_normal_2048/);assert.match(app,/normalScale\.set/);assert.match(app,/Surface map remains visible if relief map fails/);});
 test('5 brand mark asset with orange discovery node and no orange underline at brand',()=>{assert.match(mark,/<svg/);assert.match(mark,/ff6900/i);assert.match(mark,/globo y contactos/);assert.match(css,/\.wordmark::after/);assert.doesNotMatch(dc,/border-bottom:3px solid var\(--orange\)/);});

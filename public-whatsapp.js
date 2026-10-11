@@ -11,7 +11,7 @@ function link(value){
    const host=u.hostname.toLowerCase();
    if(host==='wa.me'&&/^\/\d{8,15}\/?$/.test(u.pathname)&&!u.search)return 'https://wa.me/'+u.pathname.replace(/\D/g,'');
    if(host==='api.whatsapp.com'&&u.pathname==='/send'&&u.searchParams.has('phone')&&u.searchParams.size===1){
-     number='+'+u.searchParams.get('phone');
+     const p=u.searchParams.get('phone');number=p.startsWith('+')?p:'+'+p;
    }else return '';
   }catch{return ''}
  }

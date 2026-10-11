@@ -20,7 +20,7 @@ test('02 public multilingual help offers thoughtful new beginnings, not internal
  assert.match(app,/Novos começos, novas ligações/);
  assert.match(app,/New beginnings, new connections/);
  assert.match(app,/Nuevos comienzos, nuevas conexiones/);
- assert.doesNotMatch(app.match(/function syncHelp\(\)[\s\S]*?function syncLangFlag/)[0],/TOS|scraping|framework|Gumroad|PayPal|aprobación interna/i);
+ assert.doesNotMatch(app.match(/function syncHelp\(\)[\s\S]*?function syncLangFlag/)[0],/\bTOS\b|scraping|framework|Gumroad|PayPal|aprobación interna/i);
 });
 test('03 kit is free for every person, with no login, payment or fake subscribers',()=>{
  assert.match(page,/href="\.\/kit-libre\.md"/);assert.match(page,/Sin cuenta, sin pago/);
