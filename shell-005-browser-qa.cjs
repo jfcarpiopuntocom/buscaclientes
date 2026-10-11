@@ -30,6 +30,14 @@ const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypt
      const after=await page.locator('#globe canvas').screenshot();
      assert(before.equals(after),'Canvas keeps repainting/drifting after gyro lock');
    }
+   const headline=await page.evaluate(()=>{
+    const el=document.querySelector('.hero h1 em'),pseudo=getComputedStyle(el,'::after');
+    const rule=getComputedStyle(document.querySelector('.hero .swiss-search .section-title'),'::after');
+    return {headline:pseudo.content,display:pseudo.display,underline:getComputedStyle(el).textDecorationLine,ruleTransform:rule.transform,ruleHeight:rule.height};
+   });
+   assert(headline.display==='none'||headline.headline==='none','Headline orange underline still rendered: '+JSON.stringify(headline));
+   assert.equal(headline.underline,'none');
+   assert(headline.ruleTransform==='none'||headline.ruleTransform.startsWith('matrix(1, 0, 0, 1,'),'Editorial rule was tilted: '+JSON.stringify(headline));
    const snap=await page.evaluate(()=>({
     shell:document.querySelector('.shell-version')?.textContent?.trim(),
     title:document.title,
@@ -39,7 +47,7 @@ const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypt
     editorial:!!document.querySelector('link[href="./shell-005-editorial.css"]'),
     formAtHero:document.querySelector('#searchButton')?.closest('.panel')?.parentElement?.classList.contains('hero-copy')
    }));
-   assert.match(snap.shell,/^v1\.0 shell 00[56789]$/,'Prior globe-stabilization regression remains valid on next shell');
+   assert.match(snap.shell,/^v1\.0 shell 0(?:0[56789]|10)$/,'Prior globe-stabilization regression remains valid on next shell');
    assert.equal(snap.title,'BuscaClientes: el mundo está lleno de clientes');
    assert(snap.nativeCanvas&&snap.validControls&&snap.editorial&&snap.formAtHero,JSON.stringify(snap));
    assert(snap.overflow<=8,'viewport overflow: '+snap.overflow);
