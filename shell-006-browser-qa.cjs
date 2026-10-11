@@ -45,6 +45,25 @@ const fixtures=[
    assert.equal(await dashboard.locator('header .brand strong').textContent(),'BuscaClientes');
 
 
+
+   // Shell015: the public pricing page is genuine and has NO active checkout by default.
+   const plans=await context.newPage();
+   plans.on('pageerror',e=>errors.push('plans:'+e.message));
+   await plans.goto(origin+'/planes.html',{waitUntil:'load',timeout:30000});
+   assert.equal(await plans.locator('[data-plan-card]').count(),2);
+   assert.equal(await plans.locator('[data-pay]:visible').count(),0,'Paid checkout must remain unavailable');
+   assert.equal(await plans.locator('[data-plan-card="personal"]').getAttribute('data-checkout'),'disabled');
+   assert.equal(await plans.locator('[data-plan-card="team"]').getAttribute('data-checkout'),'disabled');
+   assert.equal(await plans.locator('.bc-plan-kit a').getAttribute('href'),'./kit-libre.html');
+   await plans.locator('#planLang').selectOption('en');
+   assert.equal(await plans.locator('.bc-plan-brand .wordmark').textContent(),'FindClients');
+   assert.match(await plans.locator('[data-plan-i="title"]').innerText(),/Explore freely/);
+   await plans.locator('#planLang').selectOption('pt');
+   assert.equal(await plans.locator('.bc-plan-brand .wordmark').textContent(),'EncontraClientes');
+   await plans.locator('#planLang').selectOption('es');
+   const plansOverflow=await plans.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
+   assert(plansOverflow<=8,'Plans page horizontal overflow: '+plansOverflow);
+   await plans.close();
    await dashboard.waitForFunction(()=>document.querySelector('#kTotal')?.textContent==='0');
    assert.match(await dashboard.locator('#liveState').innerText(),/Cartera local/);
    assert.equal(await dashboard.locator('#forces .force').count(),5);
@@ -177,7 +196,7 @@ const fixtures=[
 
    await dashboard.waitForFunction(()=>document.querySelector('#liveState')?.dataset.live==='yes',{timeout:25000});
    assert.equal(await dashboard.locator('#kSaved').innerText(),'3');
-   assert.equal(await app.locator('.shell-version').innerText(),'v1.0 shell 014');
+   assert.equal(await app.locator('.shell-version').innerText(),'v1.0 shell 015');
    await dashboard.locator('#refresh').click();
    await dashboard.waitForFunction(()=>document.querySelector('#liveState')?.dataset.live==='yes',{timeout:8000});
    assert.equal(errors.length,0,'Dashboard JS errors: '+errors.join('; '));

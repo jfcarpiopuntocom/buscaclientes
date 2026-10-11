@@ -64,6 +64,6 @@ test('07 the scanner shows observed businesses/channels, never inventing WhatsAp
 test('08 dashboard shares chosen language without tampering with public brand icon',()=>{
  assert.match(app,/localStorage\.setItem\('bc-lang',lang\)/);
  assert.match(dashboard,/src="\.\/dashboard-brand\.js"/);assert.match(read('dashboard-brand.js'),/BC_BRAND\.apply\(lang\)/);
- assert.match(app,/v1\.0 shell 014/);
- assert.match(dashboard,/v1\.0 shell 014/);
+ assert.match(app,/v1\.0 shell 015/);
+ assert.match(dashboard,/v1\.0 shell 015/);
 });
