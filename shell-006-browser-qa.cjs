@@ -45,6 +45,24 @@ const fixtures=[
    assert.equal(await dashboard.locator('.force .status').first().innerText(),'MUESTRA OBSERVADA');
    assert.deepEqual(await dashboard.locator('.force .status').allInnerTexts(),['MUESTRA OBSERVADA','NO MEDIDO','NO MEDIDO','NO MEDIDO','NO MEDIDO']);
    assert.equal(await dashboard.locator('#geoMap circle').count(),3);
+
+   // Shell 011: pins become keyboard-accessible evidence clusters without mutating CRM.
+   assert.equal(await dashboard.locator('#bcMapFilters button').count(),5);
+   assert.equal(await dashboard.locator('#geoMap [data-bc-marker]').count(),3);
+   assert.match(await dashboard.locator('#bcMapCount').innerText(),/3 contactos ubicados/);
+   await dashboard.locator('#bcMapFilters [data-map-filter="web"]').click();
+   assert.equal(await dashboard.locator('#geoMap [data-bc-marker]').count(),1);
+   assert.match(await dashboard.locator('#bcMapCount').innerText(),/1 contactos ubicados/);
+   await dashboard.locator('#geoMap [data-bc-marker]').first().click();
+   assert.match(await dashboard.locator('#bcMapDetail').innerText(),/Cafetería Cuenca/);
+   assert.match(await dashboard.locator('#bcMapDetail').innerText(),/Fuente: OSM/);
+   await dashboard.locator('#bcMapFilters [data-map-filter="all"]').click();
+   assert.equal(await dashboard.locator('#geoMap [data-bc-marker]').count(),3);
+   await dashboard.locator('#geoMap [data-bc-marker]').first().focus();
+   await dashboard.keyboard.press('Enter');
+   assert.equal(await dashboard.locator('#geoMap [data-bc-marker][aria-pressed=true]').count(),1);
+   // Keep the atlas overlay from the prior shell independent of map interaction.
+
    // Shell 007 additive gate: fixed-frame atlas on the same verified CRM fixture.
    assert.equal(await dashboard.locator('#tlGrid .tl-cell').count(),9);
    assert.equal(await dashboard.locator('#tlEvidence .tl-evidence').count(),5);
@@ -110,7 +128,7 @@ const fixtures=[
 
    await dashboard.waitForFunction(()=>document.querySelector('#liveState')?.dataset.live==='yes',{timeout:25000});
    assert.equal(await dashboard.locator('#kSaved').innerText(),'3');
-   assert.equal(await app.locator('.shell-version').innerText(),'v1.0 shell 010');
+   assert.equal(await app.locator('.shell-version').innerText(),'v1.0 shell 011');
    await dashboard.locator('#refresh').click();
    await dashboard.waitForFunction(()=>document.querySelector('#liveState')?.dataset.live==='yes',{timeout:8000});
    assert.equal(errors.length,0,'Dashboard JS errors: '+errors.join('; '));
