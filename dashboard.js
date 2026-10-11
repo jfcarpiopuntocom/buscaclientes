@@ -63,7 +63,7 @@ function drawGeo(){
   m.appendChild(svgNode('text',{x:450,y:240,fill:'#B2C7DD','text-anchor':'middle','font-size':20},'Aún no hay contactos con coordenadas'));
   gaps.appendChild(element('p','empty',geo.notice));return;
  }
- for(const p of geo.points.slice(0,250)){
+ if(!root.BC_MAP_EXPLORER)for(const p of geo.points.slice(0,250)){
   const dot=svgNode('circle',{cx:50+800*p.x,cy:35+400*p.y,r:5.4,fill:'#F97316',stroke:'#FFDCB6','stroke-width':1,opacity:.9});
   dot.appendChild(svgNode('title',{},p.name+' — '+(p.address||p.category)));
   m.appendChild(dot);
