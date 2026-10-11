@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 const read=n=>fs.readFileSync(new URL('../'+n,import.meta.url),'utf8');
-const ctx={window:{},console};vm.runInNewContext(read('contact-evidence.js'),ctx);
+const ctx={window:{},console,URL};vm.runInNewContext(read('contact-evidence.js'),ctx);
 const e=ctx.window.BC_CONTACT_EVIDENCE;
 const website='https://www.cuenca-example.org/about';
 const scout=(data={})=>({type:'buscaclientes-contact-evidence',source:'https://cuenca-example.org/contact',
