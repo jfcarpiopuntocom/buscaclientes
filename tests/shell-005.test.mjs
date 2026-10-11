@@ -13,7 +13,7 @@ const create=context.window.BC_GYRO.create;
 
 test('shell 005 has one approved public identity, brand, slogan and contacts language',()=>{
  assert.match(html,/<title>BuscaClientes: el mundo está lleno de clientes<\/title>/);
- assert.match(html,/v1\.0 shell 0(?:0[56789]|1[012])/); // former shell must remain valid after strictly numbered progression
+ assert.match(html,/v1\.0 shell 0(?:0[56789]|1[0123])/); // former shell must remain valid after strictly numbered progression
  assert.doesNotMatch(html,/v1\.0 shell 004/);
  assert.doesNotMatch(html,/prospect(?:os|o|s)?\b/i);
  assert.match(html,/7 contactos revelados gratis cada semana/);
@@ -60,7 +60,7 @@ test('globe renders when active, but stops painting when settled',()=>{
  assert.match(html,/bc:globe-scan/);
  assert.match(html,/bc:globe-stabilized/);
  assert.match(html,/needsPaint=true\}\)\.observe\(wrap\)/);
- assert.match(html,/v1\.0 shell 0(?:0[56789]|1[012])/); // former shell must remain valid after strictly numbered progression
+ assert.match(html,/v1\.0 shell 0(?:0[56789]|1[0123])/); // former shell must remain valid after strictly numbered progression
 });
 test('selective orange, cobalt, crimson, petrol and ice, never another panel',()=>{
  for(const hex of ['#0b1730','#2353a4','#a4233f','#168c97','#e7ecf4','#ff6900'])assert(css.toLowerCase().includes(hex));

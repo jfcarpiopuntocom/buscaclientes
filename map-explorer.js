@@ -80,7 +80,7 @@ function detail(g){
    const a=node('a','','Consultar fuente ↗');a.href=source;a.target='_blank';a.rel='noopener noreferrer';actions.appendChild(a);
   }
   if(savedKeys.has(p.id)){
-   const a=node('a','','Abrir cartera ↗');a.href='./index.html#radar';actions.appendChild(a);
+   const a=node('a','','Abrir cartera ↗');a.href='./index.html?view=saved#radar';actions.appendChild(a);
   }
   row.appendChild(actions);list.appendChild(row);
  }
