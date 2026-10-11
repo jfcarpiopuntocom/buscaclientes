@@ -87,7 +87,7 @@ function renderCards(){
  }
  for(const item of visible.slice(0,limit)){
   const button=elt('button','crm-contact-card'+(item.id===selected?' is-selected':''));button.type='button';
-  button.dataset.contactId=item.id;button.setAttribute('role','listitem');button.setAttribute('aria-pressed',String(item.id===selected));
+  button.dataset.contactId=item.id;button.setAttribute('aria-pressed',String(item.id===selected));
   const top=elt('div','crm-card-top'),avatar=elt('div','crm-avatar',String(item.name||'?').trim().slice(0,1).toUpperCase()),info=elt('div','crm-card-info');
   info.appendChild(elt('strong','',item.name||'Sin nombre'));
   info.appendChild(elt('small','',[item.category,item.address].filter(Boolean).join(' · ')||'Ficha guardada'));
@@ -98,7 +98,7 @@ function renderCards(){
   button.appendChild(badge);
   if(item.nextAction)button.appendChild(elt('p','crm-next-action','⇢ '+item.nextAction.slice(0,120)));
   button.addEventListener('click',()=>{selected=item.id;renderCards();renderDetail();});
-  cards.appendChild(button)
+  const wrapper=elt('div','crm-card-item');wrapper.setAttribute('role','listitem');wrapper.appendChild(button);cards.appendChild(wrapper)
  }
 }
 function renderDetail(force=false){
