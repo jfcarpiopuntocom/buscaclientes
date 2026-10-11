@@ -65,12 +65,12 @@ test('06 existing app creates an unobtrusive honest link and retains the free ki
 test('07 public launch files contain zero client secrets or generated IDs',()=>{
  for(const p of ['planes.html','payment-plan-config.js','payment-launch.js','shell-015-launch.css']){
   const s=read(p);
-  assert.doesNotMatch(s,/client_secret|sk_live_|api_secret|bearer\\s+[A-Z0-9_-]{20,}/i,p);
+  assert.doesNotMatch(s,/client_secret|sk_live_|api_secret|bearer\s+[A-Z0-9_-]{20,}/i,p);
  }
 });
 test('08 no external worker, cache erasure, or CRM mutation in pricing module',()=>{
  const s=read('payment-launch.js');
- assert.doesNotMatch(s,/fetch\\(|sendBeacon|removeItem|\\.clear\\(|bc-crm-durable-v1|bc-credits-|window\\.open/i);
+ assert.doesNotMatch(s,/fetch\(|sendBeacon|removeItem|\.clear\(|bc-crm-durable-v1|bc-credits-|window\.open/i);
  assert.match(read('SHELL-015-PAYPAL-GUMROAD-RUNBOOK.md'),/server-side entitlement/);
 });
 test('09 original brand icon unaltered, source of truth for three brands',()=>{
