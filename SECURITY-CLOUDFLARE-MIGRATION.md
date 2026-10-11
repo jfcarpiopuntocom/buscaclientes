@@ -42,7 +42,7 @@ Fuente: [Prompt de backend checklist — 02 Resources](https://app.notion.com/p/
 - Pagos idempotentes. Transacciones multiescritura. Índices de filtros. Evitar N+1. Pools cuando aplique (no forzar pools inaplicables en D1).
 - Versionar migraciones, no borrar columnas en mismo deploy. Logs con request ID redactados. Health conectado a DB pero sin información sensible.
 - Devolver 429 bajo saturación (no 500); backups consistentes y restauración probada.
-Evidencia adicional: [La Empresa de Una Persona](https://app.notion.com/p/3f41642b67f38168b43bd3ef242bd028) describe SQLite con cuotas atómicas, backups/restore, separación de credenciales y trazas. No trasladar credenciales de n8n ni su infraestructura a BuscaClientes.
+Evidencia adicional: [La Empresa de Una Persona](https://app.notion.com/p/3f41642b67f38168b43bd3efeb20faf3) describe SQLite con cuotas atómicas, backups/restore, separación de credenciales y trazas. No trasladar credenciales de n8n ni su infraestructura a BuscaClientes.
 
 ## Protección adicional prioritaria
 
