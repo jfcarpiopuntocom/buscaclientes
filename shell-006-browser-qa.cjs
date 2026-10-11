@@ -81,6 +81,8 @@ const fixtures=[
     await dashboard.evaluate(rows=>localStorage.setItem('bc-crm-durable-v1',JSON.stringify(rows)),many);
     await dashboard.reload({waitUntil:'load',timeout:30000});
     await dashboard.waitForFunction(()=>document.querySelector('#kTotal')?.textContent==='21');
+    // Shell017 intentional navigation change: map lives in Intelligence tab.
+    await dashboard.locator('#tabIntel').click();
     await dashboard.locator('#geoMap [data-bc-marker].clustered').first().click();
     assert.equal(await dashboard.locator('#bcMapDetail .bc-map-contact').count(),15);
     await dashboard.locator('#bcMapDetail .bc-map-more').click();
@@ -90,6 +92,8 @@ const fixtures=[
     await dashboard.waitForFunction(()=>document.querySelector('#kTotal')?.textContent==='3');
    }
 
+   // The CRM is now the default tab, so reveal the original Intelligence suite before visual QA.
+   await dashboard.locator('#tabIntel').click();
    assert.equal(await dashboard.locator('#contactRows tr').count(),3);
    assert.equal(await dashboard.locator('.force .status').first().innerText(),'MUESTRA OBSERVADA');
    assert.deepEqual(await dashboard.locator('.force .status').allInnerTexts(),['MUESTRA OBSERVADA','NO MEDIDO','NO MEDIDO','NO MEDIDO','NO MEDIDO']);
