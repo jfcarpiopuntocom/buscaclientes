@@ -11,6 +11,7 @@ const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const OUT=join(ROOT,'dist');
 const files=[
   "404.html",
+  "migrar.html",
   "about.html",
   "dashboard.html",
   "help.html",
