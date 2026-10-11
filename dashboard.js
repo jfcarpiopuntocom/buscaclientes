@@ -140,6 +140,8 @@ function exportCSV(){
  $('shown').textContent=data.length+' contactos · CSV exportado';
 }
 const connection=bus.connectDashboard(snapshot=>{state=snapshot;paint()});
+// CRM edits in this tab must refresh table, counters and live intelligence immediately.
+root.addEventListener('bc:crm-saved',()=>connection.refresh());
 $('filter').addEventListener('input',()=>{page=0;renderTable()});
 $('bcPrev').addEventListener('click',()=>{if(page>0){page--;renderTable();$('cartera').scrollIntoView({block:'start',behavior:'auto'})}});
 $('bcNext').addEventListener('click',()=>{const max=Math.max(0,Math.ceil(filteredRows().length/PAGE_SIZE)-1);if(page<max){page++;renderTable();$('cartera').scrollIntoView({block:'start',behavior:'auto'})}});
