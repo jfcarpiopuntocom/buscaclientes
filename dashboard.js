@@ -141,8 +141,8 @@ function exportCSV(){
 }
 const connection=bus.connectDashboard(snapshot=>{state=snapshot;paint()});
 $('filter').addEventListener('input',()=>{page=0;renderTable()});
-$('bcPrev').addEventListener('click',()=>{if(page>0){page--;renderTable();$('cartera').scrollIntoView({block:'start',behavior:'instant'})}});
-$('bcNext').addEventListener('click',()=>{const max=Math.max(0,Math.ceil(filteredRows().length/PAGE_SIZE)-1);if(page<max){page++;renderTable();$('cartera').scrollIntoView({block:'start',behavior:'instant'})}});
+$('bcPrev').addEventListener('click',()=>{if(page>0){page--;renderTable();$('cartera').scrollIntoView({block:'start',behavior:'auto'})}});
+$('bcNext').addEventListener('click',()=>{const max=Math.max(0,Math.ceil(filteredRows().length/PAGE_SIZE)-1);if(page<max){page++;renderTable();$('cartera').scrollIntoView({block:'start',behavior:'auto'})}});
 $('refresh').addEventListener('click',()=>connection.refresh());
 $('print').addEventListener('click',()=>root.print());
 $('csv').addEventListener('click',exportCSV);
