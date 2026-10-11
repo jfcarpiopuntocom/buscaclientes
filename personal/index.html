@@ -4,14 +4,14 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow"><meta name="color-scheme" content="dark">
 <meta name="referrer" content="no-referrer"><meta name="theme-color" content="#071326">
-<title>BuscaClientes · Personal</title>
+<title>BuscaClientes: Búsqueda + CRM · Personal</title>
 <link rel="icon" type="image/svg+xml" href="../brand-globe.svg">
 <style>
 :root{--navy:#071326;--panel:#0e2036;--soft:#152c43;--ink:#ecf5fb;--muted:#b0c4d8;--turq:#7ae5db;--warm:#ff914d;--edge:#34526a}
 *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(ellipse 95% 65% at 90% 0%,#1e465a88,transparent 75%),var(--navy);color:var(--ink);font-size:17px;line-height:1.5}
 a{color:var(--turq)}button{font:inherit;cursor:pointer}main{max-width:1140px;margin:0 auto;padding:22px 24px 70px}
 header{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;border-bottom:1px solid var(--edge);padding-bottom:17px}
-.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);font-size:22px;font-weight:800}.brand img{width:42px;height:42px}.brand span{color:var(--turq)}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);font-size:22px;font-weight:800}.brand img{width:42px;height:42px}.brand{flex-wrap:wrap}.brand .bc-product-descriptor{font:750 13px/1.4 system-ui,sans-serif;letter-spacing:0;color:var(--turq);white-space:nowrap}.brand span{color:var(--turq)}
 #lang{font:inherit;background:var(--soft);color:var(--ink);border:1px solid var(--edge);border-radius:10px;padding:9px}
 .hero{padding:66px 0 43px;max-width:850px}.eyebrow{color:var(--turq);text-transform:uppercase;letter-spacing:.13em;font-size:12px;font-weight:800}
 h1{font-size:clamp(38px,6vw,70px);letter-spacing:-.06em;line-height:1.04;margin:17px 0 23px}
@@ -27,7 +27,7 @@ footer{border-top:1px solid var(--edge);margin-top:50px;padding-top:23px;color:v
 </head>
 <body><main>
 <header>
-<a class="brand" href="../index.html" aria-label="BuscaClientes"><img src="../brand-globe.svg" alt=""><strong>Busca<span>Clientes</span></strong></a>
+<a class="brand" href="../index.html" aria-label="BuscaClientes"><img src="../brand-globe.svg" alt=""><strong>Busca<span>Clientes</span></strong><span id="bcBrandDescriptor" class="bc-product-descriptor">: Búsqueda + CRM</span></a>
 <label for="lang">ES / EN / PT <select id="lang" aria-label="Idioma / Language"><option value="es">ES</option><option value="en">EN</option><option value="pt">PT</option></select></label>
 </header>
 <section class="hero">
@@ -62,7 +62,13 @@ footer{border-top:1px solid var(--edge);margin-top:50px;padding-top:23px;color:v
  const translate=lang=>{
   const t=dict[lang]||dict.es;document.documentElement.lang=lang;
   document.querySelectorAll('[data-t]').forEach(el=>{const key=el.dataset.t;if(key==='title')el.innerHTML=t[key];else el.textContent=t[key]});
-  document.title=({es:'BuscaClientes',en:'FindClients',pt:'EncontraClientes'}[lang])+' · Personal';
+  const brandName=({es:'BuscaClientes',en:'FindClients',pt:'EncontraClientes'}[lang]);
+  const descriptor=({es:'Búsqueda + CRM',en:'Search Satellite + CRM',pt:'Busca + CRM'}[lang]);
+  document.getElementById('bcBrandDescriptor').textContent=': '+descriptor;
+  const header=document.querySelector('header .brand strong');
+  if(header){header.textContent=brandName;}
+  document.querySelector('header .brand')?.setAttribute('aria-label',brandName+': '+descriptor);
+  document.title=brandName+': '+descriptor+' · Personal';
   try{localStorage.setItem('bc-lang',lang)}catch{}
  };
  try{const remembered=localStorage.getItem('bc-lang');if(dict[remembered])select.value=remembered;
