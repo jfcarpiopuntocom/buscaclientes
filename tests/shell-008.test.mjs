@@ -67,9 +67,10 @@ test('12 country change and manual typing clear stale target',()=>{
  assert.match(html,/cityInput\.addEventListener\('input',\(\)=>\{suggestCities\(\);window\.BC_CITY_DRAFT\?\.\(\)/);
  assert.match(html,/COORDENADAS PENDIENTES/);
 });
-test('13 sample mode names Austin and positions globe on its fictional demo city',()=>{
- assert.match(html,/function sample\(\)\{const choice=\['Austin, Texas, USA','gift_shop',30\.26,-97\.74\];selectCityChoice\(choice\);focusGlobeOnCity\(choice\)/);
- assert.match(html,/Sample Handmade Studio \(fictional\)/);
+test('13 no fake View Example mode; initial city suggestions remain available',()=>{
+ assert.doesNotMatch(html,/function sample\(\)\{|id="sampleButton"|Sample Handmade Studio \(fictional\)/);
+ assert.match(html,/Portland · Artisans/);
+ assert.match(html,/Miami · Florists/);
 });
 test('14 dashboard results cannot be assigned to a different selected city',()=>{
  assert.match(html,/results:!demo&&cityTruth\.state\.name===lastResultCity\?lastResults\.filter\(x=>!x\.demo\):\[\]/);
