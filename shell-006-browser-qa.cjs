@@ -41,6 +41,22 @@ const fixtures=[
    assert.equal(await dashboard.locator('#kSaved').innerText(),'3');
    assert.equal(await dashboard.locator('#kContact').innerText(),'2');
    assert.equal(await dashboard.locator('#kGeo').innerText(),'3');
+   if(name==='chromium'&&!mobile){
+    const many=[...fixtures,...Array.from({length:18},(_,i)=>({
+      id:'near-'+i,name:'Nearby '+(i+1),category:'cafe',lat:-2.898,lon:-79.004,source:'OSM',stage:'new'
+    }))];
+    await dashboard.evaluate(rows=>localStorage.setItem('bc-crm-durable-v1',JSON.stringify(rows)),many);
+    await dashboard.reload({waitUntil:'load',timeout:30000});
+    await dashboard.waitForFunction(()=>document.querySelector('#kTotal')?.textContent==='21');
+    await dashboard.locator('#geoMap [data-bc-marker].clustered').first().click();
+    assert.equal(await dashboard.locator('#bcMapDetail .bc-map-contact').count(),15);
+    await dashboard.locator('#bcMapDetail .bc-map-more').click();
+    assert.equal(await dashboard.locator('#bcMapDetail .bc-map-contact').count(),19);
+    await dashboard.evaluate(rows=>localStorage.setItem('bc-crm-durable-v1',JSON.stringify(rows)),fixtures);
+    await dashboard.reload({waitUntil:'load',timeout:30000});
+    await dashboard.waitForFunction(()=>document.querySelector('#kTotal')?.textContent==='3');
+   }
+
    assert.equal(await dashboard.locator('#contactRows tr').count(),3);
    assert.equal(await dashboard.locator('.force .status').first().innerText(),'MUESTRA OBSERVADA');
    assert.deepEqual(await dashboard.locator('.force .status').allInnerTexts(),['MUESTRA OBSERVADA','NO MEDIDO','NO MEDIDO','NO MEDIDO','NO MEDIDO']);
