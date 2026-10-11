@@ -74,7 +74,7 @@ test('390px mobile keeps native globe and canvas full-width despite inherited st
  assert.match(css,/\.hero \.globe-wrap\{width:100%;flex:none;min-width:0\}/);
 });
 test('untouched CRM exports and user storage remain durable and escaped',()=>{
- assert.match(html,/localStorage\.setItem\('bc-crm-durable-v1'/);
+ assert.match(html,/BC_CRM_TX\.commit\(localStorage/);assert.match(html,/\['bc-crm-durable-v1',JSON\.stringify\(next\)\]/);
  assert.match(html,/function makeCRMCSV/);
  assert.match(html,/function exportCSV/);
  assert.match(html,/function copyCRMCSV/);
