@@ -93,7 +93,7 @@ test('12 grouped markers let users access more than first 15 contacts',()=>{
 test('13 no destructive commerce, downloads or new external data engines',()=>{
  assert.doesNotMatch(read('geo-scope.js'),/localStorage|\.removeItem\(/);
  assert.doesNotMatch(read('crm-transaction.js'),/fetch\(/);
- assert.match(html,/v1\.0 shell 013/);
- assert.match(dash,/v1\.0 shell 013/);
+ assert.match(html,/v1\.0 shell 014/);
+ assert.match(dash,/v1\.0 shell 014/);
  assert.match(html,/worldMarker:'El mundo está lleno de clientes'/);
 });

@@ -68,7 +68,7 @@ const fixtures=[
    await dashboard.waitForFunction(()=>document.querySelector('#liveState')?.dataset.live==='yes',{timeout:25000});
    assert.equal(await dashboard.locator('#kSaved').innerText(),'3');
    assert.equal(await dashboard.locator('#tlGrid .tl-cell').count(),9);
-   assert.equal(await app.locator('.shell-version').innerText(),'v1.0 shell 013');
+   assert.equal(await app.locator('.shell-version').innerText(),'v1.0 shell 014');
    await dashboard.locator('#refresh').click();
    await dashboard.waitForFunction(()=>document.querySelector('#liveState')?.dataset.live==='yes',{timeout:8000});
    assert.equal(errors.length,0,'Dashboard JS errors: '+errors.join('; '));
