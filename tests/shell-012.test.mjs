@@ -52,7 +52,7 @@ test('06 Nominatim results must match selected ISO and reject equivocal response
 test('07 demo records can never enter the business intelligence snapshot',()=>{
  for(const id of [1,2,3])assert.match(html,new RegExp("id:'example-"+id+"',demo:true"));
  assert.match(html,/results:!demo&&cityTruth\.state\.name===lastResultCity\?lastResults\.filter\(x=>!x\.demo\):\[\]/);
- assert.match(read('opportunity-matrix.js'),/if\(!row\|\|row\.demo\)continue/);
+ assert.match(read('opportunity-matrix.js'),/row\.demo\|\|\/\^example-/);
 });
 const txContext={window:{},console};vm.runInNewContext(read('crm-transaction.js'),txContext);
 const tx=txContext.window.BC_CRM_TX;
