@@ -249,7 +249,13 @@ const searchDirect=async (city,category,keyword,knownLocation=null,onLocation=nu
  if(knownLocation&&Number.isFinite(Number(knownLocation.lat))&&Number.isFinite(Number(knownLocation.lon))){
   geo=[{lat:Number(knownLocation.lat),lon:Number(knownLocation.lon),display_name:city}];
  }else{
-  geo=await reqJson('https://nominatim.openstreetmap.org/search?'+new URLSearchParams({q:city,format:'json',limit:1,addressdetails:1}),{headers:{'Accept-Language':'en'}},14000);
+  const countryCode=countrySelect.value;
+  const matches=await reqJson('https://nominatim.openstreetmap.org/search?'+new URLSearchParams({
+   q:city,format:'json',limit:5,addressdetails:1,countrycodes:countryCode.toLowerCase()
+  }),{headers:{'Accept-Language':'en'}},14000);
+  if(countryCode!==countrySelect.value)throw Error('El país cambió durante la geocodificación. Repite la búsqueda.');
+  const match=window.BC_GEO_SCOPE.choose(matches,countryCode);
+  geo=match?[match]:[];
  }
  if(!geo.length)throw Error(lang==='es'?'Ciudad no encontrada.':'City not found.');
  const lat=Number(geo[0].lat),lon=Number(geo[0].lon),filter=osmTags[category];
@@ -336,6 +342,44 @@ function cityDraft(){
 }
 window.BC_CITY_DRAFT=cityDraft;
 window.BC_CITY_STATE=()=>cityTruth.state;
+let countryFocusTimer=null;
+function countryOnlyName(name){return window.BC_GEO_SCOPE.countryName(name,countryFallback,countryTitle)}
+function focusCountry(code){
+ if(countryFocusTimer!==null){clearTimeout(countryFocusTimer);countryFocusTimer=null}
+ if(!countryFallback.includes(code))return;
+ const label=countryTitle(code),token=cityTruth.draft(label,$('category').value);
+ periscopeLatest=null;$('scopeOpen').disabled=true;
+ $('scopeBadge').textContent='ENFOCANDO PAÍS';
+ $('scopeHeadline').textContent=label+' seleccionado · elige una ciudad para buscar negocios';
+ $('scopeDetailCity').textContent=label;
+ $('scopeCity').textContent='País: '+label;
+ $('cityMarker').textContent=('PAÍS: '+label).toUpperCase().slice(0,52);
+ $('targetCoords').textContent='COORDENADAS PENDIENTES';
+ $('targetUI').classList.remove('active');
+ window.dispatchEvent(new CustomEvent('bc:globe-scan'));
+ const complete=(lat,lon)=>{
+  if(!cityTruth.current(token)||countrySelect.value!==code)return false;
+  if(!cityTruth.resolve(token,label,lat,lon))return false;
+  focusGlobeOnCity([label,$('category').value,Number(lat),Number(lon)]);
+  $('scopeBadge').textContent='PAÍS ENFOCADO';
+  $('cityMarker').textContent=('PAÍS: '+label).toUpperCase().slice(0,52);
+  $('scopeCity').textContent='País: '+label;
+  return true;
+ };
+ const fixed=window.BC_GEO_SCOPE.countryFocus(code);
+ if(fixed){complete(fixed.lat,fixed.lon);return}
+ countryFocusTimer=setTimeout(()=>{
+  countryFocusTimer=null;
+  const url='https://nominatim.openstreetmap.org/search?'+new URLSearchParams({
+   q:label,format:'json',limit:5,addressdetails:1,featuretype:'country',countrycodes:code.toLowerCase()
+  });
+  void reqJson(url,{headers:{'Accept-Language':'en'}},10000)
+   .then(rows=>{const match=window.BC_GEO_SCOPE.choose(rows,code,true);if(match)complete(match.lat,match.lon)})
+   .catch(()=>{}); // Keep "pending"; never default to the equator.
+ },1100); // Avoid bursts of public Nominatim queries while changing countries.
+}
+window.BC_COUNTRY_FOCUS=focusCountry;
+
 function resolvedCity(token,name,lat,lon){
  const old=cityTruth.state;
  if(!cityTruth.resolve(token,name,lat,lon))return false;
@@ -345,15 +389,23 @@ function resolvedCity(token,name,lat,lon){
 // A completed manual selection locates the globe even before clicking Explorar.
 cityInput.addEventListener('change',()=>{
  let name=cityInput.value.trim();if(!name)return;
+ const scope=countryOnlyName(name);
+ if(scope){countrySelect.value=scope;void focusCountry(scope);return}
  if(!name.includes(',')){name+=', '+countryTitle(countrySelect.value);cityInput.value=name;cityTruth.draft(name,$('category').value)}
  setActiveCountry(name);
- const token=cityTruth.state.epoch;
+ const token=cityTruth.state.epoch,code=countrySelect.value;
  if(cityTruth.state.status==='located')return;
  const known=periscopeCities.find(c=>c[0].toLowerCase()===name.toLowerCase());
  if(known){resolvedCity(token,name,known[2],known[3]);return}
- void reqJson('https://nominatim.openstreetmap.org/search?'+new URLSearchParams({q:name,format:'json',limit:1}),{headers:{'Accept-Language':'en'}},8500)
-  .then(geo=>{if(Array.isArray(geo)&&geo.length)resolvedCity(token,name,Number(geo[0].lat),Number(geo[0].lon))})
-  .catch(()=>{}); // Leave explicit "SIN UBICAR"; never invent coordinates.
+ void reqJson('https://nominatim.openstreetmap.org/search?'+new URLSearchParams({
+  q:name,format:'json',limit:5,addressdetails:1,countrycodes:code.toLowerCase()
+ }),{headers:{'Accept-Language':'en'}},8500)
+  .then(geo=>{
+   if(countrySelect.value!==code)return;
+   const found=window.BC_GEO_SCOPE.choose(geo,code);
+   if(found)resolvedCity(token,name,Number(found.lat),Number(found.lon));
+  })
+  .catch(()=>{}); // Never use a different country or equator-like feature.
 });
 $('category').addEventListener('change',()=>{
  const previous=cityTruth.state;
@@ -387,7 +439,26 @@ function startLiveSearch(){
 }
 if(document.readyState==='complete')startLiveSearch();
 else{document.addEventListener('DOMContentLoaded',startLiveSearch,{once:true});window.addEventListener('load',startLiveSearch,{once:true})}
-async function search(){if(loading)return;let city=$('city').value.trim();if(city && !city.includes(','))city+=', '+countryTitle(countrySelect.value);if(!city){$('city').focus();return}cityInput.value=city;setActiveCountry(city);const token=cityTruth.draft(city,$('category').value);periscopeLatest=null;$('scopeOpen').disabled=true;showSelectedCity(city,false);window.dispatchEvent(new CustomEvent('bc:globe-scan'));loading=true;$('searchButton').disabled=true;$('searchButton').textContent='◌ ...';setStatus(t().searching);showSearchLoading();try{let data;if(API_BASE){const u=`${API_BASE}/api/search?`+new URLSearchParams({city,category:$('category').value,keyword:$('keyword').value.trim()});data=await reqJson(u,{},35000)}else{data=await searchDirect(city,$('category').value,$('keyword').value.trim(),null,pos=>resolvedCity(token,city,pos.lat,pos.lon))}if(!cityTruth.current(token))return;if(!data.city||!resolvedCity(token,city,data.city.lat,data.city.lon)){if(API_BASE){void reqJson('https://nominatim.openstreetmap.org/search?'+new URLSearchParams({q:city,format:'json',limit:1}),{headers:{'Accept-Language':'en'}},6000).then(geo=>{if(Array.isArray(geo)&&geo.length)resolvedCity(token,city,Number(geo[0].lat),Number(geo[0].lon))}).catch(()=>{})}}lastResultCity=city;lastResults=data.results||[];demo=false;$('scopeDetail').hidden=false;$('scopeDetailCity').textContent=city;$('scopeDetailState').textContent='Resultados de tu búsqueda';scopeEvent('⌖','Búsqueda: '+city);scopeNumbers(lastResults);scopeEvent('⧉','Encontrados: '+lastResults.length+' negocios');showSelectedCity(city,cityTruth.state.status==='located');$('resultDesc').textContent=`${lastResults.length} ${t().found}`;setStatus(lastResults.length?(lang==='es'?'Oportunidades encontradas · Contactos según datos publicados':lang==='en'?'Opportunities found · Published contact details':'Oportunidades encontradas · Contactos públicos'):t().noResults);render(filterLeads(lastResults),false)}catch(e){if(!cityTruth.current(token))return;setStatus(e.name==='AbortError'?(lang==='es'?'Se agotó el tiempo. Prueba otra vez.':lang==='en'?'Timed out. Please retry.':'Tempo esgotado. Tente novamente.'):e.message);lastResults=[];render([],false);$('resultDesc').textContent=lang==='es'?'Error de búsqueda':lang==='en'?'Search error':'Erro na pesquisa';$('results').textContent=e.message||'No se pudo completar la consulta';const retry=document.createElement('button');retry.className='chip';retry.textContent=lang==='es'?'↻ Reintentar':lang==='en'?'↻ Retry':'↻ Tentar novamente';retry.addEventListener('click',search);$('results').appendChild(retry)}finally{$('radar').classList.remove('is-loading');loading=false;$('searchButton').disabled=false;$('searchButton').textContent=t().searchButton}}
+async function search(){if(loading)return;let city=$('city').value.trim();
+ const countryOnly=countryOnlyName(city);
+ if(countryOnly){
+  countrySelect.value=countryOnly;focusCountry(countryOnly);
+  setStatus('País enfocado. Elige una ciudad de '+countryTitle(countryOnly)+' para buscar establecimientos.');
+  $('city').focus();return
+ }
+ if(city && !city.includes(','))city+=', '+countryTitle(countrySelect.value);
+ if(!city){$('city').focus();return}cityInput.value=city;setActiveCountry(city);const token=cityTruth.draft(city,$('category').value);periscopeLatest=null;$('scopeOpen').disabled=true;showSelectedCity(city,false);window.dispatchEvent(new CustomEvent('bc:globe-scan'));loading=true;$('searchButton').disabled=true;$('searchButton').textContent='◌ ...';setStatus(t().searching);showSearchLoading();try{let data;if(API_BASE){const u=`${API_BASE}/api/search?`+new URLSearchParams({city,category:$('category').value,keyword:$('keyword').value.trim()});data=await reqJson(u,{},35000)}else{data=await searchDirect(city,$('category').value,$('keyword').value.trim(),null,pos=>resolvedCity(token,city,pos.lat,pos.lon))}if(!cityTruth.current(token))return;if(!data.city||!resolvedCity(token,city,data.city.lat,data.city.lon)){
+ if(API_BASE){
+  const code=countrySelect.value;
+  void reqJson('https://nominatim.openstreetmap.org/search?'+new URLSearchParams({
+   q:city,format:'json',limit:5,addressdetails:1,countrycodes:code.toLowerCase()
+  }),{headers:{'Accept-Language':'en'}},6000).then(geo=>{
+   if(countrySelect.value!==code)return;
+   const match=window.BC_GEO_SCOPE.choose(geo,code);
+   if(match)resolvedCity(token,city,Number(match.lat),Number(match.lon));
+  }).catch(()=>{})
+ }
+}lastResultCity=city;lastResults=data.results||[];demo=false;$('scopeDetail').hidden=false;$('scopeDetailCity').textContent=city;$('scopeDetailState').textContent='Resultados de tu búsqueda';scopeEvent('⌖','Búsqueda: '+city);scopeNumbers(lastResults);scopeEvent('⧉','Encontrados: '+lastResults.length+' negocios');showSelectedCity(city,cityTruth.state.status==='located');$('resultDesc').textContent=`${lastResults.length} ${t().found}`;setStatus(lastResults.length?(lang==='es'?'Oportunidades encontradas · Contactos según datos publicados':lang==='en'?'Opportunities found · Published contact details':'Oportunidades encontradas · Contactos públicos'):t().noResults);render(filterLeads(lastResults),false)}catch(e){if(!cityTruth.current(token))return;setStatus(e.name==='AbortError'?(lang==='es'?'Se agotó el tiempo. Prueba otra vez.':lang==='en'?'Timed out. Please retry.':'Tempo esgotado. Tente novamente.'):e.message);lastResults=[];render([],false);$('resultDesc').textContent=lang==='es'?'Error de búsqueda':lang==='en'?'Search error':'Erro na pesquisa';$('results').textContent=e.message||'No se pudo completar la consulta';const retry=document.createElement('button');retry.className='chip';retry.textContent=lang==='es'?'↻ Reintentar':lang==='en'?'↻ Retry':'↻ Tentar novamente';retry.addEventListener('click',search);$('results').appendChild(retry)}finally{$('radar').classList.remove('is-loading');loading=false;$('searchButton').disabled=false;$('searchButton').textContent=t().searchButton}}
 function makeCRMCSV(){const rows=saved.filter(r=>!r.demo);if(!rows.length)return {rows,csv:''};const cols=['name','address','email','phone','website','source','category','stage','notes','created','modified','contact_page'];const safe=x=>{let v=String(x??'').replace(/[\r\n]+/g,' ');if(/^[=+@-]/.test(v))v="'"+v;return '"'+v.replaceAll('"','""')+'"'};return {rows,csv:'\uFEFF'+cols.join(',')+'\r\n'+rows.map(r=>cols.map(k=>safe(k==='contact_page'?r.contactEvidence?.pages?.[0]:r[k])).join(',')).join('\r\n')}}
 function exportCSV(){const {rows,csv}=makeCRMCSV();if(!rows.length){setStatus(lang==='es'?'Guarda primero un contacto en Mi cartera.':'Save a contact to your CRM first.');$('showSaved')?.click();return}const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='BuscaClientes-CRM-'+new Date().toISOString().slice(0,10)+'.csv';a.style.display='none';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);setStatus(lang==='es'?'Descarga iniciada: '+rows.length+' contactos. Si no aparece, usa «Copiar CSV».':'CSV download started: '+rows.length+' contacts. Use Copy CSV if blocked.');scopeEvent('⇩','Exportación solicitada: '+rows.length+' contactos')}
 async function copyCRMCSV(){const {rows,csv}=makeCRMCSV();if(!rows.length){setStatus('Guarda primero un contacto.');return}try{await navigator.clipboard.writeText(csv);setStatus('CSV copiado: '+rows.length+' contactos.');scopeEvent('⧉','CSV copiado al portapapeles')}catch(e){setStatus('El navegador no permitió copiar: '+e.message)}}
