@@ -125,6 +125,19 @@ const fixtures=[
    assert.equal(await app.locator('#city').inputValue(),live.name);
    assert.equal((await app.locator('#cityMarker').innerText()).includes('AUSTIN'),true);
    assert.equal(await app.locator('#country').inputValue(),'US');
+   // Shell012: the Ecuador country target has a physical coordinate inside Ecuador.
+   await app.locator('#country').selectOption('EC');
+   await app.waitForFunction(()=>window.BC_CITY_STATE?.().name==='Ecuador'&&window.BC_CITY_STATE().status==='located',{timeout:9000});
+   const ecuador=await app.evaluate(()=>window.BC_CITY_STATE());
+   assert(ecuador.lat < -1 && ecuador.lat > -6);
+   assert(ecuador.lon < -75 && ecuador.lon > -82);
+   assert.match(await app.locator('#cityMarker').innerText(),/PAÍS: ECUADOR/);
+   await app.locator('#city').fill('Ecuador');
+   await app.locator('#searchButton').click();
+   assert.match(await app.locator('#status').innerText(),/Elige una ciudad/);
+   assert.equal((await app.evaluate(()=>window.BC_CITY_STATE())).name,'Ecuador');
+   await app.locator('#country').selectOption('US');
+
 
    await dashboard.waitForFunction(()=>document.querySelector('#liveState')?.dataset.live==='yes',{timeout:25000});
    assert.equal(await dashboard.locator('#kSaved').innerText(),'3');
