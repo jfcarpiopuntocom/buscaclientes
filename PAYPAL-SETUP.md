@@ -1,31 +1,62 @@
-## Global tooling override — 2026-10-10
-Owner instruction: **Do not use TinyFish again** for this or any other project. Do not initiate TinyFish profile or login flows. Prior references are superseded. **Primary approved scraping/research alternatives: Firecrawl** (https://github.com/firecrawl/firecrawl; hosted free tier has credit limits, self-hosted differs in features) **and Crawl4AI** (https://github.com/unclecode/crawl4ai; free self-hosted/local, optional paid cloud). Playwright + agent-browser remain useful for deterministic interactive QA, not a replacement for business-account authorization. The prior guessed name "PhotoShot" was incorrect. For PayPal, use authenticated authorized tools and never claim an authenticated session can be controlled without confirming real tool access. Neither crawling tool grants PayPal credentials or authenticated control. Never touch friendly-123 Cloudflare resources.
+# BuscaClientes — PayPal Business: guía humana + runbook técnico
 
-# BuscaClientes — PayPal isolation & setup checklist
+**Estado al 10 oct 2026:** PR #19 aislado, no fusionado, no desplegado, **no acepta dinero**. PayPal Developer muestra una aplicación LIVE llamada BuscaClientes (captura del propietario). Eso NO verifica que su cuenta pueda crear suscripciones en Ecuador ni que exista un webhook público.
 
-**Status:** isolated code on a review branch only. NOT deployed, NOT accepting money, NOT granting premium access.
+## Directriz operativa
+- **TinyFish está prohibido**; no usarlo ni volver a pedir autenticación mediante él.
+- **Firecrawl** (https://github.com/firecrawl/firecrawl) y **Crawl4AI** (https://github.com/unclecode/crawl4ai) son las herramientas preferidas para scraping y extracción web. **No** son herramientas para operar una cuenta PayPal autenticada.
+- Playwright y agent-browser complementan las pruebas de UI con contextos de acceso legítimos. Para PayPal preferir sus herramientas oficiales; nunca pedir contraseñas, tokens o el Client Secret por chat.
+- **friendly-123 es sagrado**: no tocar su código, Workers, KV, R2, D1, secretos, rutas ni despliegues. Cloudflare Workers Free comparte cuota diaria a nivel cuenta: un Worker distinto en la MISMA cuenta **no garantiza aislamiento de cuota**. Por seguridad, no desplegar BuscaClientes allí sin evaluar una cuenta Cloudflare completamente separada o un proveedor alternativo.
 
-## Safety rules
-- Never modify or deploy friendly-123, or reuse its Cloudflare Workers, D1, KV, R2, routes, domains, tokens or service bindings.
-- Never place the PayPal Client Secret in GitHub, conversations, logs, frontend JavaScript or a Wrangler `[vars]` block.
-- Cloudflare secret variables belong to the new Worker ONLY: `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_WEBHOOK_ID`.
-- Create a separate D1 database named `buscaclientes-paypal-ledger` and bind as `PAYPAL_DB`. Run `paypal-schema.sql` on that database alone.
-- Set Cloudflare Worker name `buscaclientes-paypal` and verify the available `*.workers.dev` hostname, not an assumed one.
-- Dashboard > PayPal Developer > Apps & Credentials > Live > your app > Webhooks > Add webhook. Use actual Worker origin + `/api/paypal/webhook`. Register supported event names declared in `paypal-worker.js`. Copy resulting Webhook ID to Cloudflare secret.
-- **Important:** New worker currently responds 503 for create-order and capture-order. It DOES verify and durably store PayPal webhook events when configured. It deliberately does **not** activate accounts, call orders, or capture payment. This prevents taking money without an entitlement and refund workflow.
-- Before enabling purchases: decide product prices, create independent accounts/auth and entitlements schema, server-side price validation, approval/capture implementation, correct order-customer association, durable payment-state machine, duplicate order/capture handling, refunds/reversals, rate limits, tests, and real sandbox E2E checks. Then add Live gate.
-- PayPal Live API origin is https://api-m.paypal.com. Use sandbox API with sandbox credentials in a separate staging deployment, never mix modes.
-- Confirm Cloudflare costs/limits and isolate usage to this Worker before deploying, avoiding contention with friendly-123.
+## Instrucciones PayPal para el propietario (un minuto)
+1. La pantalla **PayPal Developer → LIVE → BuscaClientes → API credentials** ya está bien. No hace falta crear otra App ni compartir el Client ID de nuevo.
+2. En otra pestaña entra a **PayPal Business normal**, no Developer. Busca **Sales / Ventas → Subscriptions / Suscripciones → Create plan / Crear plan**.
+3. **Solo comprueba si aparece esa opción**. No crees un plan ni autorices un cargo mientras falten las condiciones comerciales aprobadas y el backend de acceso premium.
+4. Indica si la opción existe. Si no aparece, envía una captura SIN datos privados: algunas funciones dependen de elegibilidad de cuenta y mercado (Ecuador).
+5. No pulses aún "Add webhook" en Developer: se necesita primero una URL HTTPS REAL y verificada, que no tenemos. Cuando la tengamos, lo haremos juntos.
 
-## Beginner PayPal checklist
-1. Open https://developer.paypal.com/dashboard/applications/live and sign in to your PayPal Business account.
-2. Select your BuscaClientes app (or create a Merchant app).
-3. Locate Client ID and Client Secret. Keep Secret private; paste it ONLY into new Worker's Cloudflare Secrets interface.
-4. AFTER deploying the isolated webhook receiver, register its verified public URL in PayPal Live Webhooks.
-5. Select checkout/order and capture events; PayPal gives you an ID beginning `WH-`; store it as `PAYPAL_WEBHOOK_ID` in the same Worker.
-6. Test with PayPal's webhook test tools, then check D1 persistence and replay/idempotency. Do not make a real charge while the create/capture endpoints are intentionally disabled.
+Documentos oficiales:
+- https://developer.paypal.com/subscriptions/dashboard/use-dashboard
+- https://www.paypal.com/ec/cshelp/article/merchant-subscription-faqs-help289?locale.x=en_EC
+- https://developer.paypal.com/subscriptions/webhooks/
+- https://developer.paypal.com/api/rest/webhooks/rest/
 
-## Current code limits
-- Stores verified webhook payloads including any fields supplied by PayPal. Restrict database access and define retention rules before live use.
-- No billing frontend integration or account privileges yet.
-- Do not merge without code review and tests.
+## Código que ya está preparado (PR #19)
+- `paypal-worker.js`: receptor HTTPS de eventos de suscripciones con validación de firma usando API oficial PayPal, límites de cuerpo, tiempos máximos en llamadas externas y configuración explícita sandbox/live.
+- `paypal-schema.sql`: esquema de **nueva base de datos D1 aislada**, que guarda solo metadatos de eventos, NO cuerpo completo, correos ni nombres.
+- `wrangler.paypal.toml`: Worker separado `buscaclientes-paypal`, sin recursos de otros productos ni secretos en el código.
+- `tests/paypal-webhook.test.mjs`: tests que no hacen llamadas reales a PayPal ni Cloudflare.
+- `.github/workflows/paypal-guards.yml`: CI de aislamiento y seguridad.
+- **Rutas inactivas**: `/api/paypal/create-order`, `/api/paypal/capture-order`, `/api/paypal/create-subscription` devuelven 503; no hay cargos ni activaciones.
+
+### Eventos previstos (seleccionar al crear webhook)
+- `BILLING.SUBSCRIPTION.CREATED`
+- `BILLING.SUBSCRIPTION.ACTIVATED`
+- `BILLING.SUBSCRIPTION.UPDATED`
+- `BILLING.SUBSCRIPTION.EXPIRED`
+- `BILLING.SUBSCRIPTION.CANCELLED`
+- `BILLING.SUBSCRIPTION.SUSPENDED`
+- `BILLING.SUBSCRIPTION.PAYMENT.FAILED`
+- `PAYMENT.SALE.COMPLETED`
+- `PAYMENT.SALE.REFUNDED`
+- `PAYMENT.SALE.REVERSED`
+
+**No usar eventos CHECKOUT.ORDER.* o PAYMENT.CAPTURE.* como sustituto del ciclo de suscripciones.**
+
+## Secuencia futura, solo después de acuerdo comercial y staging
+1. Aprobar beneficio **real** de Personal y Equipos, precio exacto USD, frecuencia, política de cancelación/devolución y TOS/privacidad.
+2. Diseñar identificación de usuario, vinculación demostrable a PayPal subscription ID, permisos y cuotas protegidos en backend independiente; proteger contra eventos fuera de orden.
+3. Comprobar elegibilidad PayPal Business para suscripciones de la cuenta ecuatoriana y obtener un plan real, no inventado.
+4. Probar Sandbox con credenciales Sandbox reales y cuenta de comprador simulada, sin cargos live.
+5. Preparar backend fuera de la cuota/infraestructura vital de friendly-123, con presupuesto y protección antiabuso.
+6. Desplegar URL HTTPS propia en infraestructura aislada, cargar secretos **directamente en configuración privada**, crear webhook en PayPal Live, obtener `PAYPAL_WEBHOOK_ID` y verificar firma + persistencia + deduplicación.
+7. Probar suscripción/renovación/cancelación/reembolso, recuperación de fallos y reconciliación; solo entonces habilitar link/SDK en `payment-plan-config.js`.
+
+### Variables en el futuro backend seguro
+- `PAYPAL_ENV`: texto `sandbox` o `live` según despliegue.
+- `PAYPAL_CLIENT_ID`: publicable, pero NO necesario ponerlo en el repositorio.
+- `PAYPAL_CLIENT_SECRET`: **solo secreto del servidor**, nunca por chat.
+- `PAYPAL_WEBHOOK_ID`: identificador proporcionado por PayPal al registrar URL.
+- `PAYPAL_DB`: NUEVA base exclusiva de BuscaClientes, sin reutilizar friendly-123.
+
+**La página de planes y su kit gratuito continúan intactos.** Ningún evento firmado activa permisos premium por sí solo. Este PR **solo asegura recepción y registro de eventos**, no un sistema completo de suscripciones.
