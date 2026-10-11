@@ -65,8 +65,11 @@ const fixture=[
    assert.equal(rows[0].nextAction,'Escribir sobre exposición de productos');
    assert.equal(rows[0].followUpAt,'2026-10-15');
    assert.equal(rows[0].stage,'qualified');
+   await page.waitForFunction(()=>document.querySelector('#contactRows tr')?.textContent?.includes('Calificado'),null,{timeout:8000});
+   assert.equal(await page.locator('#crmFullDirectory').getAttribute('open'),null,'directory must be closed until requested');
    assert.equal(rows[1].notes,fixture[1].notes,'unrelated contact overwritten');
    assert.equal(await page.locator('#workspaceCRM #contacts').count(),1);
+   await page.evaluate(()=>window.scrollTo(0,0));
    await page.screenshot({path:path.join(output,type+'-crm-first.png'),fullPage:true});
    const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
    assert(overflow<6,'horizontal overflow '+type+' +'+overflow+' px');
