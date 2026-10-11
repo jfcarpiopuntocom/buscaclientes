@@ -1,3 +1,6 @@
+## Global tooling override — 2026-10-10
+Owner instruction: **Do not use TinyFish again** for this or any other project. Do not initiate TinyFish profile or login flows. Prior TinyFish references in other documents are superseded. Use authorized official connectors first, or Playwright + agent-browser when they can actually access the target context. The user mentioned an additional replacement sounding like "PhotoShot"; its exact name has NOT been confirmed, so do not guess. For PayPal, do not claim an authenticated session can be controlled without confirming real tool access. This does not authorize touching any friendly-123 Cloudflare resources.
+
 # BuscaClientes — PayPal isolation & setup checklist
 
 **Status:** isolated code on a review branch only. NOT deployed, NOT accepting money, NOT granting premium access.
