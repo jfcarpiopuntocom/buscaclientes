@@ -1,0 +1,41 @@
+name: Cloudflare frontend migration gate (NO DEPLOY)
+on:
+  pull_request:
+    paths:
+      - 'scripts/build-cloudflare.mjs'
+      - '.github/workflows/cloudflare-preview-gate.yml'
+      - '*.html'
+      - '*.js'
+      - '*.css'
+      - 'personal/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build-preview-assets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check strict allowlist asset build
+        run: node scripts/build-cloudflare.mjs
+      - name: Install locked tool version without persistent dependency changes
+        run: npm install --no-save --no-package-lock --ignore-scripts esbuild@0.25.10
+      - name: Generate minified, source-map-free frontend artifact
+        run: node scripts/build-cloudflare.mjs --minify
+      - name: Verify no server source/SQL/CI bundled in public assets
+        run: |
+          test -f dist/index.html
+          test -f dist/personal/index.html
+          test -f dist/brand-globe.svg
+          test ! -e dist/worker.js
+          test ! -e dist/enrich-worker.js
+          test ! -e dist/paypal-worker.js
+          test ! -e dist/personal/personal-schema.sql
+          test ! -e dist/.github
+          test ! -e dist/scripts
+          test ! -e dist/tests
+          if find dist -type f -name '*.map' | grep .; then echo 'Source map leakage'; exit 1; fi
+          echo "Cloudflare preview package passes static exposure controls"
