@@ -30,6 +30,20 @@ const fixtures=[
     color:getComputedStyle(document.querySelector('.intro h1 em')).color
    }));
    assert.equal(dashHeadline.textDecoration,'none','Dashboard headline still underlined');
+   // Shell014 CSP hotfix: selected language is reflected by an EXTERNAL script,
+   // not an inline block rejected by dashboard's strict script-src self policy.
+   assert.equal(await dashboard.locator('header .brand').getAttribute('aria-label'),'BuscaClientes');
+   await dashboard.evaluate(()=>localStorage.setItem('bc-lang','pt'));
+   await dashboard.reload({waitUntil:'load',timeout:30000});
+   assert.equal(await dashboard.locator('header .brand').getAttribute('aria-label'),'EncontraClientes');
+   assert.equal(await dashboard.locator('header .brand strong').textContent(),'EncontraClientes');
+   await dashboard.evaluate(()=>localStorage.setItem('bc-lang','en'));
+   await dashboard.reload({waitUntil:'load',timeout:30000});
+   assert.equal(await dashboard.locator('header .brand strong').textContent(),'FindClients');
+   await dashboard.evaluate(()=>localStorage.setItem('bc-lang','es'));
+   await dashboard.reload({waitUntil:'load',timeout:30000});
+   assert.equal(await dashboard.locator('header .brand strong').textContent(),'BuscaClientes');
+
 
    await dashboard.waitForFunction(()=>document.querySelector('#kTotal')?.textContent==='0');
    assert.match(await dashboard.locator('#liveState').innerText(),/Cartera local/);
