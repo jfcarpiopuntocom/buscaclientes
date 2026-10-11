@@ -133,9 +133,11 @@ const fixtures=[
    assert((await dashboard.locator('#mapStatus').innerText()).includes('Muestra geográfica'));
    const overflow=await dashboard.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
    assert(overflow<=8,'Dashboard horizontal overflow '+overflow);
+   await dashboard.locator('#tabCRM').click();
    await dashboard.locator('#filter').fill('Tienda');
    assert.equal(await dashboard.locator('#contactRows tr').count(),1);
    await dashboard.locator('#filter').fill('');
+   await dashboard.locator('#tabIntel').click();
    if(name==='chromium')await dashboard.screenshot({path:'shell-006-evidence/'+(mobile?'mobile':'desktop')+'.png',fullPage:true,timeout:30000});
    // The app must remain the authority. An open tab sends the real local CRM
    // over the same-origin BroadcastChannel; no backend/API/secret involved.
