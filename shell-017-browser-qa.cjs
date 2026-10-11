@@ -43,7 +43,7 @@ const fixture=[
    page.on('console',m=>{if(m.type()==='error')errors.push('console: '+m.text())});
    const response=await page.goto(url+'/dashboard.html',{waitUntil:'networkidle',timeout:30000});
    assert.equal(response.status(),200);
-   await page.locator('#crmTotalHero').getByText('3').waitFor();
+   await page.waitForFunction(()=>document.getElementById('crmTotalHero')?.textContent==='3',null,{timeout:8000});
    assert.equal(await page.locator('#tabCRM').getAttribute('aria-selected'),'true');
    assert.equal(await page.locator('#workspaceCRM').isVisible(),true);
    assert.equal(await page.locator('#workspaceIntel').isVisible(),false);
@@ -85,5 +85,5 @@ const fixture=[
    await browser.close();
    console.log('PASS '+type+' CRM, editing, 2 tabs, map + advanced search prefill and no overflow');
   }
- }finally{await new Promise(ok=>server.close(ok))}
+ }finally{server.closeAllConnections?.();await new Promise(ok=>server.close(ok))}
 })().catch(e=>{console.error(e);process.exitCode=1});
