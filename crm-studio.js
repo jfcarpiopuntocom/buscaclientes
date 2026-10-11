@@ -211,7 +211,7 @@ root.addEventListener('bc:crm-saved',()=>{renderCards();renderDetail()});
 document.addEventListener('bc:snapshot-ready',()=>{renderCards();renderDetail()});
 document.getElementById('researchForm').addEventListener('submit',e=>{
  e.preventDefault();const city=$('researchCity').value.trim();if(!city){$('researchCity').focus();return}
- const params=new URLSearchParams({bcCity:city.slice(0,90),bcCategory:$('researchCategory').value,bcKeyword:$('researchKeyword').value.slice(0,90)});
+ const params=new URLSearchParams({bcCity:city.slice(0,90),bcCountry:$('researchCountry').value,bcCategory:$('researchCategory').value,bcKeyword:$('researchKeyword').value.slice(0,90)});
  // Existing search engine remains authoritative. Prefill only, do not trigger scraping automatically.
  root.location.assign('./index.html?'+params.toString()+'#radar')
 });
