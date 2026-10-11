@@ -4,6 +4,7 @@ on:
     paths:
       - 'personal/**'
       - 'tests/personal-policy.test.mjs'
+      - 'tests/personal-api.test.mjs'
       - 'tests/personal-schema-check.py'
       - 'tests/shell-016.test.mjs'
       - 'dashboard.html'
@@ -23,6 +24,6 @@ jobs:
         with:
           node-version: '22'
       - name: Personal quota engine + safe portal
-        run: node --test tests/personal-policy.test.mjs tests/shell-016.test.mjs
+        run: node --test tests/personal-policy.test.mjs tests/personal-api.test.mjs tests/shell-016.test.mjs
       - name: Verify privacy-minimal D1 schema without Cloudflare access
         run: python3 tests/personal-schema-check.py
