@@ -11,6 +11,10 @@ on:
       - 'crm-transaction.js'
       - 'shell-017-browser-qa.cjs'
       - 'tests/shell-017.test.mjs'
+      - 'tests/shell-018-brand.test.mjs'
+      - 'brand-i18n.js'
+      - 'planes.html'
+      - 'personal/index.html'
       - '.github/workflows/shell-017-crm.yml'
   workflow_dispatch:
 permissions:
@@ -28,7 +32,7 @@ jobs:
         run: |
           node --check crm-studio.js
           node --check dashboard.js
-          node --test tests/shell-017.test.mjs tests/shell-016.test.mjs tests/shell-006.test.mjs
+          node --test tests/shell-018-brand.test.mjs tests/shell-017.test.mjs tests/shell-016.test.mjs tests/shell-006.test.mjs
       - name: Install Chromium and WebKit
         run: |
           npm install --no-save --no-audit --no-fund playwright@1.56.1
