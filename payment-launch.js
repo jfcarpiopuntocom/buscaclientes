@@ -36,7 +36,7 @@ function update(lang){
  const l=Object.hasOwn(dict,lang)?lang:'es',t=dict[l];
  document.documentElement.lang=l;
  const brand=root.BC_BRAND?.apply(l)||'BuscaClientes';const name=root.BC_BRAND?.names?.[l];const pieces=document.querySelectorAll('.bc-plan-brand .wordmark span');if(name&&pieces.length===2){pieces[0].textContent=name[0];pieces[1].textContent=name[1]};document.querySelector('.bc-plan-brand')?.setAttribute('aria-label',brand);
- document.title=brand+' · '+({es:'Planes',en:'Plans',pt:'Planos'}[l]);
+ document.title=brand+': '+(root.BC_BRAND?.descriptors?.[l]||'Búsqueda + CRM')+' · '+({es:'Planes',en:'Plans',pt:'Planos'}[l]);
  document.querySelectorAll('[data-plan-i]').forEach(el=>{const value=t[el.dataset.planI];if(value)el.textContent=value});
  const langSelect=document.querySelector('#planLang');if(langSelect)langSelect.value=l;
  const cfg=root.BC_PLAN_CONFIG;
