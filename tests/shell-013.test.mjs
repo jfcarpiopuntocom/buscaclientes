@@ -72,6 +72,6 @@ test('10 saved CRM map link opens the actual saved tab, never generic result rad
  assert.match(html,/queueMicrotask\(\(\)=>showCRM\('saved'\)\)/);
 });
 test('11 scope guard: versions, globe, city coherence and exact original slogan retained',()=>{
- assert.match(html,/v1\.0 shell 013/);assert.match(dash,/v1\.0 shell 013/);
+ assert.match(html,/v1\.0 shell 014/);assert.match(dash,/v1\.0 shell 014/);
  for(const text of ["geo-scope.js","city-coherence.js","crm-transaction.js","contact-evidence.js","BC_GYRO.create","window.BC_COUNTRY_FOCUS=focusCountry","worldMarker:'El mundo está lleno de clientes'"])assert(html.includes(text),text);
 });

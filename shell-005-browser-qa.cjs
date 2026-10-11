@@ -47,10 +47,29 @@ const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypt
     editorial:!!document.querySelector('link[href="./shell-005-editorial.css"]'),
     formAtHero:document.querySelector('#searchButton')?.closest('.panel')?.parentElement?.classList.contains('hero-copy')
    }));
-   assert.match(snap.shell,/^v1\.0 shell 0(?:0[56789]|1[0123])$/,'Prior globe-stabilization regression remains valid on next shell');
+   assert.match(snap.shell,/^v1\.0 shell 0(?:0[56789]|1[01234])$/,'Prior globe-stabilization regression remains valid on next shell');
    assert.equal(snap.title,'BuscaClientes: el mundo está lleno de clientes');
    assert(snap.nativeCanvas&&snap.validControls&&snap.editorial&&snap.formAtHero,JSON.stringify(snap));
    assert(snap.overflow<=8,'viewport overflow: '+snap.overflow);
+
+   // Shell 014: exact same SVG, international wordmarks and a free, human-sized help.
+   const logoSource=await page.locator('header .brand .bc-brand-symbol').getAttribute('src');
+   assert.equal(logoSource,'./brand-globe.svg');
+   await page.locator('#lang').selectOption('en');
+   assert.equal(await page.locator('header .brand').getAttribute('aria-label'),'FindClients');
+   assert.equal(await page.locator('header .brand .wordmark').innerText(),'FindClients');
+   assert.match(await page.locator('.hero h1').innerText(),/clients\./);
+   await page.locator('#lang').selectOption('pt');
+   assert.equal(await page.locator('header .brand .wordmark').innerText(),'EncontraClientes');
+   assert.match(await page.locator('#bcHelpToggle').innerText(),/Ajuda/);
+   await page.locator('#bcHelpToggle').click();
+   assert.equal(await page.locator('#bcFreeKit').getAttribute('href'),'./kit-libre.html');
+   assert(await page.locator('#bcHelpText').isVisible());
+   const mobileOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
+   assert(mobileOverflow<=8,'i18n brand/help horizontal overflow: '+mobileOverflow);
+   await page.locator('#lang').selectOption('es');
+   assert.equal(await page.locator('header .brand .wordmark').innerText(),'BuscaClientes');
+   assert.equal(await page.locator('header .brand .bc-brand-symbol').getAttribute('src'),logoSource);
    assert.equal(errors.length,0,errors.join(';'));
    if(browserName==='Chromium'){
     await page.screenshot({path:'shell-005-evidence/'+(mobile?'mobile':'desktop')+'.png',fullPage:true,timeout:30000});
