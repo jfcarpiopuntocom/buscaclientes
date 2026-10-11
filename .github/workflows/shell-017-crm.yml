@@ -1,0 +1,43 @@
+name: Shell 017 CRM-first UX Gate
+on:
+  pull_request:
+    paths:
+      - 'dashboard.html'
+      - 'dashboard.js'
+      - 'dashboard-bridge.js'
+      - 'crm-studio.js'
+      - 'crm-studio.css'
+      - 'index.html'
+      - 'crm-transaction.js'
+      - 'shell-017-browser-qa.cjs'
+      - 'tests/shell-017.test.mjs'
+      - '.github/workflows/shell-017-crm.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  crm-logic-and-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Existing and new CRM guards
+        run: |
+          node --check crm-studio.js
+          node --check dashboard.js
+          node --test tests/shell-017.test.mjs tests/shell-016.test.mjs tests/shell-006.test.mjs
+      - name: Install Chromium and WebKit
+        run: |
+          npm install --no-save --no-audit --no-fund playwright@1.56.1
+          npx playwright install --with-deps chromium webkit
+      - name: Visual, mobile, data integrity and keyboard-ready verification
+        run: node shell-017-browser-qa.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shell-017-crm-visual-evidence
+          path: shell-017-evidence/*.png
+          if-no-files-found: warn
