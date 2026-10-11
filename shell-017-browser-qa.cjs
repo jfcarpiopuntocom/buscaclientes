@@ -32,7 +32,9 @@ const fixture=[
    ['chromium',chromium,{width:1440,height:900}],
    ['webkit',webkit,{width:390,height:844}]
   ]){
+   console.log('Starting '+type+' browser acceptance');
    const browser=await browserType.launch({headless:true});
+   try{
    const context=await browser.newContext({viewport,deviceScaleFactor:1});
    await context.addInitScript(({records})=>{
     if(!localStorage.getItem('bc-crm-durable-v1'))localStorage.setItem('bc-crm-durable-v1',JSON.stringify(records));
@@ -41,7 +43,8 @@ const fixture=[
    const page=await context.newPage(),errors=[];
    page.on('pageerror',e=>errors.push('pageerror: '+e.message));
    page.on('console',m=>{if(m.type()==='error')errors.push('console: '+m.text())});
-   const response=await page.goto(url+'/dashboard.html',{waitUntil:'networkidle',timeout:30000});
+   page.setDefaultTimeout(12000);
+   const response=await page.goto(url+'/dashboard.html',{waitUntil:'domcontentloaded',timeout:25000});
    assert.equal(response.status(),200);
    await page.waitForFunction(()=>document.getElementById('crmTotalHero')?.textContent==='3',null,{timeout:8000});
    assert.equal(await page.locator('#tabCRM').getAttribute('aria-selected'),'true');
@@ -82,8 +85,8 @@ const fixture=[
    assert.equal(await page.locator('#keyword').inputValue(),'artesanal','keyword not prefilled');
    assert.equal(await page.locator('#category').inputValue(),'cafe','sector not prefilled');
    assert.deepEqual(errors,[],'browser errors in '+type+': '+JSON.stringify(errors));
-   await browser.close();
    console.log('PASS '+type+' CRM, editing, 2 tabs, map + advanced search prefill and no overflow');
+   }finally{await browser.close().catch(()=>{})}
   }
  }finally{server.closeAllConnections?.();await new Promise(ok=>server.close(ok))}
 })().catch(e=>{console.error(e);process.exitCode=1});
