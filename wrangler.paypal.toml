@@ -1,20 +1,21 @@
-# PayPal integration reserved for BuscaClientes. Separate Worker; NOT deployed.
-# Requires a NEW D1 database and approved staging first. Do not use friendly-123 bindings.
+# EXCLUSIVE BuscaClientes Worker — deployed sandbox via Cloudflare MCP, 2026-10-10.
+# Never use the account, Worker or bindings of friendly-123.
+# To deploy via Wrangler, authenticate ONLY the Cloudflare account shown here.
 name = "buscaclientes-paypal"
 main = "paypal-worker.js"
 compatibility_date = "2026-10-01"
 workers_dev = true
+account_id = "5c15f6eacab9538c6f4cccbe750758d0"
 
-# Set PAYPAL_ENV explicitly to "sandbox" for testing (or "live" ONLY after approval).
-# [vars]
-# PAYPAL_ENV = "sandbox"
+[vars]
+PAYPAL_ENV = "sandbox"
 
-# Create a NEW independent D1 database, then supply its true ID.
-# [[d1_databases]]
-# binding = "PAYPAL_DB"
-# database_name = "buscaclientes-paypal-ledger"
-# database_id = "REPLACE_WITH_NEW_DATABASE_ID"
+[[d1_databases]]
+binding = "PAYPAL_DB"
+database_name = "buscaclientes-paypal-ledger"
+database_id = "d7127a3c-288d-4ecf-8f16-ead51d883f1e"
 
-# Set secrets using the NEW Worker's Cloudflare settings ONLY:
-# PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PAYPAL_WEBHOOK_ID
-# Never store real values in source code, logs, GitHub, or chats.
+# Never commit PayPal credentials here. Future sandbox-only secrets must be set
+# in the private Cloudflare Worker environment for this separate account.
+# PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PAYPAL_WEBHOOK_ID: not configured.
+# Checkout and entitlement grant endpoints remain fail-closed (503).
