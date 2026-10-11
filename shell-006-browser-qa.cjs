@@ -90,6 +90,12 @@ const fixtures=[
    await app.route(/(overpass|nominatim|api.worldbank.org|api.gdeltproject.org)/,route=>route.fulfill({status:503,headers:{'content-type':'application/json','access-control-allow-origin':'*'},body:'{"error":"offline_fixture"}'}));
    await app.goto(origin+'/index.html',{waitUntil:'domcontentloaded',timeout:40000});
    await app.waitForFunction(()=>typeof window.BC_DASHBOARD_SOURCE==='function'&&typeof window.BC_DASHBOARD_PUBLISH==='function',{timeout:35000});
+   // Demo is illustrative: it must never enter business intelligence statistics.
+   await app.locator('#sampleButton').click();
+   const sample=await app.evaluate(()=>window.BC_DASHBOARD_SOURCE());
+   assert.equal(sample.results.length,0,'Fictional demo leaked into dashboard sample');
+   assert(!JSON.stringify(sample).includes('Sample Handmade Studio'));
+
    // 008: city selector, HUD, focus and source must share a real target.
    await app.waitForFunction(()=>window.BC_CITY_STATE?.().name && document.querySelector('#city').value===window.BC_CITY_STATE().name,{timeout:35000});
    const first=await app.evaluate(()=>({form:document.querySelector('#city').value,state:window.BC_CITY_STATE(),category:document.querySelector('#category').value}));
