@@ -84,12 +84,14 @@ export default {
    if(known)return reply({reserved:true,charged:0},200,cors);
    if(!active)return reply({error:'subscription_required'},403,cors);
    // One atomic SQL statement with quota predicate; concurrency cannot overrun 1000.
-   const sql="INSERT OR IGNORE INTO personal_usage_events (principal_id,contact_key_hash,operation_id,cycle_id,utc_week_start,saved_at) SELECT ?,?,?,?,?,? WHERE (SELECT COUNT(*) FROM personal_usage_events WHERE principal_id=? AND cycle_id=?) < 1000";
-   const result=await env.PAYPAL_DB.prepare(sql).bind(actor.id,key,input.operationId,active.cycle_id,utcMonday(now),now,actor.id,active.cycle_id).run();
+   const sql="INSERT OR IGNORE INTO personal_usage_events (principal_id,contact_key_hash,operation_id,cycle_id,utc_week_start,saved_at) SELECT ?,?,?,?,?,? WHERE (SELECT COUNT(*) FROM personal_usage_events WHERE principal_id=? AND cycle_id=?) < 1000 AND EXISTS (SELECT 1 FROM personal_subscriptions s JOIN personal_billing_cycles b ON b.subscription_id=s.subscription_id WHERE b.cycle_id=? AND s.principal_id=? AND s.status='active' AND b.starts_at<=? AND b.ends_at>? AND s.verified_at>=?)";
+   const result=await env.PAYPAL_DB.prepare(sql).bind(actor.id,key,input.operationId,active.cycle_id,utcMonday(now),now,actor.id,active.cycle_id,active.cycle_id,actor.id,now,now,new Date(Date.now()-72*3600*1000).toISOString()).run();
    if(result.meta?.changes===1)return reply({reserved:true,charged:1},200,cors);
    const again=await env.PAYPAL_DB.prepare("SELECT 1 AS found FROM personal_usage_events WHERE principal_id=? AND contact_key_hash=?").bind(actor.id,key).first();
    if(again)return reply({reserved:true,charged:0},200,cors);
-   return reply({reserved:false,error:'billing_cycle_limit',limit:1000},429,cors);
+   const replay=await env.PAYPAL_DB.prepare("SELECT 1 AS found FROM personal_usage_events WHERE principal_id=? AND operation_id=?").bind(actor.id,input.operationId).first();
+   if(replay)return reply({reserved:false,error:'operation_id_already_used'},409,cors);
+   return reply({reserved:false,error:'billing_cycle_limit_or_subscription_changed',limit:1000},429,cors);
   }catch{
    // Persistence failures must never grant access or consume a browser-side credit.
    return reply({error:'temporary_server_failure'},503,cors);
