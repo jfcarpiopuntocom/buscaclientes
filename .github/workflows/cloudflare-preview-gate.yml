@@ -39,3 +39,11 @@ jobs:
           test ! -e dist/tests
           if find dist -type f -name '*.map' | grep .; then echo 'Source map leakage'; exit 1; fi
           echo "Cloudflare preview package passes static exposure controls"
+
+      - name: Preserve tested Cloudflare preview package
+        uses: actions/upload-artifact@v4
+        with:
+          name: buscaclientes-cloudflare-preview-dist
+          path: dist/
+          retention-days: 3
+          if-no-files-found: error
