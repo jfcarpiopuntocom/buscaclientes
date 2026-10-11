@@ -58,7 +58,7 @@ const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypt
    await page.locator('#lang').selectOption('en');
    assert.equal(await page.locator('header .brand').getAttribute('aria-label'),'FindClients');
    assert.equal(await page.locator('header .brand .wordmark').textContent(),'FindClients');
-   assert.match(await page.locator('.hero h1').innerText(),/clients\./);
+   assert.match(await page.locator('.hero h1').innerText(),/clients$/);
    await page.locator('#lang').selectOption('pt');
    assert.equal(await page.locator('header .brand .wordmark').textContent(),'EncontraClientes');
    assert.match(await page.locator('#bcHelpToggle').innerText(),/Ajuda/);
