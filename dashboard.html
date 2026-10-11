@@ -39,7 +39,7 @@
   <aside class="crm-promise"><span>✧ TU CARTERA, SIEMPRE TUYA</span><strong id="crmTotalHero">0</strong><small>fichas reales en este navegador · sin ejemplos</small><a href="./index.html#radar" class="crm-search-cta">＋ Descubrir negocios</a></aside>
  </div>
  <div class="crm-metrics" aria-label="Indicadores de tu cartera">
-  <article><span>◈</span><strong id="crmDue">0</strong><small>Necesitan atención</small></article>
+  <article><span>◈</span><strong id="crmDue">0</strong><small>Seguimientos vencidos</small></article>
   <article><span>✦</span><strong id="crmNoNext">0</strong><small>Sin próximo paso</small></article>
   <article><span>⇢</span><strong id="crmActive">0</strong><small>Relaciones en curso</small></article>
   <article><span>◎</span><strong id="crmCoverage">0%</strong><small>Con siguiente acción</small></article>
@@ -50,7 +50,7 @@
    <p class="crm-helper">La app no decide por ti: te ayuda a recordar cada conversación y a encontrar la próxima acción.</p>
    <label class="crm-search-wrap"><span class="visually-hidden">Buscar contactos</span><span aria-hidden="true">⌕</span><input id="crmQuickSearch" type="search" placeholder="Busca negocio, ciudad, etapa o nota…" autocomplete="off"></label>
    <div class="crm-filterbar" role="group" aria-label="Filtrar relaciones">
-    <button type="button" data-crm-filter="attention" aria-pressed="true">Para hoy <span id="crmAttentionCount"></span></button>
+    <button type="button" data-crm-filter="attention" aria-pressed="true">Prioridades <span id="crmAttentionCount"></span></button>
     <button type="button" data-crm-filter="next" aria-pressed="false">Sin próximo paso</button>
     <button type="button" data-crm-filter="active" aria-pressed="false">En curso</button>
     <button type="button" data-crm-filter="all" aria-pressed="false">Todas</button>
@@ -65,9 +65,11 @@
  <div id="crmEditFeedback" role="status" aria-live="polite" class="crm-feedback"></div>
   <section id="cartera" aria-labelledby="contactsTitle">
   <div class="section-top"><div><span class="index">CRM · VISTA COMPLETA</span><h2 id="contactsTitle">Directorio detallado</h2></div><span class="minor">Historial completo · sin límites ocultos · exportación CSV</span></div>
+  <details id="crmFullDirectory" class="crm-directory-disclosure"><summary>Ver directorio completo y filtros <span aria-hidden="true">↗</span></summary><p class="crm-directory-hint">Todas tus fichas siguen aquí. Puedes desplazarte horizontalmente por las columnas sin perder información.</p>
   <div class="table-tools"><label>Filtrar <input id="filter" type="search" placeholder="Nombre, ciudad, sector..." autocomplete="off"></label><span id="shown" aria-live="polite">0 contactos</span></div>
   <div class="tablewrap"><table id="contacts"><thead><tr><th>Negocio</th><th>Sector</th><th>Localización</th><th>Contacto público</th><th>Etapa</th><th>Origen</th></tr></thead><tbody id="contactRows"><tr><td colspan="6" class="empty">No hay contactos almacenados en este navegador.</td></tr></tbody></table></div>
   <nav class="bc-page-nav" aria-label="Páginas de tu cartera"><button id="bcPrev" type="button" disabled>← Anterior</button><span id="bcPage" aria-live="polite">Página 1 de 1</span><button id="bcNext" type="button" disabled>Siguiente →</button></nav>
+ </details>
  </section>
  <footer class="crm-footer"><span>Privado en este navegador · Sin sincronización entre dispositivos</span><a href="./migrar.html">Respaldar o trasladar mi cartera ↗</a><a href="./planes.html">Ver Free y Personal</a></footer>
 </section>
