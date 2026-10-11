@@ -147,7 +147,7 @@ const fixtures=[
    await app.goto(origin+'/index.html',{waitUntil:'domcontentloaded',timeout:40000});
    await app.waitForFunction(()=>typeof window.BC_DASHBOARD_SOURCE==='function'&&typeof window.BC_DASHBOARD_PUBLISH==='function',{timeout:35000});
    // Demo is illustrative: it must never enter business intelligence statistics.
-   await app.locator('#sampleButton').click();
+   assert.equal(await app.locator('#sampleButton').count(),0,'Owner removed sample button');
    const sample=await app.evaluate(()=>window.BC_DASHBOARD_SOURCE());
    assert.equal(sample.results.length,0,'Fictional demo leaked into dashboard sample');
    assert(!JSON.stringify(sample).includes('Sample Handmade Studio'));
