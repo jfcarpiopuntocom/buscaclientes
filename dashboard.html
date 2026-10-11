@@ -12,12 +12,13 @@
 <link rel="stylesheet" href="./dashboard.css">
 <link rel="stylesheet" href="./territory-lab.css"><link rel="stylesheet" href="./shell-009-visual.css"><link rel="stylesheet" href="./shell-010-elegance.css"><link rel="stylesheet" href="./map-explorer.css">
 <style>.bc-page-nav{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:flex-end;padding:16px 0 8px;color:#203955;font-weight:700;font-size:15px}.bc-page-nav button{background:#13344e;color:#fff;border:1px solid #295d77;border-radius:10px;min-height:44px;padding:10px 17px;font-size:14px;font-weight:750;cursor:pointer}.bc-page-nav button:disabled{opacity:.43;cursor:not-allowed}.bc-page-nav button:focus-visible{outline:3px solid #e26d32;outline-offset:3px}@media(max-width:540px){.bc-page-nav{justify-content:space-between;gap:7px}.bc-page-nav button{padding:9px 11px;font-size:13px}}</style>
+<link rel="stylesheet" href="./crm-studio.css">
 </head>
 <body>
 <header class="top">
  <div class="wrap top-inner">
   <a href="./index.html" class="brand" aria-label="Volver a BuscaClientes"><img class="brand-mark bc-brand-symbol" src="./brand-globe.svg" width="39" height="39" alt="" aria-hidden="true"><strong>Busca<span>Clientes</span></strong></a>
-  <span class="shell-label">v1.0 shell 015</span>
+  <span class="shell-label">v1.0 shell 017</span>
   <div class="tools">
    <span id="liveState" class="pulse" role="status" aria-live="polite">Conectando con BuscaClientes…</span>
    <button id="refresh" type="button" title="Solicitar los datos actuales a BuscaClientes">↻ Actualizar</button>
@@ -27,6 +28,51 @@
  </div>
 </header>
 <main class="wrap" id="dashboard">
+
+<nav class="bc-workspace-tabs" role="tablist" aria-label="Espacios de trabajo BuscaClientes">
+ <button id="tabCRM" type="button" role="tab" aria-selected="true" aria-controls="workspaceCRM" tabindex="0"><span class="tab-glyph">◉</span><span><b>Mi CRM</b><small>Relaciones que avanzan</small></span></button>
+ <button id="tabIntel" type="button" role="tab" aria-selected="false" aria-controls="workspaceIntel" tabindex="-1"><span class="tab-glyph">⌖</span><span><b>Inteligencia</b><small>Territorio · búsqueda refinada</small></span><i class="bc-upsell-tag">Enterprise · futuro</i></button>
+</nav>
+<section id="workspaceCRM" role="tabpanel" aria-labelledby="tabCRM" tabindex="0">
+ <div class="crm-hero">
+  <div><p class="crm-overline">TU CENTRO DE RELACIONES</p><h1>No es una lista.<br><em>Son tus próximos movimientos.</em></h1><p class="crm-subtitle">Los contactos cobran valor cuando sabes a quién contactar, por qué y cuándo. La cartera que construyes permanece tuya.</p></div>
+  <aside class="crm-promise"><span>✧ TU CARTERA, SIEMPRE TUYA</span><strong id="crmTotalHero">0</strong><small>fichas reales en este navegador · sin ejemplos</small><a href="./index.html#radar" class="crm-search-cta">＋ Descubrir negocios</a></aside>
+ </div>
+ <div class="crm-metrics" aria-label="Indicadores de tu cartera">
+  <article><span>◈</span><strong id="crmDue">0</strong><small>Necesitan atención</small></article>
+  <article><span>✦</span><strong id="crmNoNext">0</strong><small>Sin próximo paso</small></article>
+  <article><span>⇢</span><strong id="crmActive">0</strong><small>Relaciones en curso</small></article>
+  <article><span>◎</span><strong id="crmCoverage">0%</strong><small>Con siguiente acción</small></article>
+ </div>
+ <div class="crm-workspace">
+  <section class="crm-inbox" aria-labelledby="crmInboxTitle">
+   <div class="crm-section-heading"><div><span class="crm-overline">FOCUS MODE · TU SIGUIENTE PASO</span><h2 id="crmInboxTitle">Tu cartera viva</h2></div><span id="crmListCount" class="crm-counter">0 contactos</span></div>
+   <p class="crm-helper">La app no decide por ti: te ayuda a recordar cada conversación y a encontrar la próxima acción.</p>
+   <label class="crm-search-wrap"><span class="visually-hidden">Buscar contactos</span><span aria-hidden="true">⌕</span><input id="crmQuickSearch" type="search" placeholder="Busca negocio, ciudad, etapa o nota…" autocomplete="off"></label>
+   <div class="crm-filterbar" role="group" aria-label="Filtrar relaciones">
+    <button type="button" data-crm-filter="attention" aria-pressed="true">Para hoy <span id="crmAttentionCount"></span></button>
+    <button type="button" data-crm-filter="next" aria-pressed="false">Sin próximo paso</button>
+    <button type="button" data-crm-filter="active" aria-pressed="false">En curso</button>
+    <button type="button" data-crm-filter="all" aria-pressed="false">Todas</button>
+   </div>
+   <div id="crmCards" class="crm-cards" role="list" aria-live="polite"><p class="crm-empty">Tus relaciones aparecerán aquí cuando guardes negocios.</p></div>
+   <div class="crm-list-footer"><span id="crmVisible">0 de 0</span><button id="crmShowMore" type="button" hidden>Mostrar más</button></div>
+  </section>
+  <aside id="crmDetail" class="crm-detail" aria-label="Detalle y seguimiento de la relación" aria-live="polite">
+   <div class="crm-detail-blank"><span>✦</span><h3>Cada relación tiene historia.</h3><p>Selecciona una ficha para guardar su próximo paso, notas y contexto. Todo queda en tu navegador.</p></div>
+  </aside>
+ </div>
+ <div id="crmEditFeedback" role="status" aria-live="polite" class="crm-feedback"></div>
+  <section id="cartera" aria-labelledby="contactsTitle">
+  <div class="section-top"><div><span class="index">CRM · VISTA COMPLETA</span><h2 id="contactsTitle">Directorio detallado</h2></div><span class="minor">Historial completo · sin límites ocultos · exportación CSV</span></div>
+  <div class="table-tools"><label>Filtrar <input id="filter" type="search" placeholder="Nombre, ciudad, sector..." autocomplete="off"></label><span id="shown" aria-live="polite">0 contactos</span></div>
+  <div class="tablewrap"><table id="contacts"><thead><tr><th>Negocio</th><th>Sector</th><th>Localización</th><th>Contacto público</th><th>Etapa</th><th>Origen</th></tr></thead><tbody id="contactRows"><tr><td colspan="6" class="empty">No hay contactos almacenados en este navegador.</td></tr></tbody></table></div>
+  <nav class="bc-page-nav" aria-label="Páginas de tu cartera"><button id="bcPrev" type="button" disabled>← Anterior</button><span id="bcPage" aria-live="polite">Página 1 de 1</span><button id="bcNext" type="button" disabled>Siguiente →</button></nav>
+ </section>
+ <footer class="crm-footer"><span>Privado en este navegador · Sin sincronización entre dispositivos</span><a href="./migrar.html">Respaldar o trasladar mi cartera ↗</a><a href="./planes.html">Ver Free y Personal</a></footer>
+</section>
+<section id="workspaceIntel" role="tabpanel" aria-labelledby="tabIntel" tabindex="0" hidden>
+
  <div class="notice" role="note"><b>Vista local de tu navegador.</b> Sin sincronización remota ni contraseña configurada todavía. No utilices este enlace como acceso empresarial protegido; el acceso seguro se implementará antes de habilitar cuentas de equipos. <a href="./index.html#radar">Abrir BuscaClientes</a></div>
  <section class="intro">
   <div><span class="eyebrow">BUSCACLIENTES · INTELIGENCIA COMERCIAL</span>
@@ -39,8 +85,12 @@
    <a href="./index.html" class="open-app">⌖ Buscar contactos ↗</a>
   </div>
  </section>
- <nav class="route" aria-label="Secciones de tu dashboard">
-  <a href="#resumen">Resumen</a><a href="#mapa">Mapa local</a><a href="#territorio">Atlas sectorial</a><a href="#porter">Porter invertida</a><a href="#cartera">Cartera</a>
+ <section class="bc-research-entry" aria-labelledby="researchTitle">
+  <div><span class="crm-overline">RESEARCH STUDIO · ENTERPRISE EN EVOLUCIÓN</span><h2 id="researchTitle">Encuentra mejores oportunidades, no más ruido.</h2><p>Prepara una búsqueda refinada por ciudad, sector y palabras clave. El buscador existente realizará la consulta cuando lo confirmes; las funciones avanzadas de Enterprise todavía no se cobran ni se desbloquean.</p></div>
+  <form id="researchForm"><label>Ciudad<input id="researchCity" type="text" maxlength="90" placeholder="Ej. Cuenca, Ecuador" required></label><label>Sector<select id="researchCategory"><option value="gift_shop">Tiendas y regalos</option><option value="restaurant">Restaurantes</option><option value="cafe">Cafeterías</option><option value="boutique">Moda y boutiques</option><option value="artisan">Artesanos</option><option value="beauty">Belleza</option><option value="bookstore">Librerías</option><option value="jewelry">Joyerías</option></select></label><label>Refinar por palabras<input id="researchKeyword" type="text" maxlength="90" placeholder="Producto, especialidad…"></label><button type="submit">Preparar búsqueda ↗</button></form>
+ </section>
+ <nav class="route" aria-label="Secciones de inteligencia">
+  <a href="#resumen">Resumen</a><a href="#mapa">Mapa local</a><a href="#territorio">Atlas sectorial</a><a href="#porter">Porter invertida</a>
  </nav>
  <section id="resumen" aria-labelledby="summaryTitle">
   <div class="section-top"><div><span class="index">01 / CONTROL</span><h2 id="summaryTitle">Visión general</h2></div><span class="minor">La app es la autoridad · este dashboard solo lee</span></div>
@@ -101,18 +151,16 @@
   <div id="forces" class="forces"></div>
   <p class="footnote">Para identificar áreas de verdadero alto rendimiento aún se necesitan demanda verificable, oferta/cobertura competitiva, precios, costos, sustitutos y restricciones locales; nunca inferirlos de etiquetas OSM ausentes.</p>
  </section>
- <section id="cartera" aria-labelledby="contactsTitle">
-  <div class="section-top"><div><span class="index">05 / CARTERA</span><h2 id="contactsTitle">Tus contactos</h2></div><span class="minor">Lectura y exportación; edición en BuscaClientes</span></div>
-  <div class="table-tools"><label>Filtrar <input id="filter" type="search" placeholder="Nombre, ciudad, sector..." autocomplete="off"></label><span id="shown" aria-live="polite">0 contactos</span></div>
-  <div class="tablewrap"><table id="contacts"><thead><tr><th>Negocio</th><th>Sector</th><th>Localización</th><th>Contacto público</th><th>Etapa</th><th>Origen</th></tr></thead><tbody id="contactRows"><tr><td colspan="6" class="empty">No hay contactos almacenados en este navegador.</td></tr></tbody></table></div>
-  <nav class="bc-page-nav" aria-label="Páginas de tu cartera"><button id="bcPrev" type="button" disabled>← Anterior</button><span id="bcPage" aria-live="polite">Página 1 de 1</span><button id="bcNext" type="button" disabled>Siguiente →</button></nav>
- </section>
+
  <footer><span>BuscaClientes: el mundo está lleno de clientes.</span><span>El mapa muestra una muestra observada, no una promesa de rendimiento.</span><a href="./index.html">Volver a BuscaClientes ↗</a></footer>
+</section>
 </main>
+<script src="./crm-transaction.js"></script>
 <script src="./opportunity-matrix.js"></script>
 <script src="./dashboard-bridge.js"></script>
 <script src="./map-explorer.js"></script>
 <script src="./brand-i18n.js"></script><script src="./dashboard.js"></script><script src="./dashboard-brand.js"></script>
 <script src="./territory-lab.js"></script>
+<script src="./crm-studio.js"></script>
 </body>
 </html>
