@@ -97,6 +97,6 @@ test('17 selecting a manual city can geocode before a search is launched',()=>{
 });
 test('18 original CRM, quota, globe and dashboard remain present',()=>{
  for(const needle of ["const quotaKey='bc-credits-'+week()","function persistCRM()","function save(r,isDemo)","window.BC_DASHBOARD_SOURCE=","BC_GYRO.create","BC_TERMINATOR_SCAN","function makeCRMCSV"])assert(html.includes(needle),needle);
- assert.match(html,/v1\.0 shell 009/);
+ assert.match(html,/v1\.0 shell 010/);
  assert.match(html,/<script src="\.\/city-coherence\.js"><\/script>/);
 });

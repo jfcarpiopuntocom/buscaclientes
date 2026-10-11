@@ -21,7 +21,7 @@ a{color:var(--cobalt)}button,input{font:inherit}button{cursor:pointer}button:foc
 .intro{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;margin:22px 0 20px}
 .eyebrow,.index,.run-label{font:800 11px ui-monospace,SFMono-Regular,monospace;letter-spacing:.11em;color:var(--cobalt)}
 h1,h2,h3{font-family:'Space Grotesk',Inter,system-ui,sans-serif;color:var(--navy);letter-spacing:-.04em;line-height:1.08}
-h1{font-size:clamp(32px,4.6vw,64px);margin:6px 0 10px}h1 em{font-style:normal;text-decoration:underline;text-decoration-color:var(--orange);text-underline-offset:9px;text-decoration-thickness:5px}
+h1{font-size:clamp(32px,4.6vw,64px);margin:6px 0 10px}h1 em{font-style:normal;text-decoration:none;color:var(--cobalt)}
 .intro p{color:var(--muted);max-width:760px;line-height:1.55;font-size:14px;margin:12px 0}
 .run{min-width:220px;max-width:310px;border:1px solid var(--line);border-radius:12px;background:#fff;padding:15px;display:grid;gap:6px;box-shadow:0 8px 32px #10234509}
 .run strong{color:var(--petrol);font-size:15px}.run #refreshed{font-size:12px;color:var(--muted)}

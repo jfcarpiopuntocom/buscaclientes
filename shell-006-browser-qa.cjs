@@ -25,6 +25,12 @@ const fixtures=[
    const dashboard=await context.newPage(),errors=[];
    dashboard.on('pageerror',e=>errors.push(e.message));
    await dashboard.goto(origin+'/dashboard.html',{waitUntil:'load',timeout:30000});
+   const dashHeadline=await dashboard.evaluate(()=>({
+    textDecoration:getComputedStyle(document.querySelector('.intro h1 em')).textDecorationLine,
+    color:getComputedStyle(document.querySelector('.intro h1 em')).color
+   }));
+   assert.equal(dashHeadline.textDecoration,'none','Dashboard headline still underlined');
+
    await dashboard.waitForFunction(()=>document.querySelector('#kTotal')?.textContent==='0');
    assert.match(await dashboard.locator('#liveState').innerText(),/Cartera local/);
    assert.equal(await dashboard.locator('#forces .force').count(),5);
@@ -104,7 +110,7 @@ const fixtures=[
 
    await dashboard.waitForFunction(()=>document.querySelector('#liveState')?.dataset.live==='yes',{timeout:25000});
    assert.equal(await dashboard.locator('#kSaved').innerText(),'3');
-   assert.equal(await app.locator('.shell-version').innerText(),'v1.0 shell 009');
+   assert.equal(await app.locator('.shell-version').innerText(),'v1.0 shell 010');
    await dashboard.locator('#refresh').click();
    await dashboard.waitForFunction(()=>document.querySelector('#liveState')?.dataset.live==='yes',{timeout:8000});
    assert.equal(errors.length,0,'Dashboard JS errors: '+errors.join('; '));

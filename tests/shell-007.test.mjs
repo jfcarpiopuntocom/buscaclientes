@@ -51,8 +51,8 @@ test('only observable sample signals are measured',()=>{
 test('visual controls integrate without editing CRM or touching source app',()=>{
  const script=read('territory-lab.js'),html=read('dashboard.html'),
        css=read('territory-lab.css'),app=read('index.html'),dash=read('dashboard.js');
- assert.match(html,/v1\.0 shell 00[789]/);
- assert.match(app,/v1\.0 shell 00[789]/);
+ assert.match(html,/v1\.0 shell 0(?:0[789]|10)/);
+ assert.match(app,/v1\.0 shell 0(?:0[789]|10)/);
  for(const id of ['tlSector','tlGrid','tlDetails','tlEvidence','tlOverlayToggle','tlExport'])
   assert(html.includes('id="'+id+'"'));
  assert.match(html,/territory-lab\.css/);assert.match(html,/territory-lab\.js/);
