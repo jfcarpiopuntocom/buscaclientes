@@ -28,7 +28,7 @@ test('dashboard bridge accepts 1000+ records without silent 250 truncation',()=>
  const items=Array.from({length:1250},(_,i)=>({id:'osm:'+i,name:'Place '+i,category:'shop',address:'City',lat:2+i/10000,lon:-78,source:'https://www.openstreetmap.org'}));
  assert.equal(api.unique(items).length,1250);
  assert.equal(api.stats(items).count,1250);
- assert.match(read('dashboard-bridge.js'),/unique\(arr,2000\)/);
+ assert.match(read('dashboard-bridge.js'),/unique\(arr\)/);
 });
 test('dashboard has real pagination navigation and exports all filtered rows',()=>{
  for(const id of ['bcPrev','bcNext','bcPage'])assert(dash.includes('id="'+id+'"'));
