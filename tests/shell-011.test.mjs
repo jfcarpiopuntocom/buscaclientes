@@ -30,7 +30,7 @@ test('04 the original map coordinate frame is unchanged by filtering',()=>{
 });
 test('05 filters use published channel fields, not inferred demand',()=>{
  const rows=[p('a',.1,.1,{email:'a@example.com'}),p('b',.3,.3,{phone:'123'}),p('c',.4,.4,{website:'example.com'}),p('d',.6,.6)];
- assert.deepEqual(FILTERS.map(f=>rows.filter(r=>matches(r,f.id)).length),[4,1,1,1,1]);
+ assert.deepEqual(Array.from(FILTERS,f=>rows.filter(r=>matches(r,f.id)).length),[4,1,1,1,1]);
 });
 test('06 no market-value or search-result mutation and only safe external links',()=>{
  assert.doesNotMatch(raw,/fetch\(|localStorage\.setItem|XMLHttpRequest|google\.com\/maps/);
