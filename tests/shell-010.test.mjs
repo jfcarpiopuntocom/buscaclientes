@@ -20,7 +20,7 @@ test('other orange editorial rules are 0 degrees and horizontal',()=>{
 });
 test('app and dashboard both opt into the polish without overwriting existing chrome',()=>{
  for(const page of [home,dash])assert.match(page,/href="\.\/shell-010-elegance\.css"/);
- assert.match(home,/v1\.0 shell 011/);assert.match(dash,/v1\.0 shell 011/);
+ assert.match(home,/v1\.0 shell 012/);assert.match(dash,/v1\.0 shell 012/);
  assert.match(home,/src="\.\/brand-globe\.svg"/);assert.match(dash,/src="\.\/brand-globe\.svg"/);
  assert.match(brand,/\.wordmark::after/);
 });
