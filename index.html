@@ -495,6 +495,27 @@ function syncHelp(){const navLink=document.querySelector('.bc-launch-link');if(n
  $('bcHelpToggle').innerHTML=c[0]+' <span aria-hidden="true">?</span>';
  for(const [id,text] of [['bcHelpTitle',c[1]],['bcHelpText',c[2]],['bcHelpMethod',c[3]],['bcFreeKit',c[4]]])$(id).textContent=text}
 function syncLangFlag(){const f=$('langFlag');f.dataset.country=lang==='en'?'us':lang==='pt'?'pt':'es'}syncLangFlag();$('lang').addEventListener('change',e=>{lang=e.target.value;try{localStorage.setItem('bc-lang',lang)}catch{}syncLangFlag();translate()});$('searchButton').addEventListener('click',search);$('sampleButton').addEventListener('click',sample);$('exportButton').addEventListener('click',exportCSV);$('copyCsvButton').addEventListener('click',copyCRMCSV);$('keyword').addEventListener('keydown',e=>{if(e.key==='Enter')search()});$('city').addEventListener('keydown',e=>{if(e.key==='Enter')search()});document.querySelectorAll('.chip[data-cat]').forEach(el=>el.addEventListener('click',()=>{$('category').value=el.dataset.cat;$('city').value=el.dataset.city;$('keyword').value='';search()}));$('showResults').addEventListener('click',()=>showCRM('search'));$('showSaved').addEventListener('click',()=>showCRM('saved'));try{const preferred=localStorage.getItem('bc-lang');if(['es','en','pt'].includes(preferred)){lang=preferred;$('lang').value=preferred;syncLangFlag()}}catch{}translate();updateQuota();
+ // Shell017: the Intelligence tab prepares inputs, never triggers extraction without a click.
+ const research=new URLSearchParams(window.location.search);
+ if(research.has('bcCity')){
+  const city=String(research.get('bcCity')||'').slice(0,90),kw=String(research.get('bcKeyword')||'').slice(0,90);
+  const cat=String(research.get('bcCategory')||'');
+  if(city)$('city').value=city;
+  if(categoryData.some(row=>row[0]===cat))$('category').value=cat;
+  if(kw)$('keyword').value=kw;
+  if(city)setStatus(lang==='es'?'Búsqueda preparada: confirma la ciudad y pulsa Buscar.':'Search prepared: confirm the city and press Search.');
+ }
+ // A dashboard edit in another same-origin tab must refresh the canonical CRM array.
+ // Do not reset textareas that the user is actively editing in this tab.
+ window.addEventListener('storage',event=>{
+  if(event.key!=='bc-crm-durable-v1')return;
+  const latest=jsonGet('bc-crm-durable-v1',saved);
+  if(!Array.isArray(latest))return;
+  saved=latest;crmTabs();
+  if(crmView==='saved'&&!document.activeElement?.closest('.crm-edit'))render(saved,false);
+  window.BC_DASHBOARD_PUBLISH?.();
+ });
+
 if(new URLSearchParams(window.location.search).get('view')==='saved'&&window.location.hash==='#radar'){
  queueMicrotask(()=>showCRM('saved'))
 }
