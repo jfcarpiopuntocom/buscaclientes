@@ -22,7 +22,7 @@ function normalize(row={}){
 function unique(input,limit=250){
  const map=new Map();
  for(const raw of Array.isArray(input)?input.slice(0,limit*2):[]){
-  const row=normalize(raw);if(!row||row.demo)continue;
+  const row=normalize(raw);if(!row||row.demo||/^example-[1-3]$/.test(row.id))continue; // Legacy unflagged demo records from previously open tabs.
   const key=row.id||row.name+'|'+row.address;
   if(!map.has(key))map.set(key,row);
   if(map.size>=limit)break;
