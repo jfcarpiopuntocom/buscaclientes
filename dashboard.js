@@ -6,7 +6,8 @@
 'use strict';
 const $=id=>document.getElementById(id),api=root.BC_OPPORTUNITIES,bus=root.BC_DASHBOARD_BUS;
 if(!api||!bus){$('liveState').textContent='Módulos de lectura no disponibles';return}
-let state={saved:[],results:[],connected:false,city:'',at:0},filtered=[];
+let state={saved:[],results:[],connected:false,city:'',at:0},filtered=[],page=0;
+const PAGE_SIZE=100;
 const fmt=new Intl.NumberFormat('es-EC');
 const safe=v=>String(v??'').replace(/[\u0000-\u001f]/g,' ').trim();
 function element(tag,cls,text){const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;return el}
@@ -97,9 +98,14 @@ function filteredRows(){
 }
 function renderTable(){
  const tbody=$('contactRows');clear(tbody);filtered=filteredRows();
+ const maxPage=Math.max(0,Math.ceil(filtered.length/PAGE_SIZE)-1);
+ page=Math.min(page,maxPage);
  $('shown').textContent=filtered.length+' contactos en la cartera';
+ $('bcPage').textContent='Página '+(page+1)+' de '+(maxPage+1);
+ $('bcPrev').disabled=page===0;
+ $('bcNext').disabled=page>=maxPage;
  if(!filtered.length){const tr=element('tr'),td=element('td','empty','No hay contactos guardados que coincidan con este filtro.');td.colSpan=6;tr.appendChild(td);tbody.appendChild(tr);return}
- for(const item of filtered.slice(0,250)){
+ for(const item of filtered.slice(page*PAGE_SIZE,(page+1)*PAGE_SIZE)){
   const tr=element('tr');
   const cols=[
    item.name,item.category,item.address||'Sin ubicación detallada',
@@ -134,7 +140,9 @@ function exportCSV(){
  $('shown').textContent=data.length+' contactos · CSV exportado';
 }
 const connection=bus.connectDashboard(snapshot=>{state=snapshot;paint()});
-$('filter').addEventListener('input',renderTable);
+$('filter').addEventListener('input',()=>{page=0;renderTable()});
+$('bcPrev').addEventListener('click',()=>{if(page>0){page--;renderTable();$('cartera').scrollIntoView({block:'start',behavior:'instant'})}});
+$('bcNext').addEventListener('click',()=>{const max=Math.max(0,Math.ceil(filteredRows().length/PAGE_SIZE)-1);if(page<max){page++;renderTable();$('cartera').scrollIntoView({block:'start',behavior:'instant'})}});
 $('refresh').addEventListener('click',()=>connection.refresh());
 $('print').addEventListener('click',()=>root.print());
 $('csv').addEventListener('click',exportCSV);
