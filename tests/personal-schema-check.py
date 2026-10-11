@@ -14,9 +14,9 @@ assert not (colnames & {"email","phone","notes","contact_name","payload"})
 h = "a" * 64
 db.execute("INSERT INTO personal_principals VALUES(?,?,?,?)",
            ("principal-1","google_oidc",h,"2026-10-10T00:00:00Z"))
-db.execute("INSERT INTO personal_subscriptions VALUES(?,?,?,?,?)",
+db.execute("INSERT INTO personal_subscriptions VALUES(?,?,?,?,?,?)",
            ("I-PAYPALTEST","principal-1","P-DRAFT","active",
-            "2026-10-10T00:00:00Z"))
+            "2026-10-10T00:00:00Z","2026-10-10T00:00:00Z"))
 db.execute("INSERT INTO personal_billing_cycles VALUES(?,?,?,?)",
            ("cycle-01","I-PAYPALTEST","2026-10-01T00:00:00Z","2026-11-01T00:00:00Z"))
 db.execute("INSERT INTO personal_usage_events VALUES(?,?,?,?,?,?)",
