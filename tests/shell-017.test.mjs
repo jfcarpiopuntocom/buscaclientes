@@ -71,3 +71,11 @@ test('No unintended dependency on friendly-123 or network auth in the CRM cockpi
  assert.match(read('scripts/build-cloudflare.mjs'),/"crm-studio\.css"/);
  assert.doesNotThrow(()=>new vm.Script(js,{filename:'crm-studio.js'}));
 });
+
+test('mobile full directory stays collapsible and refreshes instantly after CRM edit',()=>{
+ const desk=read('dashboard.html'),css=read('crm-studio.css'),render=read('dashboard.js');
+ assert.match(desk,/<details id="crmFullDirectory"/);
+ assert.match(desk,/<\/details>/);
+ assert.match(css,/\.crm-directory-disclosure table\{min-width:970px!important\}/);
+ assert.match(render,/root\.addEventListener\('bc:crm-saved',\(\)=>connection\.refresh\(\)\)/);
+});
