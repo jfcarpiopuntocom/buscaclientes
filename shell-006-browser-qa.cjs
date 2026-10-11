@@ -112,7 +112,7 @@ const fixtures=[
    // map can focus exactly on the searched city without invented contacts.
    await app.route(/nominatim\.openstreetmap\.org\/search/,route=>route.fulfill({
     status:200,headers:{'content-type':'application/json','access-control-allow-origin':'*'},
-    body:JSON.stringify([{lat:'30.2672',lon:'-97.7431',display_name:'Austin, Texas, USA'}])
+    body:JSON.stringify([{lat:'30.2672',lon:'-97.7431',display_name:'Austin, Texas, USA',address:{country_code:'us'},type:'city'}])
    }));
    // Blur/selection alone must focus Austin correctly, without pressing Explorar.
    await app.locator('#city').press('Tab');
