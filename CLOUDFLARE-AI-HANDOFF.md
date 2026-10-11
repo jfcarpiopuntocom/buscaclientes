@@ -1,3 +1,10 @@
+## Agent connectivity — 2026-10-10 (do not duplicate MCP tunnel)
+- Existing JFC MCPtunnel is already working and exposes a local **read-only n8n** MCP tool to ChatGPT. This is NOT a Cloudflare administrator connector. Never alter, widen, or repurpose this tunnel/server's permissions for payments or deployments.
+- Official Cloudflare API MCP: https://mcp.cloudflare.com/mcp, with OAuth and account-scoped authorization. It is a remote MCP endpoint and can be added **directly** as a separate ChatGPT custom MCP plugin when the ChatGPT UI/workspace permits. Do **not** route it through the existing local tunnel just to achieve connectivity.
+- Plugin setup: ChatGPT web > Plugins > + > Add custom MCP server > URL above > OAuth, choose only the independent BuscaClientes Cloudflare account, grant minimum read-first permissions. Owner must approve OAuth personally. No credentials or tokens in GitHub/chat.
+- If custom remote MCP is unavailable in the current plan/UI, a **separate** local Cloudflare adapter and second MCP tunnel could be engineered later, but only after validating actual support and account controls; never modify the current n8n read-only tunnel or friendly-123.
+- Verify actual Cloudflare capabilities and identity before calling any deployment tools. The official Cloudflare agent-setup guide at https://developers.cloudflare.com/agent-setup/prompt.md covers CLI agents (Codex, Claude Code etc.). It does **not** install agent skills into this ChatGPT session merely by fetching it. Don't claim installation complete until tool connection appears and OAuth is confirmed.
+
 # Handoff to Cloudflare Dashboard Assistant — BuscaClientes PayPal
 
 **Scope:** new independent Cloudflare account ONLY. Read-only checks first. Do NOT connect or change the Cloudflare account, application, zones, Workers, D1, KV, R2, secrets, bindings or billing plan used by friendly-123.
