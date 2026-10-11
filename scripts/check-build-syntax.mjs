@@ -4,9 +4,10 @@
  */
 import {readFile,readdir,stat} from 'node:fs/promises';
 import {join} from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {spawnSync} from 'node:child_process';
 import vm from 'node:vm';
-const root=new URL('../dist/',import.meta.url);
+const root=fileURLToPath(new URL('../dist/',import.meta.url));
 let tested=0;
 async function walk(dir){
  for(const ent of await readdir(dir,{withFileTypes:true})){
@@ -33,5 +34,5 @@ async function walk(dir){
   }
  }
 }
-await walk(new URL('../dist/',import.meta.url));
+await walk(root);
 console.log(JSON.stringify({status:'PASS',javascript_blocks_tested:tested}));
