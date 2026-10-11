@@ -19,7 +19,7 @@ function normalize(row={}){
   source:clean(row.source||'Origen no documentado'),stage:clean(row.stage||'new'),
   created:clean(row.created),demo:!!row.demo};
 }
-function unique(input,limit=2000){
+function unique(input,limit=Infinity){
  const map=new Map();
  for(const raw of Array.isArray(input)?input.slice(0,limit*2):[]){
   const row=normalize(raw);if(!row||row.demo||/^example-[1-3]$/.test(row.id))continue; // Legacy unflagged demo records from previously open tabs.
