@@ -103,6 +103,15 @@ html{scroll-padding-top:150px}
 .bc-enterprise-future strong{font-size:14px;color:#c9fff3}
 .bc-enterprise-future span{color:#d4e4e9;font-size:12px;line-height:1.5}
 .bc-enterprise-future a{display:inline-flex;justify-self:start;font-size:12px;font-weight:850;color:#90f3e1}
+.crm-directory-disclosure{margin-top:18px;background:#fff;border:1px solid #dce6ed;border-radius:14px;overflow:hidden}
+.crm-directory-disclosure summary{list-style:none;cursor:pointer;font-weight:850;font-size:14px;padding:17px 19px;color:#0b2c45;display:flex;justify-content:space-between;align-items:center;gap:10px;background:#f1f7fa}
+.crm-directory-disclosure summary::-webkit-details-marker{display:none}
+.crm-directory-disclosure summary:focus-visible{outline:3px solid #179b97;outline-offset:-3px}
+.crm-directory-disclosure[open] summary{border-bottom:1px solid #dce6ed}
+.crm-directory-disclosure .table-tools,.crm-directory-disclosure .bc-page-nav{margin:14px 16px}
+.crm-directory-disclosure .tablewrap{margin:0 16px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.crm-directory-disclosure table{min-width:970px!important}
+.crm-directory-hint{font-size:12px;color:#61748f;margin:13px 16px}
 @media(max-width:1080px){.crm-workspace{grid-template-columns:minmax(0,1fr) minmax(260px,.9fr)}.bc-upsell-tag{display:none}}
 @media(max-width:850px){.crm-hero{grid-template-columns:1fr}.crm-workspace{grid-template-columns:1fr}.crm-detail{position:relative;top:auto}.crm-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.bc-research-entry{grid-template-columns:1fr}.bc-upsell-tag{display:inline-flex}}
 @media(max-width:540px){#workspaceCRM{padding:10px}.crm-hero{padding:26px 18px}.crm-hero h1{font-size:36px}.crm-hero .crm-promise{padding:17px}.bc-workspace-tabs{gap:6px;padding:4px}.bc-workspace-tabs button{min-height:70px;padding:8px;gap:8px}.bc-workspace-tabs .tab-glyph{width:35px;height:38px;border-radius:9px;font-size:22px}.bc-workspace-tabs small{font-size:10px}.bc-workspace-tabs b{font-size:15px}.bc-upsell-tag{display:none}.crm-metrics{gap:8px}.crm-metrics article{padding:12px}.crm-edit-grid{grid-template-columns:1fr}.crm-section-heading{align-items:start}.crm-counter{white-space:normal}.bc-research-entry form{grid-template-columns:1fr}.bc-research-entry label{grid-column:1/-1}.crm-filterbar{margin-inline:-4px;padding-inline:4px}.crm-detail{scroll-margin-top:20px}}
