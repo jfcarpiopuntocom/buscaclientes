@@ -11,7 +11,7 @@ function apply(lang,doc=document){
  const dashboard=doc.querySelector('header .brand strong');
  if(!word&&dashboard){dashboard.replaceChildren(doc.createTextNode(names[key][0]));const suffix=doc.createElement('span');suffix.textContent=names[key][1];dashboard.appendChild(suffix)}
  const descriptor=doc.querySelector('.bc-product-descriptor');
- if(descriptor)descriptor.textContent=descriptors[key];
+ if(descriptor)descriptor.textContent=': '+descriptors[key];
  const header=doc.querySelector('header .brand');
  if(header){header.setAttribute('aria-label',name);if(descriptor?.id)header.setAttribute('aria-describedby',descriptor.id)}
  const planHeader=doc.querySelector('.bc-plan-brand');if(planHeader&&descriptor?.id)planHeader.setAttribute('aria-describedby',descriptor.id);
