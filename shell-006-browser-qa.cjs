@@ -134,6 +134,7 @@ const fixtures=[
    const overflow=await dashboard.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
    assert(overflow<=8,'Dashboard horizontal overflow '+overflow);
    await dashboard.locator('#tabCRM').click();
+   await dashboard.locator('#crmFullDirectory summary').click();
    await dashboard.locator('#filter').fill('Tienda');
    assert.equal(await dashboard.locator('#contactRows tr').count(),1);
    await dashboard.locator('#filter').fill('');
