@@ -66,7 +66,7 @@ footer{border-top:1px solid var(--edge);margin-top:50px;padding-top:23px;color:v
   const descriptor=({es:'Búsqueda + CRM',en:'Search Satellite + CRM',pt:'Busca + CRM'}[lang]);
   document.getElementById('bcBrandDescriptor').textContent=': '+descriptor;
   const header=document.querySelector('header .brand strong');
-  if(header){header.textContent=brandName;}
+  if(header){const parts=({es:['Busca','Clientes'],en:['Find','Clients'],pt:['Encontra','Clientes']}[lang]);header.replaceChildren(document.createTextNode(parts[0]));const suffix=document.createElement('span');suffix.textContent=parts[1];header.appendChild(suffix);}
   document.querySelector('header .brand')?.setAttribute('aria-label',brandName+': '+descriptor);
   document.title=brandName+': '+descriptor+' · Personal';
   try{localStorage.setItem('bc-lang',lang)}catch{}
