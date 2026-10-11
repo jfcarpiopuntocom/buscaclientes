@@ -25,6 +25,8 @@ jobs:
         run: npm install --no-save --no-package-lock --ignore-scripts esbuild@0.25.10
       - name: Generate minified, source-map-free frontend artifact
         run: node scripts/build-cloudflare.mjs --minify
+      - name: Verify minified JS syntax, classic and module scripts
+        run: node scripts/check-build-syntax.mjs
       - name: Verify no server source/SQL/CI bundled in public assets
         run: |
           test -f dist/index.html
