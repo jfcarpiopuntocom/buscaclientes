@@ -169,6 +169,39 @@ const fixtures=[
    assert.equal(errors.length,0,'Dashboard JS errors: '+errors.join('; '));
    const appData=await app.evaluate(()=>JSON.stringify(window.BC_DASHBOARD_SOURCE()));
    assert(!appData.includes('fake_executive'),'No fictitious contacts');
+
+   if(name==='chromium'&&!mobile){
+    // Shell 013: a failed enriched-contact write MUST retain CRM bytes and in-memory fields.
+    const probe=await app.evaluate(()=>{
+     const before=localStorage.getItem('bc-crm-durable-v1');
+     const contact=window.BC_DASHBOARD_SOURCE().saved.find(x=>x.website);
+     if(!contact)return {missing:true};
+     const original=JSON.stringify(contact);
+     const evidence=window.BC_CONTACT_EVIDENCE.normalize({
+      emails:['public@cafecuenca.example'],phones:[],pages:['https://cafecuenca.example/contact']
+     },contact.website,'remote');
+     const write=Storage.prototype.setItem;
+     try{
+      Storage.prototype.setItem=function(key,value){
+       if(key==='bc-crm-durable-v1')throw new DOMException('Denied','QuotaExceededError');
+       return write.call(this,key,value);
+      };
+      return {ok:window.applyContactEvidence(contact,evidence),before,after:localStorage.getItem('bc-crm-durable-v1'),
+       old:original,now:JSON.stringify(contact)};
+     }finally{Storage.prototype.setItem=write}
+    });
+    assert(!probe.missing,'Missing saved contact fixture for evidence rollback test');
+    assert.equal(probe.ok,false,'Evidence was accepted despite failed durable write');
+    assert.equal(probe.before,probe.after,'Stored CRM changed on failed enrichment');
+    assert.equal(probe.old,probe.now,'In-memory CRM changed on failed enrichment');
+    // Dashboard link must really open "Mi cartera" rather than leaving Results active.
+    const deeplink=await context.newPage();
+    await deeplink.goto(origin+'/index.html?view=saved#radar',{waitUntil:'domcontentloaded',timeout:40000});
+    await deeplink.waitForFunction(()=>document.querySelector('#showSaved')?.classList.contains('active'),{timeout:15000});
+    assert.equal(await deeplink.locator('#showSaved').getAttribute('class').then(c=>c.includes('active')),true);
+    await deeplink.close();
+   }
+
    console.log('PASS shell006',name,mobile?'mobile':'desktop',JSON.stringify({saved:3,geolocated:3,live:true,overflow,forces:5}));
    await context.close();await browser.close();
   }
