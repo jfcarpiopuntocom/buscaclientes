@@ -449,7 +449,14 @@ $('scopeTry').addEventListener('click',runPeriscope);$('scopeOpen').addEventList
 function startLiveSearch(){
  if(periscopeBooted)return;
  periscopeBooted=true;
- let cache=null;try{cache=JSON.parse(sessionStorage.getItem('bc-live-lookup-v1')||'null')}catch{}
+ // Shell017: explicit research query takes precedence over the random discovery tour.
+  // Never start an external search without the user's explicit Search action.
+  if(new URLSearchParams(window.location.search).has('bcCity')){
+    $('scopeBadge').textContent='CONSULTA PREPARADA';
+    $('scopeHeadline').textContent='Búsqueda preparada · confirma y pulsa Buscar';
+    return;
+  }
+  let cache=null;try{cache=JSON.parse(sessionStorage.getItem('bc-live-lookup-v1')||'null')}catch{}
  if(cache&&Array.isArray(cache.rows)&&typeof cache.city==='string'&&Number.isFinite(cache.at)&&cache.at<=Date.now()&&Date.now()-cache.at<600000&&periscopeCities.some(c=>c[0]===cache.city&&c[1]===cache.category)){
   periscopeLatest={city:cache.city,category:cache.category,rows:cache.rows};const cachedTarget=periscopeCities.find(c=>c[0]===cache.city&&c[1]===cache.category);selectCityChoice(cachedTarget);focusGlobeOnCity(cachedTarget);
   $('scopeCity').textContent=cache.city;$('cityMarker').textContent=cache.city.toUpperCase().slice(0,34);$('scopeDetailCity').textContent=cache.city;$('scopeHeadline').textContent='Encontramos '+cache.rows.length+' negocios en '+cache.city;$('scopeCategory').textContent=cache.category;
@@ -502,6 +509,10 @@ function syncLangFlag(){const f=$('langFlag');f.dataset.country=lang==='en'?'us'
   const cat=String(research.get('bcCategory')||'');
   if(city)$('city').value=city;
   if(categoryData.some(row=>row[0]===cat))$('category').value=cat;
+  const iso=String(research.get('bcCountry')||'').toUpperCase();
+  if(/^[A-Z]{2}$/.test(iso)&&[...$('country').options].some(o=>o.value===iso))$('country').value=iso;
+  if(city)window.BC_CITY_DRAFT?.();
+
   if(kw)$('keyword').value=kw;
   if(city)setStatus(lang==='es'?'Búsqueda preparada: confirma la ciudad y pulsa Buscar.':'Search prepared: confirm the city and press Search.');
  }
