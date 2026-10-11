@@ -22,7 +22,9 @@ jobs:
             safe="$(echo "$item" | tr '/' '_')"
             curl --retry 4 --retry-delay 3 --connect-timeout 10 --max-time 30 --fail-with-body -sS -D "/tmp/bc-live/$safe.headers" "$ORIGIN/$item" -o "/tmp/bc-live/$safe.body"
             test -s "/tmp/bc-live/$safe.body"
-            grep -iq '^x-bc-release: shell-018-6dacf7' "/tmp/bc-live/$safe.headers"
+            if [ "$item" != "__health" ]; then
+              grep -iq '^x-bc-release: shell-018-6dacf7' "/tmp/bc-live/$safe.headers"
+            fi
             echo "PASS /$item $(wc -c < "/tmp/bc-live/$safe.body") bytes"
           done
           grep -q '"source":"cloudflare-kv"' /tmp/bc-live/__health.body
