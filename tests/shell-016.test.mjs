@@ -47,3 +47,22 @@ test('unchanged public free kit and origin-only preservation',()=>{
  assert.match(dash,/Sin sincronización remota ni contraseña configurada todavía/);
  assert.doesNotMatch(page,/<iframe|fetch\(|WebSocket|navigator\.sendBeacon/i);
 });
+
+test('one transparent Personal 1000/cycle offer in all languages, no 250/week second cap',()=>{
+ const portal=read('personal/index.html');
+ const plans=read('payment-launch.js');
+ assert.match(portal,/<b>1\.000<\/b>/);
+ assert.doesNotMatch(portal,/250 nuevos|250-new|250 contactos novos/i);
+ assert.match(plans,/1\.000 negocios públicos/);
+ assert.match(plans,/1,000 newly saved public businesses/);
+ assert.match(plans,/1\.000 novos negócios públicos/);
+});
+test('CRM migration is local-only and merges without deleting existing records',()=>{
+ const migration=read('migrar.html');
+ assert.match(migration,/buscaclientes-crm-export-v1/);
+ assert.match(migration,/SHA-256/);
+ assert.match(migration,/if\(!ids\.has\(item\.id\)\)/);
+ assert.match(migration,/BC_CRM_TX\.commit/);
+ assert.doesNotMatch(migration,/\bfetch\s*\(|XMLHttpRequest|navigator\.sendBeacon/);
+ assert.match(read('scripts/build-cloudflare.mjs'),/"migrar\.html"/);
+});
