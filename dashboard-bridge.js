@@ -6,7 +6,7 @@
 'use strict';
 const CHANNEL='bc-dashboard-s006';
 const CRM='bc-crm-durable-v1';
-const allow=(arr)=>root.BC_OPPORTUNITIES?.unique(arr,250)||[];
+const allow=(arr)=>root.BC_OPPORTUNITIES?.unique(arr)||[];
 const localRows=()=>{try{return allow(JSON.parse(root.localStorage?.getItem(CRM)||'[]'))}catch{return []}};
 const createChannel=()=>typeof root.BroadcastChannel==='function'?new root.BroadcastChannel(CHANNEL):null;
 function connectApp(source){

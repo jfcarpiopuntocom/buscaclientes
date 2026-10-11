@@ -1,0 +1,45 @@
+name: Cloudflare Live Public Smoke — Shell018
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/cloudflare-live-smoke.yml'
+      - 'tests/shell-018-brand.test.mjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  public-https-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Verify Cloudflare public HTTPS serves native KV assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          ORIGIN="https://buscaclientes-web.buscaclientes.workers.dev"
+          mkdir -p /tmp/bc-live
+          for item in "__health" "index.html" "dashboard.html" "personal/" "brand-globe.svg" "crm-studio.js" "planes.html"; do
+            safe="$(echo "$item" | tr '/' '_')"
+            curl --retry 4 --retry-delay 3 --connect-timeout 10 --max-time 30 --fail-with-body -sS -D "/tmp/bc-live/$safe.headers" "$ORIGIN/$item" -o "/tmp/bc-live/$safe.body"
+            test -s "/tmp/bc-live/$safe.body"
+            if [ "$item" != "__health" ]; then
+              grep -iq '^x-bc-release: shell-018-6dacf7' "/tmp/bc-live/$safe.headers"
+            fi
+            echo "PASS /$item $(wc -c < "/tmp/bc-live/$safe.body") bytes"
+          done
+          grep -q '"source":"cloudflare-kv"' /tmp/bc-live/__health.body
+          grep -q '"checkoutEnabled":false' /tmp/bc-live/__health.body
+          grep -q 'BuscaClientes' /tmp/bc-live/index.html.body
+          grep -q 'bc-product-descriptor' /tmp/bc-live/index.html.body
+          grep -q 'id="workspaceCRM"' /tmp/bc-live/dashboard.html.body
+          grep -q 'id="workspaceIntel"' /tmp/bc-live/dashboard.html.body
+          grep -q 'id="bcBrandDescriptor"' /tmp/bc-live/personal_.body
+          grep -q '<svg' /tmp/bc-live/brand-globe.svg.body
+          grep -q 'function renderCards' /tmp/bc-live/crm-studio.js.body
+          if grep -q 'id="sampleButton"' /tmp/bc-live/index.html.body; then echo 'FAIL example button regression';exit 1;fi
+          for internal in paypal-worker.js personal/personal-schema.sql tests/shell-017.test.mjs; do
+            code="$(curl --max-time 15 -sS -o /dev/null -w '%{http_code}' "$ORIGIN/$internal")"
+            test "$code" = "404" || { echo "FAIL leaked $internal HTTP $code"; exit 1; }
+          done
+      - name: Summary
+        run: echo "Smoke verified independently from GitHub Actions; no secrets or user data accessed."

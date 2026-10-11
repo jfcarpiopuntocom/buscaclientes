@@ -1,0 +1,29 @@
+name: BuscaClientes Shell 016 Personal Gate
+on:
+  pull_request:
+    paths:
+      - 'personal/**'
+      - 'tests/personal-policy.test.mjs'
+      - 'tests/personal-api.test.mjs'
+      - 'tests/personal-schema-check.py'
+      - 'tests/shell-016.test.mjs'
+      - 'dashboard.html'
+      - 'dashboard.js'
+      - 'dashboard-bridge.js'
+      - 'opportunity-matrix.js'
+      - '.github/workflows/personal-016.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  personal-offline-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Personal quota engine + safe portal
+        run: node --test tests/personal-policy.test.mjs tests/personal-api.test.mjs tests/shell-016.test.mjs
+      - name: Verify privacy-minimal D1 schema without Cloudflare access
+        run: python3 tests/personal-schema-check.py

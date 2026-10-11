@@ -1,0 +1,59 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><title>BuscaClientes · Copia de seguridad y migración</title>
+<link rel="icon" href="./brand-globe.svg" type="image/svg+xml">
+<style>:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#081624;color:#ecf5fb;font:17px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}main{max-width:900px;margin:auto;padding:24px}a{color:#78e6e2}h1{font-size:clamp(31px,6vw,52px);line-height:1.12;letter-spacing:-.04em}.lead{color:#b8cbdc;max-width:720px}.cards{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:26px 0}.card{border:1px solid #37536b;background:#10283d;border-radius:16px;padding:24px}button{background:#7ce8dc;color:#082533;font:700 16px system-ui;border:0;border-radius:12px;min-height:50px;padding:12px 17px;cursor:pointer;max-width:100%}button:focus-visible,input:focus-visible{outline:3px solid #ffab67;outline-offset:3px}button:disabled{opacity:.55;cursor:not-allowed}input[type=file]{max-width:100%;margin:8px 0 15px}small,.quiet{color:#b1c3d1}#out{min-height:48px;padding:16px;border:1px solid #4b667b;border-radius:12px;margin-top:25px;white-space:pre-wrap}header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #33516a;padding-bottom:14px}header img{width:39px;height:39px;vertical-align:middle}footer{margin-top:28px;border-top:1px solid #33516a;padding-top:20px;color:#b1c3d1}@media(max-width:660px){main{padding:18px}.cards{grid-template-columns:1fr}.card{padding:19px}}</style></head><body>
+<main><header><a href="./index.html"><img src="./brand-globe.svg" alt=""> BuscaClientes</a><a href="./personal/">Personal</a></header>
+<h1>Tu cartera viaja contigo.</h1><p class="lead">Copia tu CRM a un archivo local y restáuralo en la nueva web. Nada se transmite a nuestros servidores. No borra registros existentes.</p>
+<p class="quiet">Your CRM, your file. Export here and import on the new website. No cloud upload. Os teus contactos continuam teus: exporta e importa sem apagar.</p>
+<section class="cards"><div class="card"><h2>1. Exportar / Export</h2><p>Descarga tus contactos, etapas y notas actuales en formato JSON, con comprobación SHA-256.</p><button id="export" type="button">Descargar mi cartera</button></div>
+<div class="card"><h2>2. Importar / Import</h2><p>Elige el archivo previamente descargado. La importación conserva tus contactos actuales y añade los nuevos.</p><label for="file">Archivo de respaldo:</label><input id="file" type="file" accept=".json,application/json"><button id="import" type="button">Validar e importar</button></div></section>
+<p class="quiet">Sin sobrescritura silenciosa: ante un mismo identificador conserva el registro local ya existente. No incluye claves, suscripciones, PIN o credenciales de PayPal. Conserva una copia del respaldo fuera del navegador.</p>
+<div id="out" role="status" aria-live="polite">Esperando acción.</div><footer><a href="./index.html">Volver a BuscaClientes</a> · <a href="./privacy.html">Privacidad</a></footer>
+</main><script src="./crm-transaction.js"></script><script>
+(()=>{'use strict';
+const key='bc-crm-durable-v1', schema='buscaclientes-crm-export-v1',status=document.getElementById('out');
+const report=t=>status.textContent=t;
+const hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+const check=async contacts=>hex(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(contacts))));
+const allowed={id:220,name:180,category:180,address:240,lat:0,lon:0,website:500,phone:100,email:200,source:500,stage:32,notes:1200,created:80,modified:80,demo:0};
+function valid(row){
+ if(!row||typeof row!=='object'||Array.isArray(row)||typeof row.id!=='string'||row.id.length<1||row.id.length>220||typeof row.name!=='string'||!row.name.trim())throw Error('Registro inválido: identificador o nombre.');
+ const out={};for(const [field,max] of Object.entries(allowed)){
+  const val=row[field];if(val===undefined)continue;
+  if(max===0){if(field==='demo')out.demo=!!val;else if(val===null||Number.isFinite(Number(val)))out[field]=val===null?null:Number(val);else throw Error('Coordenadas inválidas.')}
+  else if(typeof val==='string'&&val.length<=max)out[field]=val;
+  else throw Error('Dato demasiado largo o inválido: '+field);
+ }
+ return out;
+}
+function parseStored(){const str=localStorage.getItem(key);if(!str)return[];const data=JSON.parse(str);if(!Array.isArray(data))throw Error('El CRM local tiene un formato inesperado.');return data}
+document.getElementById('export').addEventListener('click',async()=>{
+ try{
+  const rows=parseStored().filter(x=>x&&!x.demo).map(valid);
+  if(rows.length>50000)throw Error('La cartera necesita una exportación por lotes.');
+  const file={schema,exportedAt:new Date().toISOString(),origin:location.origin,count:rows.length,contacts:rows,sha256:await check(rows)};
+  const blob=new Blob([JSON.stringify(file,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='buscaclientes-crm-'+new Date().toISOString().slice(0,10)+'.json';a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),30000);
+  report('Respaldo generado: '+rows.length+' contactos. Conserva el archivo antes de migrar.');
+ }catch(e){report('No se pudo exportar: '+e.message)}
+});
+document.getElementById('import').addEventListener('click',async()=>{
+ try{
+  const file=document.getElementById('file').files?.[0];if(!file)throw Error('Selecciona tu archivo JSON.');
+  if(file.size>10*1024*1024)throw Error('Archivo mayor de 10 MB.');
+  const pack=JSON.parse(await file.text());
+  if(pack?.schema!==schema||!Array.isArray(pack.contacts)||!Number.isInteger(pack.count)||pack.count!==pack.contacts.length||pack.contacts.length>50000||!/^[a-f0-9]{64}$/.test(pack.sha256))throw Error('Respaldo inválido o incompleto.');
+  if(await check(pack.contacts)!==pack.sha256)throw Error('La suma de comprobación SHA-256 no coincide; se canceló la operación.');
+  const imported=pack.contacts.map(valid).filter(x=>!x.demo),current=parseStored();
+  const ids=new Set(current.map(x=>x.id));let additions=0;
+  const merged=[...current];
+  for(const item of imported)if(!ids.has(item.id)){merged.push(item);ids.add(item.id);additions++}
+  if(!window.BC_CRM_TX?.commit)throw Error('Módulo transaccional CRM no disponible.');
+  const result=window.BC_CRM_TX.commit(localStorage,[[key,JSON.stringify(merged)]]);
+  if(!result.ok)throw Error('Espacio insuficiente o fallo al escribir; no se sobrescribió el CRM anterior.');
+  report('Importación verificada. Nuevos: '+additions+'. Conservados: '+current.length+'. Total: '+merged.length+'. Puedes abrir el CRM ahora.');
+ }catch(e){report('Importación cancelada sin cambios: '+e.message)}
+});
+})();
+</script></body></html>

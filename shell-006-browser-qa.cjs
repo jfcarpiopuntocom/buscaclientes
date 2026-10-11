@@ -81,6 +81,8 @@ const fixtures=[
     await dashboard.evaluate(rows=>localStorage.setItem('bc-crm-durable-v1',JSON.stringify(rows)),many);
     await dashboard.reload({waitUntil:'load',timeout:30000});
     await dashboard.waitForFunction(()=>document.querySelector('#kTotal')?.textContent==='21');
+    // Shell017 intentional navigation change: map lives in Intelligence tab.
+    await dashboard.locator('#tabIntel').click();
     await dashboard.locator('#geoMap [data-bc-marker].clustered').first().click();
     assert.equal(await dashboard.locator('#bcMapDetail .bc-map-contact').count(),15);
     await dashboard.locator('#bcMapDetail .bc-map-more').click();
@@ -90,6 +92,8 @@ const fixtures=[
     await dashboard.waitForFunction(()=>document.querySelector('#kTotal')?.textContent==='3');
    }
 
+   // The CRM is now the default tab, so reveal the original Intelligence suite before visual QA.
+   await dashboard.locator('#tabIntel').click();
    assert.equal(await dashboard.locator('#contactRows tr').count(),3);
    assert.equal(await dashboard.locator('.force .status').first().innerText(),'MUESTRA OBSERVADA');
    assert.deepEqual(await dashboard.locator('.force .status').allInnerTexts(),['MUESTRA OBSERVADA','NO MEDIDO','NO MEDIDO','NO MEDIDO','NO MEDIDO']);
@@ -129,9 +133,12 @@ const fixtures=[
    assert((await dashboard.locator('#mapStatus').innerText()).includes('Muestra geográfica'));
    const overflow=await dashboard.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
    assert(overflow<=8,'Dashboard horizontal overflow '+overflow);
+   await dashboard.locator('#tabCRM').click();
+   await dashboard.locator('#crmFullDirectory summary').click();
    await dashboard.locator('#filter').fill('Tienda');
    assert.equal(await dashboard.locator('#contactRows tr').count(),1);
    await dashboard.locator('#filter').fill('');
+   await dashboard.locator('#tabIntel').click();
    if(name==='chromium')await dashboard.screenshot({path:'shell-006-evidence/'+(mobile?'mobile':'desktop')+'.png',fullPage:true,timeout:30000});
    // The app must remain the authority. An open tab sends the real local CRM
    // over the same-origin BroadcastChannel; no backend/API/secret involved.
@@ -140,7 +147,7 @@ const fixtures=[
    await app.goto(origin+'/index.html',{waitUntil:'domcontentloaded',timeout:40000});
    await app.waitForFunction(()=>typeof window.BC_DASHBOARD_SOURCE==='function'&&typeof window.BC_DASHBOARD_PUBLISH==='function',{timeout:35000});
    // Demo is illustrative: it must never enter business intelligence statistics.
-   await app.locator('#sampleButton').click();
+   assert.equal(await app.locator('#sampleButton').count(),0,'Owner removed sample button');
    const sample=await app.evaluate(()=>window.BC_DASHBOARD_SOURCE());
    assert.equal(sample.results.length,0,'Fictional demo leaked into dashboard sample');
    assert(!JSON.stringify(sample).includes('Sample Handmade Studio'));

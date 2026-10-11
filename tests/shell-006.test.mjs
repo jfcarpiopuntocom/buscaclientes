@@ -19,7 +19,7 @@ const sample=[
 test('shell 006 link and title preserve approved name, shell and legacy app',()=>{
  assert.match(index,/v1\.0 shell 0(?:0[6789]|1[012345])/);
  assert.match(index,/href="\.\/dashboard\.html"/);
- assert.match(html,/BuscaClientes: el mundo está lleno de clientes/);
+ assert.match(html,/BuscaClientes: Búsqueda \+ CRM/);
  assert.match(index,/function makeCRMCSV/);
  assert.match(index,/function persistCRM/);
  assert.match(index,/const quotaKey='bc-credits-'\+week\(\)/);

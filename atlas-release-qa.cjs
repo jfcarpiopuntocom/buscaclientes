@@ -64,11 +64,18 @@ const engines=[['Chromium',chromium],['WebKit',webkit]];
   assert(intelText.includes('Inflation'),'World Bank MCP context did not render in Periscope');
   assert(intelText.includes('Sample source signal'),'GDELT MCP news did not render in Periscope');
   assert(intelText.includes('Alpha County'),'Census territory density did not render in Periscope');
-  // Demo is explicitly synthetic and must be non-persistent; never claim real sales leads.
-  await page.evaluate(()=>sample());
+  // Synthetic fixtures exist ONLY inside QA, not in the public product or its UI.
+  await page.evaluate(()=>{
+    const fixture=[
+      {id:'qa-1',demo:true,name:'QA Artisan Studio',address:'Fixture Street · Austin, TX',category:'gift_shop',lat:30.26,lon:-97.74,phone:'',email:'',website:'',source:'https://www.openstreetmap.org/'},
+      {id:'qa-2',demo:true,name:'QA Community Boutique',address:'Fixture Avenue · Austin, TX',category:'boutique',lat:30.27,lon:-97.75,phone:'',email:'',website:'',source:'https://www.openstreetmap.org/'},
+      {id:'qa-3',demo:true,name:'QA Makers Market',address:'Fixture Plaza · Austin, TX',category:'artisan',lat:30.28,lon:-97.76,phone:'',email:'',website:'',source:'https://www.openstreetmap.org/'}
+    ];
+    lastResults=fixture;demo=true;render(fixture,true);
+  });
   await page.waitForTimeout(250);
   const num=await page.locator('#results .lead').count();
-  assert.equal(num,3,'Original 3 synthetic demo cards are missing');
+  assert.equal(num,3,'QA-only fixture cards are missing');
   const badge=page.locator('#results .lead-class').first();
   await badge.click();
   assert.equal(await page.locator('.swiss-company-proof').count(),1,'Evidence must live in existing lead card');

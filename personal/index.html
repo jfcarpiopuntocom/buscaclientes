@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow"><meta name="color-scheme" content="dark">
+<meta name="referrer" content="no-referrer"><meta name="theme-color" content="#071326">
+<title>BuscaClientes: Búsqueda + CRM · Personal</title>
+<link rel="icon" type="image/svg+xml" href="../brand-globe.svg">
+<style>
+:root{--navy:#071326;--panel:#0e2036;--soft:#152c43;--ink:#ecf5fb;--muted:#b0c4d8;--turq:#7ae5db;--warm:#ff914d;--edge:#34526a}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(ellipse 95% 65% at 90% 0%,#1e465a88,transparent 75%),var(--navy);color:var(--ink);font-size:17px;line-height:1.5}
+a{color:var(--turq)}button{font:inherit;cursor:pointer}main{max-width:1140px;margin:0 auto;padding:22px 24px 70px}
+header{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;border-bottom:1px solid var(--edge);padding-bottom:17px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);font-size:22px;font-weight:800}.brand img{width:42px;height:42px}.brand{flex-wrap:wrap}.brand .bc-product-descriptor{font:750 13px/1.4 system-ui,sans-serif;letter-spacing:0;color:var(--turq);white-space:nowrap}.brand span{color:var(--turq)}
+#lang{font:inherit;background:var(--soft);color:var(--ink);border:1px solid var(--edge);border-radius:10px;padding:9px}
+.hero{padding:66px 0 43px;max-width:850px}.eyebrow{color:var(--turq);text-transform:uppercase;letter-spacing:.13em;font-size:12px;font-weight:800}
+h1{font-size:clamp(38px,6vw,70px);letter-spacing:-.06em;line-height:1.04;margin:17px 0 23px}
+h1 em{color:var(--warm);font-style:normal}.lead{font-size:clamp(18px,2vw,21px);color:var(--muted);max-width:680px}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px}.button{display:inline-flex;align-items:center;justify-content:center;text-align:center;min-height:54px;padding:14px 20px;border:1px solid var(--edge);border-radius:13px;text-decoration:none;background:var(--soft);color:var(--ink);font-weight:750}.button.primary{background:var(--turq);color:#082534;border-color:var(--turq)}.button:focus-visible,#lang:focus-visible{outline:3px solid var(--warm);outline-offset:3px}
+.state{padding:20px;border:1px solid #746345;border-radius:14px;background:#312d244f;color:#fce5c5;font-size:15px}.state strong{display:block;margin-bottom:6px}
+.stat{background:var(--panel);border:1px solid var(--edge);border-radius:16px;padding:23px;min-width:0}.stat b{display:block;font-size:35px;line-height:1.2;color:var(--turq);margin:12px 0}.stat span{color:var(--muted);font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:34px 0}.section-title{font-size:25px;letter-spacing:-.035em;margin:40px 0 12px}.features{display:grid;grid-template-columns:1fr 1fr;gap:12px}.feature{padding:20px;border:1px solid var(--edge);border-radius:14px;background:#13253a88}.feature h3{margin:0 0 8px;font-size:17px}.feature p{margin:0;color:var(--muted);font-size:15px}
+footer{border-top:1px solid var(--edge);margin-top:50px;padding-top:23px;color:var(--muted);font-size:14px;display:flex;gap:20px;flex-wrap:wrap}
+@media(max-width:680px){main{padding:16px 17px 50px}.hero{padding:43px 0 24px}.grid,.features{grid-template-columns:1fr}.button{width:100%}.actions{display:grid}h1{font-size:43px}.stat b{font-size:31px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body><main>
+<header>
+<a class="brand" href="../index.html" aria-label="BuscaClientes"><img src="../brand-globe.svg" alt=""><strong>Busca<span>Clientes</span></strong><span id="bcBrandDescriptor" class="bc-product-descriptor">: Búsqueda + CRM</span></a>
+<label for="lang">ES / EN / PT <select id="lang" aria-label="Idioma / Language"><option value="es">ES</option><option value="en">EN</option><option value="pt">PT</option></select></label>
+</header>
+<section class="hero">
+<div class="eyebrow" data-t="eyebrow">TU ESPACIO PERSONAL</div>
+<h1 data-t="title">Tus contactos, <em>con claridad.</em></h1>
+<p class="lead" data-t="intro">Descubre establecimientos, conserva tu cartera y estudia tu territorio desde el mismo navegador.</p>
+<div class="actions"><a class="button primary" href="../dashboard.html" data-t="dashboard">Ver mi dashboard actual ↗</a><a class="button" href="../index.html?view=saved#radar" data-t="crm">Abrir mi cartera en el CRM ↗</a></div>
+</section>
+<div class="state" role="status"><strong data-t="noticeTitle">Personal todavía no está activado.</strong><span data-t="notice">La página conserva el acceso gratuito al dashboard existente. La ampliación a 1.000 negocios nuevos guardados por ciclo de facturación se habilitará únicamente después de verificar la suscripción y activar el control de cuota del servidor. No se ha cobrado nada desde esta página.</span></div>
+<div class="grid">
+<div class="stat"><span data-t="savedLabel">Contactos que tienes guardados en este navegador</span><b id="saved">—</b><span data-t="savedHelp">Estos datos siguen siendo tuyos aunque no te suscribas.</span></div>
+<div class="stat"><span data-t="freeLabel">Plan Gratis · contactos nuevos/semana</span><b>7</b><span data-t="freeHelp">Explorar no consume cuota; volver a exportar no cuesta contactos.</span></div>
+<div class="stat"><span data-t="personalLabel">Personal · propuesta en evaluación</span><b>1.000</b><span data-t="personalHelp">Contactos nuevos por ciclo de facturación, sin un segundo límite semanal. Todavía no activado.</span></div>
+</div>
+<h2 class="section-title" data-t="featuresTitle">Un espacio para trabajar, no para complicarte.</h2>
+<div class="features">
+<article class="feature"><h3 data-t="f1">CRM con contexto</h3><p data-t="d1">Etapas, notas y contactos conservados en el navegador actual.</p></article>
+<article class="feature"><h3 data-t="f2">Visor gerencial</h3><p data-t="d2">Resumen, mapa, sectores y matriz de Porter invertida sobre los datos observados; hoy disponible como visor local.</p></article>
+<article class="feature"><h3 data-t="f3">CSV reutilizable</h3><p data-t="d3">Exporta tu cartera guardada, sin descontar créditos por repetir una descarga.</p></article>
+<article class="feature"><h3 data-t="f4">Sin pérdida de información</h3><p data-t="d4">Cancelar una suscripción futura no deberá borrar el historial ni las notas.</p></article>
+</div>
+<footer><a href="../planes.html" data-t="plans">Ver planes</a><a href="../kit-libre.html" data-t="kit">Kit gratis para todos</a><a href="../privacy.html" data-t="privacy">Privacidad</a><span>BuscaClientes · FindClients · EncontraClientes</span></footer>
+</main>
+<script>
+(()=>{
+ const dict={
+ es:{eyebrow:'TU ESPACIO PERSONAL',title:'Tus contactos, <em>con claridad.</em>',intro:'Descubre establecimientos, conserva tu cartera y estudia tu territorio desde el mismo navegador.',dashboard:'Ver mi dashboard actual ↗',crm:'Abrir mi cartera en el CRM ↗',noticeTitle:'Personal todavía no está activado.',notice:'La página conserva el acceso gratuito al dashboard existente. La ampliación a 1.000 negocios nuevos guardados por ciclo de facturación se habilitará únicamente después de verificar la suscripción y activar el control de cuota del servidor. No se ha cobrado nada desde esta página.',savedLabel:'Contactos que tienes guardados en este navegador',savedHelp:'Estos datos siguen siendo tuyos aunque no te suscribas.',freeLabel:'Plan Gratis · contactos nuevos/semana',freeHelp:'Explorar no consume cuota; volver a exportar no cuesta contactos.',personalLabel:'Personal · propuesta en evaluación',personalHelp:'Contactos nuevos por ciclo de facturación, sin un segundo límite semanal. Todavía no activado.',featuresTitle:'Un espacio para trabajar, no para complicarte.',f1:'CRM con contexto',d1:'Etapas, notas y contactos conservados en el navegador actual.',f2:'Visor gerencial',d2:'Resumen, mapa, sectores y matriz de Porter invertida sobre los datos observados; hoy disponible como visor local.',f3:'CSV reutilizable',d3:'Exporta tu cartera guardada, sin descontar créditos por repetir una descarga.',f4:'Sin pérdida de información',d4:'Cancelar una suscripción futura no deberá borrar el historial ni las notas.',plans:'Ver planes',kit:'Kit gratis para todos',privacy:'Privacidad'},
+ en:{eyebrow:'YOUR PERSONAL SPACE',title:'Your contacts, <em>with clarity.</em>',intro:'Discover establishments, keep your contacts and explore your territory in the same browser.',dashboard:'View my current dashboard ↗',crm:'Open my CRM contacts ↗',noticeTitle:'Personal is not active yet.',notice:'The existing local dashboard remains free to access. The 1,000-new-contacts billing-cycle allowance will be unlocked only after subscription verification and a real server-side quota are working. No charge is made on this page.',savedLabel:'Contacts saved in this browser',savedHelp:'Your records remain yours without a subscription.',freeLabel:'Free · new contacts/week',freeHelp:'Exploration and repeat exports do not spend credits.',personalLabel:'Personal · proposal under review',personalHelp:'New saved contacts per billing cycle, with no extra weekly cap. Not active.',featuresTitle:'A workspace built to be useful.',f1:'Contextual CRM',d1:'Stages, notes and saved contacts stay in this browser.',f2:'Executive dashboard',d2:'Summary, map, sectors and reverse Porter matrix from observed data; currently a local viewer.',f3:'Reusable CSV',d3:'Export saved contacts, with no credit spent on repeated downloads.',f4:'Preserve your data',d4:'Future cancellation must never delete history or notes.',plans:'View plans',kit:'Free kit for everyone',privacy:'Privacy'},
+ pt:{eyebrow:'O TEU ESPAÇO PESSOAL',title:'Os teus contactos, <em>com clareza.</em>',intro:'Descobre estabelecimentos, mantém a tua carteira e analisa o território no mesmo navegador.',dashboard:'Ver o meu dashboard atual ↗',crm:'Abrir a minha carteira no CRM ↗',noticeTitle:'Personal ainda não está ativo.',notice:'O dashboard local existente continua gratuito. Os 1.000 novos negócios guardados por ciclo de faturação só serão desbloqueados depois de verificar a assinatura e ativar os limites no servidor. Não são cobrados pagamentos nesta página.',savedLabel:'Contactos guardados neste navegador',savedHelp:'Os teus dados continuam teus sem assinatura.',freeLabel:'Gratuito · contactos novos/semana',freeHelp:'Explorar e reexportar não consome quotas.',personalLabel:'Personal · proposta em avaliação',personalHelp:'Novos contactos guardados por ciclo de faturação, sem outro limite semanal. Ainda inativo.',featuresTitle:'Um espaço para trabalhar sem complicações.',f1:'CRM com contexto',d1:'Etapas, notas e contactos conservados no navegador.',f2:'Dashboard executivo',d2:'Resumo, mapa, setores e Porter invertida dos dados observados; hoje um visor local.',f3:'CSV reutilizável',d3:'Exporta contactos guardados sem créditos por descargas repetidas.',f4:'Dados preservados',d4:'Cancelar uma futura assinatura nunca deve apagar histórico ou notas.',plans:'Ver planos',kit:'Kit grátis para todos',privacy:'Privacidade'}
+ };
+ const select=document.getElementById('lang');
+ const translate=lang=>{
+  const t=dict[lang]||dict.es;document.documentElement.lang=lang;
+  document.querySelectorAll('[data-t]').forEach(el=>{const key=el.dataset.t;if(key==='title')el.innerHTML=t[key];else el.textContent=t[key]});
+  const brandName=({es:'BuscaClientes',en:'FindClients',pt:'EncontraClientes'}[lang]);
+  const descriptor=({es:'Búsqueda + CRM',en:'Search Satellite + CRM',pt:'Busca + CRM'}[lang]);
+  document.getElementById('bcBrandDescriptor').textContent=': '+descriptor;
+  const header=document.querySelector('header .brand strong');
+  if(header){const parts=({es:['Busca','Clientes'],en:['Find','Clients'],pt:['Encontra','Clientes']}[lang]);header.replaceChildren(document.createTextNode(parts[0]));const suffix=document.createElement('span');suffix.textContent=parts[1];header.appendChild(suffix);}
+  document.querySelector('header .brand')?.setAttribute('aria-label',brandName+': '+descriptor);
+  document.title=brandName+': '+descriptor+' · Personal';
+  try{localStorage.setItem('bc-lang',lang)}catch{}
+ };
+ try{const remembered=localStorage.getItem('bc-lang');if(dict[remembered])select.value=remembered;
+ const rows=JSON.parse(localStorage.getItem('bc-crm-durable-v1')||'[]');
+ document.getElementById('saved').textContent=Array.isArray(rows)?rows.filter(r=>r&&r.demo!==true).length.toLocaleString():0;
+ }catch{document.getElementById('saved').textContent='—'}
+ select.addEventListener('change',()=>translate(select.value));translate(select.value);
+})();
+</script></body></html>
