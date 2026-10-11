@@ -41,6 +41,22 @@ const fixtures=[
    assert.equal(await dashboard.locator('#kSaved').innerText(),'3');
    assert.equal(await dashboard.locator('#kContact').innerText(),'2');
    assert.equal(await dashboard.locator('#kGeo').innerText(),'3');
+   if(name==='chromium'&&!mobile){
+    const many=[...fixtures,...Array.from({length:18},(_,i)=>({
+      id:'near-'+i,name:'Nearby '+(i+1),category:'cafe',lat:-2.898,lon:-79.004,source:'OSM',stage:'new'
+    }))];
+    await dashboard.evaluate(rows=>localStorage.setItem('bc-crm-durable-v1',JSON.stringify(rows)),many);
+    await dashboard.reload({waitUntil:'load',timeout:30000});
+    await dashboard.waitForFunction(()=>document.querySelector('#kTotal')?.textContent==='21');
+    await dashboard.locator('#geoMap [data-bc-marker].clustered').first().click();
+    assert.equal(await dashboard.locator('#bcMapDetail .bc-map-contact').count(),15);
+    await dashboard.locator('#bcMapDetail .bc-map-more').click();
+    assert.equal(await dashboard.locator('#bcMapDetail .bc-map-contact').count(),19);
+    await dashboard.evaluate(rows=>localStorage.setItem('bc-crm-durable-v1',JSON.stringify(rows)),fixtures);
+    await dashboard.reload({waitUntil:'load',timeout:30000});
+    await dashboard.waitForFunction(()=>document.querySelector('#kTotal')?.textContent==='3');
+   }
+
    assert.equal(await dashboard.locator('#contactRows tr').count(),3);
    assert.equal(await dashboard.locator('.force .status').first().innerText(),'MUESTRA OBSERVADA');
    assert.deepEqual(await dashboard.locator('.force .status').allInnerTexts(),['MUESTRA OBSERVADA','NO MEDIDO','NO MEDIDO','NO MEDIDO','NO MEDIDO']);
@@ -90,6 +106,12 @@ const fixtures=[
    await app.route(/(overpass|nominatim|api.worldbank.org|api.gdeltproject.org)/,route=>route.fulfill({status:503,headers:{'content-type':'application/json','access-control-allow-origin':'*'},body:'{"error":"offline_fixture"}'}));
    await app.goto(origin+'/index.html',{waitUntil:'domcontentloaded',timeout:40000});
    await app.waitForFunction(()=>typeof window.BC_DASHBOARD_SOURCE==='function'&&typeof window.BC_DASHBOARD_PUBLISH==='function',{timeout:35000});
+   // Demo is illustrative: it must never enter business intelligence statistics.
+   await app.locator('#sampleButton').click();
+   const sample=await app.evaluate(()=>window.BC_DASHBOARD_SOURCE());
+   assert.equal(sample.results.length,0,'Fictional demo leaked into dashboard sample');
+   assert(!JSON.stringify(sample).includes('Sample Handmade Studio'));
+
    // 008: city selector, HUD, focus and source must share a real target.
    await app.waitForFunction(()=>window.BC_CITY_STATE?.().name && document.querySelector('#city').value===window.BC_CITY_STATE().name,{timeout:35000});
    const first=await app.evaluate(()=>({form:document.querySelector('#city').value,state:window.BC_CITY_STATE(),category:document.querySelector('#category').value}));
@@ -112,7 +134,7 @@ const fixtures=[
    // map can focus exactly on the searched city without invented contacts.
    await app.route(/nominatim\.openstreetmap\.org\/search/,route=>route.fulfill({
     status:200,headers:{'content-type':'application/json','access-control-allow-origin':'*'},
-    body:JSON.stringify([{lat:'30.2672',lon:'-97.7431',display_name:'Austin, Texas, USA'}])
+    body:JSON.stringify([{lat:'30.2672',lon:'-97.7431',display_name:'Austin, Texas, USA',address:{country_code:'us'},type:'city'}])
    }));
    // Blur/selection alone must focus Austin correctly, without pressing Explorar.
    await app.locator('#city').press('Tab');
@@ -125,10 +147,23 @@ const fixtures=[
    assert.equal(await app.locator('#city').inputValue(),live.name);
    assert.equal((await app.locator('#cityMarker').innerText()).includes('AUSTIN'),true);
    assert.equal(await app.locator('#country').inputValue(),'US');
+   // Shell012: the Ecuador country target has a physical coordinate inside Ecuador.
+   await app.locator('#country').selectOption('EC');
+   await app.waitForFunction(()=>window.BC_CITY_STATE?.().name==='Ecuador'&&window.BC_CITY_STATE().status==='located',{timeout:9000});
+   const ecuador=await app.evaluate(()=>window.BC_CITY_STATE());
+   assert(ecuador.lat < -1 && ecuador.lat > -6);
+   assert(ecuador.lon < -75 && ecuador.lon > -82);
+   assert.match(await app.locator('#cityMarker').innerText(),/PAÍS: ECUADOR/);
+   await app.locator('#city').fill('Ecuador');
+   await app.locator('#searchButton').click();
+   assert.match(await app.locator('#status').innerText(),/Elige una ciudad/);
+   assert.equal((await app.evaluate(()=>window.BC_CITY_STATE())).name,'Ecuador');
+   await app.locator('#country').selectOption('US');
+
 
    await dashboard.waitForFunction(()=>document.querySelector('#liveState')?.dataset.live==='yes',{timeout:25000});
    assert.equal(await dashboard.locator('#kSaved').innerText(),'3');
-   assert.equal(await app.locator('.shell-version').innerText(),'v1.0 shell 011');
+   assert.equal(await app.locator('.shell-version').innerText(),'v1.0 shell 012');
    await dashboard.locator('#refresh').click();
    await dashboard.waitForFunction(()=>document.querySelector('#liveState')?.dataset.live==='yes',{timeout:8000});
    assert.equal(errors.length,0,'Dashboard JS errors: '+errors.join('; '));

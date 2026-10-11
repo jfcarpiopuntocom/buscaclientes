@@ -54,7 +54,7 @@ function safeExternal(text){
   return /^https?:$/.test(value.protocol)&&value.hostname.includes('.')&&!value.username&&!value.password?value.href:'';
  }catch{return ''}
 }
-let all=[],savedKeys=new Set(),current='all',selected='',at=0,clusters=[];
+let all=[],savedKeys=new Set(),current='all',selected='',at=0,clusters=[],visible=15;
 function detail(g){
  const panel=byId('bcMapDetail');if(!panel)return;
  panel.replaceChildren();
@@ -63,7 +63,7 @@ function detail(g){
  panel.appendChild(node('h3','',g.count>1?g.count+' establecimientos observados':'Establecimiento observado'));
  panel.appendChild(node('p','bc-map-disclaimer','Coordenadas observadas · No se infiere demanda, oportunidad garantizada ni rentabilidad.'));
  const list=node('div','bc-map-list');
- for(const p of g.rows.slice(0,15)){
+ for(const p of g.rows.slice(0,visible)){
   const row=node('article','bc-map-contact');
   row.appendChild(node('strong','',p.name));
   row.appendChild(node('span','',p.category+(savedKeys.has(p.id)?' · En mi cartera':' · Consulta observada')));
@@ -85,7 +85,12 @@ function detail(g){
   row.appendChild(actions);list.appendChild(row);
  }
  panel.appendChild(list);
- if(g.count>15)panel.appendChild(node('p','bc-map-empty',(g.count-15)+' establecimientos adicionales agrupados en este marcador.'));
+ if(g.count>visible){
+  const more=node('button','bc-map-more','Mostrar '+Math.min(15,g.count-visible)+' más de '+(g.count-visible)+' pendientes');
+  more.type='button';
+  more.addEventListener('click',()=>{visible=Math.min(g.count,visible+15);detail(g);panel.querySelector('.bc-map-more')?.focus()});
+  panel.appendChild(more);
+ }
 }
 function render(){
  const svg=byId('geoMap'),buttons=byId('bcMapFilters');
@@ -114,7 +119,7 @@ function render(){
   if(g.count>1){const label=svgn('text',{x:g.x,y:g.y+5,'text-anchor':'middle'});label.textContent=String(g.count);el.appendChild(label)}
   const title=svgn('title');title.textContent=g.count>1?g.count+' registros públicos en esta zona':g.rows[0].name;
   el.appendChild(title);
-  const choose=()=>{selected=g.rows[0].id;render();};
+  const choose=()=>{if(!g.rows.some(p=>p.id===selected))visible=15;selected=g.rows[0].id;render();};
   el.addEventListener('click',choose);
   el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose();svg.querySelector('[data-bc-marker="'+g.key+'"]')?.focus()}});
   svg.appendChild(el);
@@ -142,7 +147,7 @@ if(controls){
   if(!button||!controls.contains(button))return;
   const filter=button.dataset.mapFilter;
   if(!FILTERS.some(t=>t.id===filter))return;
-  current=filter;selected='';render();
+  current=filter;selected='';visible=15;render();
  });
  document.addEventListener('bc:snapshot-ready',incoming);
 }

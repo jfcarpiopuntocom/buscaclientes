@@ -17,7 +17,7 @@ const sample=[
  {id:'demo',name:'Tienda simulada',category:'shop',demo:true,lat:-2.8,lon:-79},
 ];
 test('shell 006 link and title preserve approved name, shell and legacy app',()=>{
- assert.match(index,/v1\.0 shell 0(?:0[6789]|1[01])/);
+ assert.match(index,/v1\.0 shell 0(?:0[6789]|1[012])/);
  assert.match(index,/href="\.\/dashboard\.html"/);
  assert.match(html,/BuscaClientes: el mundo está lleno de clientes/);
  assert.match(index,/function makeCRMCSV/);

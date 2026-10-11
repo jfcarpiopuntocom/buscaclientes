@@ -72,7 +72,7 @@ test('13 sample mode names Austin and positions globe on its fictional demo city
  assert.match(html,/Sample Handmade Studio \(fictional\)/);
 });
 test('14 dashboard results cannot be assigned to a different selected city',()=>{
- assert.match(html,/results:cityTruth\.state\.name===lastResultCity\?lastResults:\[\]/);
+ assert.match(html,/results:!demo&&cityTruth\.state\.name===lastResultCity\?lastResults\.filter\(x=>!x\.demo\):\[\]/);
  assert.match(html,/saved:saved\.filter\(x=>!x\.demo\)/);
 });
 test('15 cloudless globe does not instantiate cloud textures or spherical cover',()=>{
@@ -93,10 +93,10 @@ test('16 Terminator cancels obsolete acquisitions before focus or query',async()
 test('17 selecting a manual city can geocode before a search is launched',()=>{
  assert.match(html,/cityInput\.addEventListener\('change',\(\)=>\{/);
  assert.match(html,/const known=periscopeCities\.find/);
- assert.match(html,/\.then\(geo=>\{if\(Array\.isArray\(geo\)&&geo\.length\)resolvedCity/);
+ assert.match(html,/const found=window\.BC_GEO_SCOPE\.choose\(geo,code\)/);
 });
 test('18 original CRM, quota, globe and dashboard remain present',()=>{
- for(const needle of ["const quotaKey='bc-credits-'+week()","function persistCRM()","function save(r,isDemo)","window.BC_DASHBOARD_SOURCE=","BC_GYRO.create","BC_TERMINATOR_SCAN","function makeCRMCSV"])assert(html.includes(needle),needle);
- assert.match(html,/v1\.0 shell 011/);
+ for(const needle of ["const quotaKey='bc-credits-'+week()","function persistCRM(next=saved)","function save(r,isDemo)","window.BC_DASHBOARD_SOURCE=","BC_GYRO.create","BC_TERMINATOR_SCAN","function makeCRMCSV"])assert(html.includes(needle),needle);
+ assert.match(html,/v1\.0 shell 012/);
  assert.match(html,/<script src="\.\/city-coherence\.js"><\/script>/);
 });
