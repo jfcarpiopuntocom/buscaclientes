@@ -71,7 +71,7 @@ const engines=[['Chromium',chromium],['WebKit',webkit]];
       {id:'qa-2',demo:true,name:'QA Community Boutique',address:'Fixture Avenue · Austin, TX',category:'boutique',lat:30.27,lon:-97.75,phone:'',email:'',website:'',source:'https://www.openstreetmap.org/'},
       {id:'qa-3',demo:true,name:'QA Makers Market',address:'Fixture Plaza · Austin, TX',category:'artisan',lat:30.28,lon:-97.76,phone:'',email:'',website:'',source:'https://www.openstreetmap.org/'}
     ];
-    render(fixture,true);
+    lastResults=fixture;demo=true;render(fixture,true);
   });
   await page.waitForTimeout(250);
   const num=await page.locator('#results .lead').count();
