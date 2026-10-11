@@ -26,3 +26,8 @@
 @media(max-width:740px){.bc-map-filters{gap:6px}.bc-map-filters button{font-size:11px;padding:7px 9px;min-height:39px}.bc-map-detail{max-height:360px;padding:10px}.bc-map-list{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){#geoMap .bc-map-marker circle{transition:none}}
 @media print{.bc-map-filters{display:none}.bc-map-detail{max-height:none;overflow:visible}.bc-map-list{grid-template-columns:repeat(2,1fr)}}
+
+/* Shell 012 — make a large cluster navigable without showing a false truncation. */
+.bc-map-more{display:block;margin:10px auto 0;background:#E5F2F5;color:#13586A;border:1px solid #9FBFCC;border-radius:7px;padding:9px 14px;font-weight:800;cursor:pointer;min-height:40px}
+.bc-map-more:hover{background:#CFEAF0}
+.bc-map-more:focus-visible{outline:3px solid #E37729;outline-offset:2px}
