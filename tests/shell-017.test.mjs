@@ -48,7 +48,7 @@ test('User context and follow-ups are preserved on same-origin index and never i
  assert.match(read('payment-plan-config.js'),/live:false/);
 });
 test('No invented contacts; source and business channels are checked and rendered safely',()=>{
- assert.match(js,/item\.demo!==true/);
+ assert.match(js,/x\.demo!==true/);
  assert.match(js,/\.textContent=String\(text\)/);
  assert.match(js,/\['https:','http:'\]/);
  assert.match(js,/noopener noreferrer/);
