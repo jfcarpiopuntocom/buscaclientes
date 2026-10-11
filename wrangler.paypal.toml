@@ -1,0 +1,15 @@
+# INDEPENDENT PayPal Worker. Do NOT merge into friendly-123's wrangler config.
+# Run: npx wrangler deploy --config wrangler.paypal.toml
+name = "buscaclientes-paypal"
+main = "paypal-worker.js"
+compatibility_date = "2026-10-01"
+workers_dev = true
+
+# Create a BRAND NEW D1 database, then set its id; NEVER reuse friendly-123 D1.
+# [[d1_databases]]
+# binding = "PAYPAL_DB"
+# database_name = "buscaclientes-paypal-ledger"
+# database_id = "REPLACE_WITH_NEW_DATABASE_ID"
+
+# Secrets, entered ONLY in Cloudflare UI for this independent Worker:
+# PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PAYPAL_WEBHOOK_ID
